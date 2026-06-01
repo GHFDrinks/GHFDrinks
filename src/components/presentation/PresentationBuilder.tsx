@@ -22,6 +22,7 @@ import { mockBrands } from "@/data/brands";
 import { Brand } from "@/types/brand";
 import { SlideType, PRESENTATION_TEMPLATES } from "@/types/presentation";
 import { usePresentationStore } from "@/lib/presentation-store";
+import { useBrands } from "@/hooks/useBrands";
 import { GripVertical, X, Check, Save, Play, Plus, Image as ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { v4 as uuidv4 } from "uuid";
@@ -64,6 +65,7 @@ export function PresentationBuilder() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { savePresentation } = usePresentationStore();
+  const { brands } = useBrands();
   
   const [name, setName] = useState("Untitled Presentation");
   const [selectedBrands, setSelectedBrands] = useState<Brand[]>([]);
@@ -82,11 +84,13 @@ export function PresentationBuilder() {
       const template = PRESENTATION_TEMPLATES.find(t => t.id === templateId);
       if (template) {
         setName(template.name);
-        const brands = template.brandSlugs.map(slug => mockBrands.find(b => b.slug === slug)).filter(Boolean) as Brand[];
-        setSelectedBrands(brands);
+        const resolvedBrands = template.brandSlugs
+          .map(slug => brands.find(b => b.slug === slug) || mockBrands.find(b => b.slug === slug))
+          .filter(Boolean) as Brand[];
+        setSelectedBrands(resolvedBrands);
       }
     }
-  }, [searchParams]);
+  }, [searchParams, brands]);
 
   const toggleBrand = (brand: Brand) => {
     if (selectedBrands.find(b => b.id === brand.id)) {
@@ -150,7 +154,8 @@ export function PresentationBuilder() {
     router.push(`/present-mode/${id}`);
   };
 
-  const filteredAvailableBrands = mockBrands.filter(b => 
+  const availableBrandsSource = brands.length > 0 ? brands : mockBrands;
+  const filteredAvailableBrands = availableBrandsSource.filter(b => 
     !selectedBrands.find(sb => sb.id === b.id) &&
     (b.name.toLowerCase().includes(searchQuery.toLowerCase()) || b.category.toLowerCase().includes(searchQuery.toLowerCase()))
   );

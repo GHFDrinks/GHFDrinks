@@ -44,38 +44,70 @@ export function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (op
   const [user, setUser] = React.useState<UserProfile | null>(null);
 
   React.useEffect(() => {
-    async function loadUser() {
-      try {
-        const supabase = createClient();
-        const { data: { user: authUser } } = await supabase.auth.getUser();
-        if (authUser) {
-          const email = authUser.email || "";
-          const name = authUser.user_metadata?.full_name || email.split("@")[0];
-          
-          const formattedName = name
-            .split(/[._-]/)
-            .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(" ");
-          
-          const initials = formattedName
-            .split(" ")
-            .map((w: string) => w.charAt(0))
-            .join("")
-            .slice(0, 2)
-            .toUpperCase() || "GA";
-
-          setUser({
-            name: formattedName,
-            email,
-            initials,
-            role: email.toLowerCase().includes("admin") ? "Administrator" : "Sales Executive"
-          });
+    function loadUser() {
+      // 1. Check local storage
+      if (typeof window !== "undefined") {
+        const local = localStorage.getItem("ghf_user_profile");
+        if (local) {
+          try {
+            const parsed = JSON.parse(local);
+            setUser(parsed);
+            return;
+          } catch (e) {
+            console.error("Failed to parse cached profile", e);
+          }
         }
-      } catch (err) {
-        console.error("Failed to load user in sidebar:", err);
       }
+
+      // 2. Fallback to Supabase Auth
+      async function fetchAuth() {
+        try {
+          const supabase = createClient();
+          const { data: { user: authUser } } = await supabase.auth.getUser();
+          if (authUser) {
+            const email = authUser.email || "";
+            const name = authUser.user_metadata?.full_name || email.split("@")[0];
+            
+            const formattedName = name
+              .split(/[._-]/)
+              .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(" ");
+            
+            const initials = formattedName
+              .split(" ")
+              .map((w: string) => w.charAt(0))
+              .join("")
+              .slice(0, 2)
+              .toUpperCase() || "GA";
+
+            const profile = {
+              name: formattedName,
+              email,
+              initials,
+              role: email.toLowerCase().includes("admin") ? "Administrator" : "Sales Executive"
+            };
+
+            setUser(profile);
+            localStorage.setItem("ghf_user_profile", JSON.stringify(profile));
+          }
+        } catch (err) {
+          console.error("Failed to load user in sidebar:", err);
+        }
+      }
+      fetchAuth();
     }
+
     loadUser();
+
+    // Listen to local/custom events for instant re-render when user saves profile
+    const handleUpdate = () => loadUser();
+    window.addEventListener("storage", handleUpdate);
+    window.addEventListener("ghf_profile_updated", handleUpdate);
+
+    return () => {
+      window.removeEventListener("storage", handleUpdate);
+      window.removeEventListener("ghf_profile_updated", handleUpdate);
+    };
   }, []);
 
   return (
@@ -135,17 +167,18 @@ export function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (op
       </nav>
       
       {/* Footer Area */}
-      <div className="p-6 border-t border-white/5">
-        <div className="flex items-center space-x-4">
-          <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-xs font-semibold text-accent">
-            {user ? user.initials : "JD"}
-          </div>
-          <div className="flex flex-col">
-            <span className="text-sm font-medium text-white">{user ? user.name : "John Doe"}</span>
-            <span className="text-xs text-muted-foreground">{user ? user.role : "Sales Executive"}</span>
-          </div>
+      <Link 
+        href="/profile" 
+        className="p-6 border-t border-white/5 flex items-center space-x-4 hover:bg-white/5 transition-colors cursor-pointer block"
+      >
+        <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-xs font-semibold text-accent">
+          {user ? user.initials : "JD"}
         </div>
-      </div>
+        <div className="flex flex-col">
+          <span className="text-sm font-medium text-white">{user ? user.name : "John Doe"}</span>
+          <span className="text-xs text-muted-foreground">{user ? user.role : "Sales Executive"}</span>
+        </div>
+      </Link>
     </aside>
   );
 }

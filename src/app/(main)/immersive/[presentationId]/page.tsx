@@ -5,8 +5,11 @@ import { ImmersiveBrandStage } from "@/components/media/ImmersiveBrandStage";
 import { OfflineMediaPackager } from "@/components/media/OfflineMediaPackager";
 import { SwipeSlideNavigator } from "@/components/tablet/SwipeSlideNavigator";
 import { motion, AnimatePresence } from "framer-motion";
-import { Download, CheckCircle2, X } from "lucide-react";
+import { Download, CheckCircle2, X, Loader2 } from "lucide-react";
 import Link from "next/link";
+import { usePresentationStore } from "@/lib/presentation-store";
+import { useBrands } from "@/hooks/useBrands";
+import { Brand } from "@/types/brand";
 
 const MOCK_SCENES = [
   {
@@ -41,30 +44,70 @@ const MOCK_SCENES = [
 ];
 
 export default function ImmersivePresentationViewer({ params }: { params: Promise<{ presentationId: string }> }) {
+  const resolvedParams = React.use(params);
+  const presentationId = resolvedParams.presentationId;
+  
+  const { getPresentation } = usePresentationStore();
+  const { brands, loading } = useBrands();
+  
   const [currentSceneIdx, setCurrentSceneIdx] = useState(0);
   const [isOfflineReady, setIsOfflineReady] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [showHotspotDetails, setShowHotspotDetails] = useState<string | null>(null);
 
-  const currentScene = MOCK_SCENES[currentSceneIdx];
+  const presentation = getPresentation(presentationId);
+  
+  // Resolve brands in this presentation
+  const presentationBrands = presentation
+    ? presentation.brands.map(id => brands.find(b => b.id === id || b.slug === id)).filter(Boolean) as Brand[]
+    : [];
+
+  // Fallback to all brands if presentation has no brands, or if it is just a direct view
+  const activeBrands = presentationBrands.length > 0 
+    ? presentationBrands 
+    : (brands.length > 0 ? brands.slice(0, 3) : []);
+
+  const scenes = activeBrands.map((brand) => {
+    const preset = MOCK_SCENES.find(s => s.brand.toLowerCase().includes(brand.name.toLowerCase()) || brand.name.toLowerCase().includes(s.brand.toLowerCase()));
+    
+    const hotspots = brand.variants.map((v, i) => ({
+      x: 30 + i * 25,
+      y: 40 + i * 15,
+      label: `${v.name} (${v.abv})`
+    }));
+
+    return {
+      id: brand.id,
+      brand: brand.name,
+      tagline: brand.tagline || brand.story?.headline || "Curated presentation deck.",
+      media: preset?.media || brand.heroImage.url,
+      type: preset?.type || ("image" as const),
+      hotspots: hotspots.length > 0 ? hotspots : [{ x: 50, y: 50, label: brand.tagline || brand.name }]
+    };
+  });
+
+  const currentScene = scenes[currentSceneIdx];
 
   // Pre-check if all media is cached
   useEffect(() => {
-    const urls = MOCK_SCENES.map(s => s.media);
-    OfflineMediaPackager.checkOfflineStatus(urls).then(setIsOfflineReady);
-  }, []);
+    if (scenes.length > 0) {
+      const urls = scenes.map(s => s.media);
+      OfflineMediaPackager.checkOfflineStatus(urls).then(setIsOfflineReady);
+    }
+  }, [scenes]);
 
   const handleDownload = async () => {
+    if (scenes.length === 0) return;
     setIsDownloading(true);
-    const urls = MOCK_SCENES.map(s => s.media);
+    const urls = scenes.map(s => s.media);
     await OfflineMediaPackager.preloadMediaPack(urls, setDownloadProgress);
     setIsDownloading(false);
     setIsOfflineReady(true);
   };
 
   const nextScene = () => {
-    if (currentSceneIdx < MOCK_SCENES.length - 1) {
+    if (currentSceneIdx < scenes.length - 1) {
       setCurrentSceneIdx(prev => prev + 1);
     }
   };
@@ -75,11 +118,19 @@ export default function ImmersivePresentationViewer({ params }: { params: Promis
     }
   };
 
+  if (scenes.length === 0) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-black">
+        <Loader2 className="w-8 h-8 animate-spin text-accent" />
+      </div>
+    );
+  }
+
   return (
     <div className="fixed inset-0 bg-black text-white overflow-hidden selection:bg-accent touch-pan-y">
       <SwipeSlideNavigator
         currentIndex={currentSceneIdx}
-        totalSlides={MOCK_SCENES.length}
+        totalSlides={scenes.length}
         onNext={nextScene}
         onPrev={prevScene}
       >
@@ -155,7 +206,7 @@ export default function ImmersivePresentationViewer({ params }: { params: Promis
       
       {/* Scene Progress Indicators */}
       <div className="absolute bottom-16 right-12 z-50 flex items-center space-x-3">
-        {MOCK_SCENES.map((_, idx) => (
+        {scenes.map((_, idx) => (
           <button 
             key={idx}
             onClick={() => setCurrentSceneIdx(idx)}

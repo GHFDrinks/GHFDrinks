@@ -10,12 +10,14 @@ import { SlideType } from "@/types/presentation";
 import { RevealAnimation } from "@/components/experience/RevealAnimation";
 import { SwipeSlideNavigator } from "@/components/tablet/SwipeSlideNavigator";
 import { TabletPresentationDock } from "@/components/tablet/TabletPresentationDock";
+import { useBrands } from "@/hooks/useBrands";
+import { Brand } from "@/types/brand";
 
 // Simplified generic components for the presentation mode slide renderer
 // Real implementation would reuse the actual components but wrapped for 100vh layout
 
-function SlideRenderer({ brandId, type }: { brandId: string, type: SlideType }) {
-  const brand = mockBrands.find(b => b.id === brandId);
+function SlideRenderer({ brandId, type, brands }: { brandId: string, type: SlideType, brands: Brand[] }) {
+  const brand = brands.find(b => b.id === brandId || b.slug === brandId) || mockBrands.find(b => b.id === brandId || b.slug === brandId);
   if (!brand) return null;
 
   switch (type) {
@@ -148,6 +150,7 @@ function SlideRenderer({ brandId, type }: { brandId: string, type: SlideType }) 
 export function FullscreenViewer({ presentationId }: { presentationId: string }) {
   const router = useRouter();
   const { getPresentation } = usePresentationStore();
+  const { brands } = useBrands();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0); // 1 for forward, -1 for backward
 
@@ -220,7 +223,7 @@ export function FullscreenViewer({ presentationId }: { presentationId: string })
           onPrev={prevSlide}
         >
           {currentSlide ? (
-            <SlideRenderer brandId={currentSlide.brandId} type={currentSlide.type} />
+            <SlideRenderer brandId={currentSlide.brandId} type={currentSlide.type} brands={brands} />
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center text-white p-24 text-center">
               <h1 className="text-6xl font-light mb-8">Presentation Complete</h1>
