@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Loader2, Plus, Trash2, Package, Zap } from "lucide-react";
 import { RevealAnimation } from "@/components/experience/RevealAnimation";
-import { getBrands } from "@/lib/supabase/queries/brands";
+import { useBrands } from "@/hooks/useBrands";
 import { Brand } from "@/types/brand";
 
 interface ListingItem {
@@ -14,8 +14,7 @@ interface ListingItem {
 }
 
 export default function PackagesPage() {
-  const [brands, setBrands] = useState<Brand[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { brands, loading } = useBrands();
   
   // Package builder state
   const [selectedBrandId, setSelectedBrandId] = useState("");
@@ -23,16 +22,10 @@ export default function PackagesPage() {
   const [listings, setListings] = useState<ListingItem[]>([]);
 
   useEffect(() => {
-    async function loadBrands() {
-      const data = await getBrands();
-      setBrands(data);
-      if (data.length > 0) {
-        setSelectedBrandId(data[0].id);
-      }
-      setLoading(false);
+    if (brands.length > 0) {
+      setSelectedBrandId(prev => prev || brands[0].id);
     }
-    loadBrands();
-  }, []);
+  }, [brands]);
 
   const getTierValue = (tier: "Standard" | "Gold" | "Platinum") => {
     switch (tier) {
@@ -67,7 +60,7 @@ export default function PackagesPage() {
 
   const totalBudget = listings.reduce((sum, item) => sum + item.value, 0);
 
-  if (loading) {
+  if (loading && brands.length === 0) {
     return (
       <div className="h-screen flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-accent" />

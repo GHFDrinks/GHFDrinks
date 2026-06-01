@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Loader2, Calendar as CalendarIcon, MapPin, ChevronLeft, ChevronRight, Zap } from "lucide-react";
 import { RevealAnimation } from "@/components/experience/RevealAnimation";
-import { getBrands } from "@/lib/supabase/queries/brands";
+import { useBrands } from "@/hooks/useBrands";
 import { Brand } from "@/types/brand";
 
 interface CalendarEvent {
@@ -24,14 +24,13 @@ const MONTH_NAMES = [
 ];
 
 export default function CalendarPage() {
+  const { brands, loading } = useBrands();
   const [events, setEvents] = useState<CalendarEvent[]>([]);
-  const [loading, setLoading] = useState(true);
   const [selectedYear, setSelectedYear] = useState(2026);
   const [selectedMonth, setSelectedMonth] = useState(9); // Default to October (has planting)
 
   useEffect(() => {
-    async function loadEvents() {
-      const brands = await getBrands();
+    if (brands.length > 0) {
       const loaded: CalendarEvent[] = [];
       
       brands.forEach(brand => {
@@ -65,10 +64,8 @@ export default function CalendarPage() {
       });
       
       setEvents(loaded);
-      setLoading(false);
     }
-    loadEvents();
-  }, []);
+  }, [brands]);
 
   const handlePrevMonth = () => {
     if (selectedMonth === 0) {
@@ -90,7 +87,7 @@ export default function CalendarPage() {
 
   const activeEvents = events.filter(e => e.month === selectedMonth && e.year === selectedYear);
 
-  if (loading) {
+  if (loading && brands.length === 0) {
     return (
       <div className="h-screen flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-accent" />

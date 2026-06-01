@@ -17,6 +17,7 @@ import {
   Presentation
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { createClient } from "@/lib/supabase/client";
 
 const NAV_ITEMS = [
   { name: "Spirits", href: "/brands/spirits", icon: GlassWater },
@@ -31,8 +32,51 @@ const NAV_ITEMS = [
   { name: "GHF Support", href: "/support", icon: LifeBuoy },
 ];
 
+interface UserProfile {
+  name: string;
+  email: string;
+  initials: string;
+  role: string;
+}
+
 export function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (open: boolean) => void }) {
   const pathname = usePathname();
+  const [user, setUser] = React.useState<UserProfile | null>(null);
+
+  React.useEffect(() => {
+    async function loadUser() {
+      try {
+        const supabase = createClient();
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        if (authUser) {
+          const email = authUser.email || "";
+          const name = authUser.user_metadata?.full_name || email.split("@")[0];
+          
+          const formattedName = name
+            .split(/[._-]/)
+            .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(" ");
+          
+          const initials = formattedName
+            .split(" ")
+            .map((w: string) => w.charAt(0))
+            .join("")
+            .slice(0, 2)
+            .toUpperCase() || "GA";
+
+          setUser({
+            name: formattedName,
+            email,
+            initials,
+            role: email.toLowerCase().includes("admin") ? "Administrator" : "Sales Executive"
+          });
+        }
+      } catch (err) {
+        console.error("Failed to load user in sidebar:", err);
+      }
+    }
+    loadUser();
+  }, []);
 
   return (
     <aside
@@ -93,12 +137,12 @@ export function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (op
       {/* Footer Area */}
       <div className="p-6 border-t border-white/5">
         <div className="flex items-center space-x-4">
-          <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-xs">
-            JD
+          <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-xs font-semibold text-accent">
+            {user ? user.initials : "JD"}
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-medium text-white">John Doe</span>
-            <span className="text-xs text-muted-foreground">Sales Executive</span>
+            <span className="text-sm font-medium text-white">{user ? user.name : "John Doe"}</span>
+            <span className="text-xs text-muted-foreground">{user ? user.role : "Sales Executive"}</span>
           </div>
         </div>
       </div>

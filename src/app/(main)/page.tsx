@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Play, Wine, MapPin, Calendar as CalendarIcon, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { getBrands } from "@/lib/supabase/queries/brands";
+import { useBrands } from "@/hooks/useBrands";
 import { Brand } from "@/types/brand";
 
 interface HomeActivation {
@@ -17,42 +17,31 @@ interface HomeActivation {
 }
 
 export default function Home() {
-  const [brands, setBrands] = useState<Brand[]>([]);
+  const { brands, loading } = useBrands();
   const [activations, setActivations] = useState<HomeActivation[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadData() {
-      try {
-        const data = await getBrands();
-        setBrands(data);
-        
-        // Extract upcoming activations
-        const list: HomeActivation[] = [];
-        data.forEach(brand => {
-          if (brand.activations) {
-            brand.activations.forEach(act => {
-              list.push({
-                id: act.id || Math.random().toString(),
-                brandName: brand.name,
-                title: act.title,
-                date: act.date,
-                location: act.location
-              });
+    if (brands.length > 0) {
+      // Extract upcoming activations
+      const list: HomeActivation[] = [];
+      brands.forEach(brand => {
+        if (brand.activations) {
+          brand.activations.forEach(act => {
+            list.push({
+              id: act.id || Math.random().toString(),
+              brandName: brand.name,
+              title: act.title,
+              date: act.date,
+              location: act.location
             });
-          }
-        });
-        setActivations(list.slice(0, 3)); // show top 3
-      } catch (err) {
-        console.error("Failed to load home page data:", err);
-      } finally {
-        setLoading(false);
-      }
+          });
+        }
+      });
+      setActivations(list.slice(0, 3)); // show top 3
     }
-    loadData();
-  }, []);
+  }, [brands]);
 
-  if (loading) {
+  if (loading && brands.length === 0) {
     return (
       <div className="h-screen flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-accent" />

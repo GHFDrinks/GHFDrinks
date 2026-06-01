@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Loader2, Calendar as CalendarIcon, MapPin, ArrowRight } from "lucide-react";
 import { RevealAnimation } from "@/components/experience/RevealAnimation";
-import { getBrands } from "@/lib/supabase/queries/brands";
+import { useBrands } from "@/hooks/useBrands";
 import { Brand } from "@/types/brand";
 
 interface ActivationItem {
@@ -20,13 +20,12 @@ interface ActivationItem {
 }
 
 export default function ActivationsPage() {
+  const { brands, loading } = useBrands();
   const [activations, setActivations] = useState<ActivationItem[]>([]);
   const [filter, setFilter] = useState<'all' | 'upcoming' | 'past'>('all');
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadData() {
-      const brands = await getBrands();
+    if (brands.length > 0) {
       const allActivations: ActivationItem[] = [];
       
       brands.forEach(brand => {
@@ -48,17 +47,15 @@ export default function ActivationsPage() {
       });
       
       setActivations(allActivations);
-      setLoading(false);
     }
-    loadData();
-  }, []);
+  }, [brands]);
 
   const filtered = activations.filter(act => {
     if (filter === 'all') return true;
     return act.type === filter;
   });
 
-  if (loading) {
+  if (loading && brands.length === 0) {
     return (
       <div className="h-screen flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-accent" />

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Loader2, Zap } from "lucide-react";
 import { RevealAnimation } from "@/components/experience/RevealAnimation";
-import { getBrands } from "@/lib/supabase/queries/brands";
+import { useBrands } from "@/hooks/useBrands";
 import { Brand } from "@/types/brand";
 
 interface TastingProfile {
@@ -16,13 +16,12 @@ interface TastingProfile {
 }
 
 export default function TastingNotesPage() {
+  const { brands, loading } = useBrands();
   const [profiles, setProfiles] = useState<TastingProfile[]>([]);
   const [selectedProfile, setSelectedProfile] = useState<TastingProfile | null>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadData() {
-      const brands = await getBrands();
+    if (brands.length > 0) {
       const allProfiles: TastingProfile[] = [];
       
       brands.forEach(brand => {
@@ -56,15 +55,12 @@ export default function TastingNotesPage() {
       });
       
       setProfiles(allProfiles);
-      if (allProfiles.length > 0) {
-        setSelectedProfile(allProfiles[0]);
-      }
-      setLoading(false);
+      // Only set initial selectedProfile if none is currently selected, to avoid overwriting user interaction on refresh
+      setSelectedProfile(prev => prev || allProfiles[0]);
     }
-    loadData();
-  }, []);
+  }, [brands]);
 
-  if (loading) {
+  if (loading && brands.length === 0) {
     return (
       <div className="h-screen flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-accent" />

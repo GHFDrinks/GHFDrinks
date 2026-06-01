@@ -4,27 +4,17 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Loader2, ArrowLeft } from "lucide-react";
 import { RevealAnimation } from "@/components/experience/RevealAnimation";
-import { getBrands } from "@/lib/supabase/queries/brands";
+import { useBrands } from "@/hooks/useBrands";
 import { Brand } from "@/types/brand";
 
 export default function BeerCiderMixersPage() {
-  const [brands, setBrands] = useState<Brand[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { brands: allBrands, loading } = useBrands();
+  const brands = allBrands.filter(b => {
+    const cat = b.category.toLowerCase();
+    return cat.includes("beer") || cat.includes("cider") || cat.includes("mixer") || cat.includes("low");
+  });
 
-  useEffect(() => {
-    async function loadBrands() {
-      const data = await getBrands();
-      const filtered = data.filter(b => {
-        const cat = b.category.toLowerCase();
-        return cat.includes("beer") || cat.includes("cider") || cat.includes("mixer") || cat.includes("low");
-      });
-      setBrands(filtered);
-      setLoading(false);
-    }
-    loadBrands();
-  }, []);
-
-  if (loading) {
+  if (loading && allBrands.length === 0) {
     return (
       <div className="h-screen flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-accent" />
