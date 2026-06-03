@@ -1,41 +1,23 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import { Suspense } from "react";
 import { PresentationProvider } from "@/lib/presentation-store";
 import { OfflineProvider } from "@/components/offline/OfflineProvider";
 import { ErrorBoundary } from "@/components/system/ErrorBoundary";
-import { GlobalLoader } from "@/components/system/GlobalLoader";
-import { AppHealthMonitor } from "@/components/system/AppHealthMonitor";
-import { AccessibilityControls } from "@/components/system/AccessibilityControls";
-import { SyncConflictResolver } from "@/components/system/SyncConflictResolver";
-import { PerformanceOverlay } from "@/components/system/PerformanceOverlay";
-import { NetworkRecoveryLayer } from "@/components/system/NetworkRecoveryLayer";
-import { RouteTransitionManager } from "@/components/system/RouteTransitionManager";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
-  title: "GHF Drinks | Luxury Presentation Platform",
-  description: "Offline-first presentation platform for premium drinks brands.",
+  title: "GHF Portfolio Presenter",
+  description: "Interactive brand presentation tool for GHF Drinks sales teams.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
-    statusBarStyle: "black-translucent",
-    title: "GHF Deck",
+    statusBarStyle: "default",
+    title: "GHF Presenter",
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0a0a0a",
+  themeColor: "#1a3a2a",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -44,25 +26,13 @@ export const viewport: Viewport = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
-    >
-      <body className="min-h-full flex flex-col bg-background text-foreground selection:bg-accent selection:text-accent-foreground overscroll-none">
+    <html lang="en" className="h-full">
+      <body className="min-h-full flex flex-col bg-background text-foreground overscroll-none">
         <ErrorBoundary>
-          <Suspense fallback={null}>
-            <GlobalLoader />
-          </Suspense>
-          <AppHealthMonitor />
-          <AccessibilityControls />
-          <SyncConflictResolver />
-          <PerformanceOverlay />
-          <NetworkRecoveryLayer />
-          <RouteTransitionManager />
           <OfflineProvider>
             <PresentationProvider>
               {children}
@@ -73,4 +43,3 @@ export default function RootLayout({
     </html>
   );
 }
-

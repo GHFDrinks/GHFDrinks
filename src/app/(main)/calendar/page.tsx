@@ -1,214 +1,193 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { Loader2, Calendar as CalendarIcon, MapPin, ChevronLeft, ChevronRight, Zap } from "lucide-react";
-import { RevealAnimation } from "@/components/experience/RevealAnimation";
+import React, { useState } from "react";
+import Link from "next/link";
 import { useBrands } from "@/hooks/useBrands";
-import { Brand } from "@/types/brand";
 
-interface CalendarEvent {
-  id: string;
-  title: string;
-  brandName: string;
-  brandCategory: string;
-  dateStr: string; // e.g., "October 2026"
-  month: number;   // 0-11
-  year: number;
-  location: string;
-  description: string;
-}
-
-const MONTH_NAMES = [
+const MONTHS = [
   "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
+  "July", "August", "September", "October", "November", "December",
 ];
 
 export default function CalendarPage() {
   const { brands, loading } = useBrands();
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
-  const [selectedYear, setSelectedYear] = useState(2026);
-  const [selectedMonth, setSelectedMonth] = useState(9); // Default to October (has planting)
+  const [activeMonth, setActiveMonth] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (brands.length > 0) {
-      const loaded: CalendarEvent[] = [];
-      
-      brands.forEach(brand => {
-        if (brand.activations) {
-          brand.activations.forEach(act => {
-            // Parse date string like "October 2026" or "January 2027"
-            let month = 0;
-            let year = 2026;
-            
-            const parts = act.date.split(" ");
-            if (parts.length === 2) {
-              const mIdx = MONTH_NAMES.findIndex(m => m.toLowerCase() === parts[0].toLowerCase());
-              if (mIdx !== -1) month = mIdx;
-              const yNum = parseInt(parts[1]);
-              if (!isNaN(yNum)) year = yNum;
-            }
-            
-            loaded.push({
-              id: act.id || Math.random().toString(),
-              title: act.title,
-              brandName: brand.name,
-              brandCategory: brand.category,
-              dateStr: act.date,
-              month,
-              year,
-              location: act.location,
-              description: act.description
-            });
-          });
-        }
-      });
-      
-      setEvents(loaded);
-    }
-  }, [brands]);
+  // Build a flat list of all key dates across all activations
+  const allEntries = brands.flatMap((b) =>
+    (b.activations || []).flatMap((a) =>
+      (a.keyDates || []).map((date) => ({
+        date,
+        activationTitle: a.title,
+        activationType: a.activationType,
+        brandName: b.name,
+        brandSlug: b.slug,
+      }))
+    )
+  );
 
-  const handlePrevMonth = () => {
-    if (selectedMonth === 0) {
-      setSelectedMonth(11);
-      setSelectedYear(prev => prev - 1);
-    } else {
-      setSelectedMonth(prev => prev - 1);
-    }
-  };
-
-  const handleNextMonth = () => {
-    if (selectedMonth === 11) {
-      setSelectedMonth(0);
-      setSelectedYear(prev => prev + 1);
-    } else {
-      setSelectedMonth(prev => prev + 1);
-    }
-  };
-
-  const activeEvents = events.filter(e => e.month === selectedMonth && e.year === selectedYear);
-
-  if (loading && brands.length === 0) {
-    return (
-      <div className="h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-accent" />
-      </div>
+  // Group by which month keyword appears in the date string
+  const byMonth: Record<string, typeof allEntries> = {};
+  MONTHS.forEach((m) => {
+    const matches = allEntries.filter((e) =>
+      e.date.toLowerCase().includes(m.toLowerCase())
     );
-  }
+    if (matches.length > 0) byMonth[m] = matches;
+  });
+
+  // Entries not matching any month
+  const ungrouped = allEntries.filter(
+    (e) => !MONTHS.some((m) => e.date.toLowerCase().includes(m.toLowerCase()))
+  );
 
   return (
-    <div className="space-y-16 pb-24 px-6 lg:px-12 pt-12">
-      <header>
-        <RevealAnimation direction="up" delay={0.1}>
-          <h1 className="text-6xl lg:text-8xl font-light tracking-tight mb-6">Activation Calendar</h1>
-        </RevealAnimation>
-        <RevealAnimation direction="up" delay={0.2}>
-          <p className="text-2xl lg:text-3xl text-muted-foreground max-w-3xl font-light leading-relaxed">
-            Track seasonal activation milestones and campaign dates across our entire beverage portfolio.
-          </p>
-        </RevealAnimation>
-      </header>
+    <div className="p-10 min-h-screen bg-white">
+      <h1
+        className="text-4xl font-light mb-1 tracking-tight"
+        style={{ color: "var(--accent)" }}
+      >
+        Activation Calendar
+      </h1>
+      <p className="text-sm mb-10" style={{ color: "var(--muted-foreground)" }}>
+        Key dates across the GHF portfolio
+      </p>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-12 items-start">
-        {/* Calendar Picker Card */}
-        <div className="xl:col-span-2 rounded-[2.5rem] border border-white/10 bg-white/5 p-8 lg:p-10 backdrop-blur-md space-y-8">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-light text-white">
-              {MONTH_NAMES[selectedMonth]} <span className="text-accent font-semibold">{selectedYear}</span>
-            </h2>
-            <div className="flex items-center space-x-2">
-              <button 
-                onClick={handlePrevMonth}
-                className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/10 hover:border-white/20 transition-colors"
-              >
-                <ChevronLeft className="w-5 h-5 text-white" />
-              </button>
-              <button 
-                onClick={handleNextMonth}
-                className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/10 hover:border-white/20 transition-colors"
-              >
-                <ChevronRight className="w-5 h-5 text-white" />
-              </button>
-            </div>
-          </div>
-
-          {/* Month grid layout */}
-          <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
-            {MONTH_NAMES.map((m, idx) => {
-              const hasEvents = events.some(e => e.month === idx && e.year === selectedYear);
-              const isSelected = selectedMonth === idx;
-              return (
-                <button
-                  key={m}
-                  onClick={() => setSelectedMonth(idx)}
-                  className={`relative p-5 rounded-2xl border text-center transition-all ${
-                    isSelected
-                      ? "bg-accent border-accent text-accent-foreground font-semibold"
-                      : "bg-black/25 border-white/5 text-white hover:bg-white/5 hover:border-white/10"
-                  }`}
-                >
-                  <span className="text-sm block">{m.slice(0, 3)}</span>
-                  {hasEvents && (
-                    <span className={`absolute bottom-2 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full ${
-                      isSelected ? "bg-accent-foreground" : "bg-accent"
-                    }`} />
-                  )}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Year selector */}
-          <div className="flex items-center space-x-4 pt-4 border-t border-white/5">
-            <span className="text-xs uppercase tracking-widest text-muted-foreground font-medium">Select Year:</span>
-            {[2026, 2027].map(y => (
+      {loading ? (
+        <p className="text-sm" style={{ color: "var(--muted-foreground)" }}>Loading...</p>
+      ) : (
+        <div className="space-y-4">
+          {Object.entries(byMonth).map(([month, entries]) => (
+            <div
+              key={month}
+              className="border border-gray-200 rounded-xl overflow-hidden"
+            >
               <button
-                key={y}
-                onClick={() => setSelectedYear(y)}
-                className={`px-5 py-2 rounded-full text-xs font-semibold tracking-wide border transition-all ${
-                  selectedYear === y
-                    ? "bg-white/10 border-white/20 text-white"
-                    : "border-transparent text-white/50 hover:text-white"
-                }`}
+                onClick={() =>
+                  setActiveMonth(activeMonth === month ? null : month)
+                }
+                className="w-full flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors"
               >
-                {y}
+                <span
+                  className="text-base font-medium"
+                  style={{ color: "var(--accent)" }}
+                >
+                  {month}
+                </span>
+                <span
+                  className="text-xs tracking-widest"
+                  style={{ color: "var(--muted-foreground)" }}
+                >
+                  {entries.length} event{entries.length !== 1 ? "s" : ""}
+                </span>
               </button>
-            ))}
-          </div>
-        </div>
 
-        {/* Selected Month Activations Panel */}
-        <div className="space-y-6">
-          <h3 className="text-sm font-semibold uppercase tracking-widest text-accent">
-            Activations in {MONTH_NAMES[selectedMonth]} {selectedYear}
-          </h3>
-          
-          {activeEvents.length === 0 ? (
-            <div className="rounded-[2rem] border border-white/5 bg-black/25 p-8 text-center text-white/40 italic">
-              No activations scheduled for this month.
-            </div>
-          ) : (
-            <div className="space-y-6">
-              {activeEvents.map(e => (
-                <div key={e.id} className="rounded-[2rem] border border-white/10 bg-white/5 p-8 space-y-6 hover:border-accent/25 transition-colors">
-                  <div className="flex items-center justify-between">
-                    <span className="px-3 py-1 bg-accent/15 border border-accent/25 rounded-full text-[10px] font-semibold uppercase tracking-wider text-accent">
-                      {e.brandCategory}
-                    </span>
-                    <span className="text-xs text-white/50 font-medium">{e.brandName}</span>
-                  </div>
-                  <h4 className="text-2xl font-light text-white leading-snug">{e.title}</h4>
-                  <p className="text-sm text-muted-foreground font-light leading-relaxed">{e.description}</p>
-                  
-                  <div className="flex items-center space-x-2 text-xs text-white/60 pt-4 border-t border-white/5">
-                    <MapPin className="w-4 h-4 text-accent" />
-                    <span>{e.location}</span>
-                  </div>
+              {activeMonth === month && (
+                <div className="border-t border-gray-100">
+                  {entries.map((e, i) => (
+                    <Link
+                      key={i}
+                      href={`/brands/${e.brandSlug}`}
+                      className="flex items-start gap-4 px-6 py-3 border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="flex-1">
+                        <p
+                          className="text-xs font-semibold tracking-widest uppercase mb-0.5"
+                          style={{ color: "var(--gold)" }}
+                        >
+                          {e.brandName}
+                        </p>
+                        <p
+                          className="text-sm"
+                          style={{ color: "var(--accent)" }}
+                        >
+                          {e.activationTitle}
+                        </p>
+                        <p
+                          className="text-xs mt-0.5"
+                          style={{ color: "var(--muted-foreground)" }}
+                        >
+                          {e.date}
+                        </p>
+                      </div>
+                      {e.activationType && (
+                        <span
+                          className="text-[10px] tracking-widest uppercase border rounded px-2 py-0.5 flex-shrink-0"
+                          style={{
+                            borderColor: "var(--border)",
+                            color: "var(--muted-foreground)",
+                          }}
+                        >
+                          {e.activationType}
+                        </span>
+                      )}
+                    </Link>
+                  ))}
                 </div>
-              ))}
+              )}
+            </div>
+          ))}
+
+          {/* Ungrouped dates */}
+          {ungrouped.length > 0 && (
+            <div className="border border-gray-200 rounded-xl overflow-hidden">
+              <button
+                onClick={() =>
+                  setActiveMonth(activeMonth === "other" ? null : "other")
+                }
+                className="w-full flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors"
+              >
+                <span
+                  className="text-base font-medium"
+                  style={{ color: "var(--accent)" }}
+                >
+                  Seasonal / Ongoing
+                </span>
+                <span
+                  className="text-xs tracking-widest"
+                  style={{ color: "var(--muted-foreground)" }}
+                >
+                  {ungrouped.length} events
+                </span>
+              </button>
+              {activeMonth === "other" && (
+                <div className="border-t border-gray-100">
+                  {ungrouped.map((e, i) => (
+                    <Link
+                      key={i}
+                      href={`/brands/${e.brandSlug}`}
+                      className="flex items-start gap-4 px-6 py-3 border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="flex-1">
+                        <p
+                          className="text-xs font-semibold tracking-widest uppercase mb-0.5"
+                          style={{ color: "var(--gold)" }}
+                        >
+                          {e.brandName}
+                        </p>
+                        <p className="text-sm" style={{ color: "var(--accent)" }}>
+                          {e.activationTitle}
+                        </p>
+                        <p
+                          className="text-xs mt-0.5"
+                          style={{ color: "var(--muted-foreground)" }}
+                        >
+                          {e.date}
+                        </p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
             </div>
           )}
+
+          {Object.keys(byMonth).length === 0 && ungrouped.length === 0 && (
+            <p className="text-sm" style={{ color: "var(--muted-foreground)" }}>
+              No key dates yet. Add them to activations via the admin panel.
+            </p>
+          )}
         </div>
-      </div>
+      )}
     </div>
   );
 }

@@ -1,179 +1,160 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { Loader2, Zap } from "lucide-react";
-import { RevealAnimation } from "@/components/experience/RevealAnimation";
+import React, { useState } from "react";
+import Link from "next/link";
 import { useBrands } from "@/hooks/useBrands";
-import { Brand } from "@/types/brand";
-
-interface TastingProfile {
-  brandName: string;
-  variantName: string;
-  abv: string;
-  volume: string;
-  imageUrl: string;
-  notes: { flavor: string; intensity: number }[];
-}
 
 export default function TastingNotesPage() {
   const { brands, loading } = useBrands();
-  const [profiles, setProfiles] = useState<TastingProfile[]>([]);
-  const [selectedProfile, setSelectedProfile] = useState<TastingProfile | null>(null);
+  const [activeSlug, setActiveSlug] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (brands.length > 0) {
-      const allProfiles: TastingProfile[] = [];
-      
-      brands.forEach(brand => {
-        brand.variants.forEach(variant => {
-          // Fallback tasting notes if database doesn't have them yet
-          let notes = (variant as any).tastingNotes || [];
-          if (notes.length === 0) {
-            // Default premium notes based on variant name
-            if (variant.name.includes("Vodka")) {
-              notes = [{ flavor: "Clean", intensity: 90 }, { flavor: "Citrus", intensity: 40 }, { flavor: "Vanilla", intensity: 30 }];
-            } else if (variant.name.includes("Gin")) {
-              notes = [{ flavor: "Juniper", intensity: 85 }, { flavor: "Rosemary", intensity: 60 }, { flavor: "Grapefruit", intensity: 50 }];
-            } else if (variant.name.includes("Forest")) {
-              notes = [{ flavor: "Vanilla", intensity: 80 }, { flavor: "Saffron", intensity: 65 }, { flavor: "Orange Blossom", intensity: 75 }];
-            } else if (variant.name.includes("Rosé")) {
-              notes = [{ flavor: "Wild Strawberry", intensity: 80 }, { flavor: "Citrus", intensity: 70 }, { flavor: "White Peach", intensity: 60 }];
-            } else {
-              notes = [{ flavor: "Smooth", intensity: 80 }, { flavor: "Balanced", intensity: 70 }, { flavor: "Crisp", intensity: 60 }];
-            }
-          }
-          
-          allProfiles.push({
-            brandName: brand.name,
-            variantName: variant.name,
-            abv: variant.abv,
-            volume: variant.volume,
-            imageUrl: variant.image.url,
-            notes
-          });
-        });
-      });
-      
-      setProfiles(allProfiles);
-      // Only set initial selectedProfile if none is currently selected, to avoid overwriting user interaction on refresh
-      setSelectedProfile(prev => prev || allProfiles[0]);
-    }
-  }, [brands]);
-
-  if (loading && brands.length === 0) {
-    return (
-      <div className="h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-accent" />
-      </div>
-    );
-  }
+  const brandsWithNotes = brands.filter(
+    (b) => b.variants?.some((v) => v.tastingNotes?.length > 0)
+  );
 
   return (
-    <div className="space-y-16 pb-24 px-6 lg:px-12 pt-12">
-      <header>
-        <RevealAnimation direction="up" delay={0.1}>
-          <h1 className="text-6xl lg:text-8xl font-light tracking-tight mb-6">Tasting Notes</h1>
-        </RevealAnimation>
-        <RevealAnimation direction="up" delay={0.2}>
-          <p className="text-2xl lg:text-3xl text-muted-foreground max-w-3xl font-light leading-relaxed">
-            Explore taste profile mappings and sensory tasting charts for every variant in the GHF Drinks portfolio.
-          </p>
-        </RevealAnimation>
-      </header>
+    <div className="p-10 min-h-screen bg-white">
+      <h1
+        className="text-4xl font-light mb-1 tracking-tight"
+        style={{ color: "var(--accent)" }}
+      >
+        Tasting Notes
+      </h1>
+      <p className="text-sm mb-10" style={{ color: "var(--muted-foreground)" }}>
+        Flavour profiles across the GHF portfolio
+      </p>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-12 items-start">
-        {/* Variant selector sidebar list */}
-        <div className="rounded-[2.5rem] border border-white/10 bg-white/5 p-6 backdrop-blur-md space-y-3">
-          <span className="text-xs uppercase tracking-widest text-muted-foreground font-semibold px-4 block mb-4">
-            Select Product Variant
-          </span>
-          <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-2 scrollbar-thin">
-            {profiles.map(p => {
-              const isSelected = selectedProfile?.variantName === p.variantName;
-              return (
-                <button
-                  key={p.variantName}
-                  onClick={() => setSelectedProfile(p)}
-                  className={`w-full flex items-center space-x-4 p-4 rounded-2xl text-left border transition-all ${
-                    isSelected
-                      ? "bg-accent border-accent text-accent-foreground shadow-lg"
-                      : "bg-black/20 border-white/5 text-white hover:bg-white/5 hover:border-white/10"
-                  }`}
+      {loading ? (
+        <p className="text-sm" style={{ color: "var(--muted-foreground)" }}>Loading...</p>
+      ) : brandsWithNotes.length === 0 ? (
+        <div>
+          <p className="text-sm mb-6" style={{ color: "var(--muted-foreground)" }}>
+            Tasting notes will appear here once added via the admin panel.
+            Below is the full portfolio for reference.
+          </p>
+          <div className="grid grid-cols-3 gap-6">
+            {brands.map((b) => (
+              <Link
+                key={b.slug}
+                href={`/brands/${b.slug}`}
+                className="border border-gray-200 rounded-xl p-5 hover:border-gray-400 transition-colors"
+              >
+                <p
+                  className="text-xs tracking-widest uppercase mb-1"
+                  style={{ color: "var(--muted-foreground)" }}
                 >
-                  <img src={p.imageUrl} alt="" className="w-8 h-12 object-contain" />
-                  <div className="flex-1 min-w-0">
-                    <span className={`text-[10px] uppercase tracking-wider block font-semibold ${
-                      isSelected ? "text-accent-foreground/75" : "text-accent"
-                    }`}>
-                      {p.brandName}
-                    </span>
-                    <h3 className="text-sm font-medium truncate">{p.variantName}</h3>
-                    <span className={`text-xs block ${
-                      isSelected ? "text-accent-foreground/60" : "text-white/40"
-                    }`}>
-                      {p.abv} • {p.volume}
-                    </span>
-                  </div>
-                </button>
-              );
-            })}
+                  {b.category}
+                </p>
+                <h2
+                  className="text-base font-medium mb-1"
+                  style={{ color: "var(--accent)" }}
+                >
+                  {b.name}
+                </h2>
+                <p
+                  className="text-xs leading-relaxed"
+                  style={{ color: "var(--muted-foreground)" }}
+                >
+                  {b.tagline}
+                </p>
+              </Link>
+            ))}
           </div>
         </div>
-
-        {/* Selected Profile Tasting Visualization */}
-        {selectedProfile && (
-          <div className="xl:col-span-2 rounded-[2.5rem] border border-white/10 bg-white/5 p-8 lg:p-12 backdrop-blur-md grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            {/* Visual presentation */}
-            <div className="flex flex-col items-center justify-center space-y-6">
-              <div className="aspect-[3/4] h-72 relative flex items-center justify-center bg-black/40 rounded-3xl p-6 border border-white/5 overflow-hidden">
-                <img 
-                  src={selectedProfile.imageUrl} 
-                  alt={selectedProfile.variantName}
-                  className="h-full object-contain filter drop-shadow-[0_15px_30px_rgba(255,255,255,0.08)]"
-                />
-              </div>
-              <div className="text-center">
-                <span className="text-xs uppercase tracking-widest text-accent font-semibold">
-                  {selectedProfile.brandName}
+      ) : (
+        <div className="space-y-6">
+          {brandsWithNotes.map((b) => (
+            <div
+              key={b.slug}
+              className="border border-gray-200 rounded-xl overflow-hidden"
+            >
+              <button
+                onClick={() =>
+                  setActiveSlug(activeSlug === b.slug ? null : b.slug)
+                }
+                className="w-full flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <span
+                    className="text-base font-medium"
+                    style={{ color: "var(--accent)" }}
+                  >
+                    {b.name}
+                  </span>
+                  <span
+                    className="text-xs tracking-widest uppercase"
+                    style={{ color: "var(--muted-foreground)" }}
+                  >
+                    {b.category}
+                  </span>
+                </div>
+                <span
+                  className="text-xs"
+                  style={{ color: "var(--muted-foreground)" }}
+                >
+                  {b.variants.length} variant{b.variants.length !== 1 ? "s" : ""}
                 </span>
-                <h2 className="text-3xl font-light text-white mt-1">{selectedProfile.variantName}</h2>
-                <p className="text-sm text-white/50 mt-2 font-medium">ABV: {selectedProfile.abv} | Vol: {selectedProfile.volume}</p>
-              </div>
-            </div>
+              </button>
 
-            {/* Flavor mapping meters */}
-            <div className="space-y-8">
-              <div className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-widest text-accent">
-                <Zap className="w-4 h-4" />
-                <span>Flavor Profile Intensity</span>
-              </div>
-              
-              <div className="space-y-6">
-                {selectedProfile.notes.map((note, idx) => (
-                  <div key={idx} className="space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="font-medium text-white/90">{note.flavor}</span>
-                      <span className="text-white/60 font-semibold">{note.intensity}%</span>
+              {activeSlug === b.slug && (
+                <div className="border-t border-gray-100 px-6 py-5 grid grid-cols-2 gap-6">
+                  {b.variants.map((v) => (
+                    <div key={v.id}>
+                      <p
+                        className="text-sm font-semibold mb-3"
+                        style={{ color: "var(--accent)" }}
+                      >
+                        {v.name}
+                      </p>
+                      {v.tastingNotes?.length > 0 ? (
+                        <div className="space-y-2">
+                          {v.tastingNotes.map((note, i) => (
+                            <div key={i}>
+                              <div className="flex items-center justify-between mb-1">
+                                <span
+                                  className="text-xs"
+                                  style={{ color: "var(--foreground)" }}
+                                >
+                                  {note.flavor}
+                                </span>
+                                <span
+                                  className="text-xs"
+                                  style={{ color: "var(--muted-foreground)" }}
+                                >
+                                  {note.intensity}%
+                                </span>
+                              </div>
+                              <div
+                                className="h-1.5 rounded-full overflow-hidden"
+                                style={{ backgroundColor: "var(--muted)" }}
+                              >
+                                <div
+                                  className="h-full rounded-full"
+                                  style={{
+                                    width: `${note.intensity}%`,
+                                    backgroundColor: "var(--accent)",
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p
+                          className="text-xs"
+                          style={{ color: "var(--muted-foreground)" }}
+                        >
+                          No tasting notes yet.
+                        </p>
+                      )}
                     </div>
-                    {/* Visual bar */}
-                    <div className="h-2.5 w-full bg-white/5 border border-white/10 rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-accent rounded-full transition-all duration-1000"
-                        style={{ width: `${note.intensity}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="pt-6 border-t border-white/5 flex items-center space-x-3 text-xs text-white/40">
-                <Zap className="w-5 h-5 text-accent" />
-                <span>Sensory analytics based on verified trade tastings and distiller notes.</span>
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
-          </div>
-        )}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

@@ -47,11 +47,16 @@ export async function getBrands(): Promise<Brand[]> {
       ? b.activations.map((a: any) => ({
           id: a.id,
           title: a.title,
-          date: a.date || '',
-          location: a.location || '',
-          description: a.description || '',
-          type: (a.type as any) || 'upcoming',
-          image: { url: a.image_url || '', alt: a.title },
+          date: a.date || "",
+          location: a.location || "",
+          description: a.description || "",
+          type: (a.type as any) || "upcoming",
+          image: { url: a.image_url || "", alt: a.title },
+          photo1: a.photo_1_url ? { url: a.photo_1_url, alt: a.title } : undefined,
+          photo2: a.photo_2_url ? { url: a.photo_2_url, alt: a.title } : undefined,
+          activationType: a.activation_type || "",
+          keyDates: a.key_dates || [],
+          mixerPairings: a.mixer_pairings || [],
         }))
       : mock?.activations || [];
 
@@ -88,6 +93,15 @@ export async function getBrands(): Promise<Brand[]> {
       category: b.category,
       tagline: b.tagline || mock?.tagline || '',
       heroImage: { url: heroImage.url, alt: heroImage.alt || '' },
+      logo: b.logo_url ? { url: b.logo_url, alt: b.name + " logo" } : undefined,
+      lifestyleImages: [
+        b.lifestyle_image_1 ? { url: b.lifestyle_image_1, alt: "" } : null,
+        b.lifestyle_image_2 ? { url: b.lifestyle_image_2, alt: "" } : null,
+        b.lifestyle_image_3 ? { url: b.lifestyle_image_3, alt: "" } : null,
+      ].filter(Boolean) as any[],
+      venueBadges: b.venue_badges || [],
+      promotionActive: b.promotion_active || false,
+      bcorp: b.bcorp || false,
       story: {
         title: b.story_title || mock?.story?.title || '',
         description: b.story_description || mock?.story?.description || '',

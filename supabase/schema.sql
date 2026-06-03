@@ -12,6 +12,13 @@ CREATE TABLE public.brands (
   story_title TEXT,
   story_description TEXT,
   story_founders TEXT[],
+  logo_url TEXT,
+  lifestyle_image_1 TEXT,
+  lifestyle_image_2 TEXT,
+  lifestyle_image_3 TEXT,
+  venue_badges JSONB DEFAULT '[]',
+  promotion_active BOOLEAN DEFAULT false,
+  bcorp BOOLEAN DEFAULT false,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
@@ -58,6 +65,11 @@ CREATE TABLE public.activations (
   description TEXT,
   type TEXT CHECK (type IN ('upcoming', 'past')),
   image_url TEXT,
+  activation_type TEXT,
+  key_dates TEXT[] DEFAULT '{}',
+  mixer_pairings JSONB DEFAULT '[]',
+  photo_1_url TEXT,
+  photo_2_url TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 

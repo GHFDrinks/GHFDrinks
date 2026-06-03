@@ -20,6 +20,13 @@ export interface Database {
           story_title: string | null
           story_description: string | null
           story_founders: string[] | null
+          logo_url: string | null
+          lifestyle_image_1: string | null
+          lifestyle_image_2: string | null
+          lifestyle_image_3: string | null
+          venue_badges: any[]
+          promotion_active: boolean
+          bcorp: boolean | null
           created_at: string
           updated_at: string
         }
@@ -61,6 +68,11 @@ export interface Database {
           description: string | null
           type: string | null
           image_url: string | null
+          activation_type: string | null
+          key_dates: string[] | null
+          mixer_pairings: any[]
+          photo_1_url: string | null
+          photo_2_url: string | null
           created_at: string
         }
       }

@@ -12,7 +12,7 @@ export interface Presentation {
   id: string;
   name: string;
   dateCreated: string;
-  brands: string[]; // array of brand IDs
+  brands: string[];
   slides: Slide[];
 }
 
@@ -20,38 +20,50 @@ export interface PresentationTemplate {
   id: string;
   name: string;
   description: string;
-  brandSlugs: string[]; // slugs of the brands included
+  brandSlugs: string[];
 }
 
 export const PRESENTATION_TEMPLATES: PresentationTemplate[] = [
   {
-    id: "t1",
-    name: "Low/No Alcohol Package",
-    description: "A curated selection of premium non-alcoholic and low ABV options.",
-    brandSlugs: ["everleaf"], // Currently we only have Everleaf as no-alc in mock
-  },
-  {
-    id: "t2",
+    id: "best-of-british",
     name: "Best of British",
-    description: "Highlighting exceptional spirits distilled in the UK.",
-    brandSlugs: ["sapling"],
+    description:
+      "Exceptional spirits and sparkling wines distilled and produced in the UK.",
+    brandSlugs: ["sapling", "fielden", "dropworks", "coates-and-seely"],
   },
   {
-    id: "t3",
-    name: "Sustainable Brands",
-    description: "Brands making a positive impact on the environment.",
-    brandSlugs: ["sapling", "everleaf", "mirabeau"],
+    id: "sustainable",
+    name: "Sustainable",
+    description:
+      "Brands making a measurable positive impact on the environment.",
+    brandSlugs: ["sapling", "mirabeau", "everleaf", "big-drop"],
   },
   {
-    id: "t4",
-    name: "Contemporary & Creative",
-    description: "Modern brands pushing the boundaries of category norms.",
-    brandSlugs: ["everleaf", "mirabeau"],
+    id: "european-lifestyle",
+    name: "European Lifestyle",
+    description:
+      "Sun-drenched, convivial brands from France and across Europe.",
+    brandSlugs: ["mirabeau", "wignac", "cote-citron", "noam", "dreamsake"],
   },
   {
-    id: "t5",
+    id: "crafted-and-discerning",
     name: "Crafted & Discerning",
-    description: "Premium, highly crafted liquids for the discerning palate.",
-    brandSlugs: ["sapling", "mirabeau"],
-  }
+    description:
+      "Premium, highly crafted liquids for the discerning on-trade buyer.",
+    brandSlugs: ["fielden", "craggy-range", "quinta-da-romaneira", "coates-and-seely"],
+  },
+  {
+    id: "elevated-and-sophisticated",
+    name: "Elevated & Sophisticated",
+    description:
+      "Brands that elevate the guest experience and command premium positioning.",
+    brandSlugs: ["sapling", "fielden", "mirabeau", "dreamsake", "cote-citron", "wild-idol"],
+  },
+  {
+    id: "contemporary-and-creative",
+    name: "Contemporary & Creative",
+    description:
+      "Modern brands pushing the boundaries of category norms.",
+    brandSlugs: ["dropworks", "desdeya", "pensador", "everleaf", "dreamsake", "wignac", "big-drop"],
+  },
 ];

@@ -1,209 +1,102 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Loader2, Plus, Trash2, Package, Zap } from "lucide-react";
-import { RevealAnimation } from "@/components/experience/RevealAnimation";
+import React from "react";
+import Link from "next/link";
 import { useBrands } from "@/hooks/useBrands";
-import { Brand } from "@/types/brand";
-
-interface ListingItem {
-  brandId: string;
-  brandName: string;
-  tier: "Standard" | "Gold" | "Platinum";
-  value: number;
-}
+import { PRESENTATION_TEMPLATES } from "@/types/presentation";
 
 export default function PackagesPage() {
   const { brands, loading } = useBrands();
-  
-  // Package builder state
-  const [selectedBrandId, setSelectedBrandId] = useState("");
-  const [selectedTier, setSelectedTier] = useState<"Standard" | "Gold" | "Platinum">("Standard");
-  const [listings, setListings] = useState<ListingItem[]>([]);
-
-  useEffect(() => {
-    if (brands.length > 0) {
-      setSelectedBrandId(prev => prev || brands[0].id);
-    }
-  }, [brands]);
-
-  const getTierValue = (tier: "Standard" | "Gold" | "Platinum") => {
-    switch (tier) {
-      case "Standard": return 500;
-      case "Gold": return 1200;
-      case "Platinum": return 3000;
-    }
-  };
-
-  const handleAddListing = () => {
-    const brand = brands.find(b => b.id === selectedBrandId);
-    if (!brand) return;
-    
-    // Check if already listed
-    if (listings.some(l => l.brandId === selectedBrandId)) {
-      alert("This brand is already added to the package.");
-      return;
-    }
-
-    const value = getTierValue(selectedTier);
-    setListings([...listings, {
-      brandId: selectedBrandId,
-      brandName: brand.name,
-      tier: selectedTier,
-      value
-    }]);
-  };
-
-  const handleRemoveListing = (brandId: string) => {
-    setListings(listings.filter(l => l.brandId !== brandId));
-  };
-
-  const totalBudget = listings.reduce((sum, item) => sum + item.value, 0);
-
-  if (loading && brands.length === 0) {
-    return (
-      <div className="h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-accent" />
-      </div>
-    );
-  }
 
   return (
-    <div className="space-y-16 pb-24 px-6 lg:px-12 pt-12">
-      <header>
-        <RevealAnimation direction="up" delay={0.1}>
-          <h1 className="text-6xl lg:text-8xl font-light tracking-tight mb-6">Support Packages</h1>
-        </RevealAnimation>
-        <RevealAnimation direction="up" delay={0.2}>
-          <p className="text-2xl lg:text-3xl text-muted-foreground max-w-3xl font-light leading-relaxed">
-            Build a bespoke listings package to unlock customized marketing and GHF support budgets.
-          </p>
-        </RevealAnimation>
-      </header>
+    <div className="p-10 min-h-screen bg-white">
+      <h1
+        className="text-4xl font-light mb-1 tracking-tight"
+        style={{ color: "var(--accent)" }}
+      >
+        Packages
+      </h1>
+      <p className="text-sm mb-10 tracking-wide" style={{ color: "var(--muted-foreground)" }}>
+        Pre-curated presentations for trade customers
+      </p>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-12 items-start">
-        {/* Interactive Builder Form */}
-        <div className="xl:col-span-2 space-y-8">
-          <section className="p-8 lg:p-10 rounded-[2.5rem] border border-white/10 bg-white/5 space-y-6">
-            <h2 className="text-2xl font-light text-white">Add Product Listing</h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-white/70">Select Brand</label>
-                <select
-                  value={selectedBrandId}
-                  onChange={e => setSelectedBrandId(e.target.value)}
-                  className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-accent focus:outline-none transition-colors appearance-none"
-                >
-                  {brands.map(b => (
-                    <option key={b.id} value={b.id}>{b.name}</option>
-                  ))}
-                </select>
-              </div>
+      <div className="grid grid-cols-3 gap-8">
+        {PRESENTATION_TEMPLATES.map((template) => {
+          const templateBrands = brands.filter((b) =>
+            template.brandSlugs.includes(b.slug)
+          );
 
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-white/70">Select Listing Tier</label>
-                <select
-                  value={selectedTier}
-                  onChange={e => setSelectedTier(e.target.value as any)}
-                  className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-accent focus:outline-none transition-colors appearance-none"
-                >
-                  <option value="Standard">Standard Listing (£500 budget)</option>
-                  <option value="Gold">Gold Listing (£1,200 budget)</option>
-                  <option value="Platinum">Platinum Listing (£3,000 budget)</option>
-                </select>
-              </div>
-            </div>
-
-            <button
-              onClick={handleAddListing}
-              className="w-full py-4 rounded-xl bg-accent text-accent-foreground font-semibold hover:bg-white transition-all transform hover:scale-[1.01] flex items-center justify-center space-x-2"
+          return (
+            <Link
+              key={template.id}
+              href={`/packages/${template.id}`}
+              className="group block rounded-xl overflow-hidden border border-gray-200 hover:border-gray-400 transition-colors bg-white"
             >
-              <Plus className="w-5 h-5" />
-              <span>Add to Listings Package</span>
-            </button>
-          </section>
-
-          {/* Active Listings Table */}
-          <section className="p-8 lg:p-10 rounded-[2.5rem] border border-white/10 bg-white/5 space-y-6">
-            <h2 className="text-2xl font-light text-white">Proposed Listings ({listings.length})</h2>
-            
-            {listings.length === 0 ? (
-              <p className="text-muted-foreground font-light italic text-center py-8">No listings added to this package yet.</p>
-            ) : (
-              <div className="space-y-4">
-                {listings.map(item => (
-                  <div key={item.brandId} className="flex items-center justify-between p-5 rounded-2xl bg-black/30 border border-white/5 hover:border-white/10 transition-colors">
-                    <div>
-                      <h4 className="font-semibold text-white text-lg">{item.brandName}</h4>
-                      <span className="text-xs font-semibold uppercase tracking-wider text-accent">{item.tier} Tier</span>
-                    </div>
-                    <div className="flex items-center space-x-6">
-                      <span className="font-semibold text-white text-lg">£{item.value.toLocaleString()}</span>
-                      <button
-                        onClick={() => handleRemoveListing(item.brandId)}
-                        className="w-10 h-10 rounded-full bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white flex items-center justify-center transition-colors"
+              {/* Bottle grid */}
+              <div
+                className="h-52 flex items-end justify-center gap-2 px-4 pb-4 overflow-hidden"
+                style={{ backgroundColor: "var(--muted)" }}
+              >
+                {loading ? (
+                  <div className="text-xs text-gray-400">Loading...</div>
+                ) : templateBrands.length > 0 ? (
+                  templateBrands.slice(0, 5).map((b) => {
+                    const imgUrl =
+                      b.variants[0]?.image?.url || b.heroImage?.url || "";
+                    return imgUrl ? (
+                      <img
+                        key={b.slug}
+                        src={imgUrl}
+                        alt={b.name}
+                        className="object-contain"
+                        style={{ maxHeight: "160px", maxWidth: "80px" }}
+                      />
+                    ) : (
+                      <div
+                        key={b.slug}
+                        className="flex items-end justify-center"
+                        style={{ height: "160px", width: "60px" }}
                       >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                        <span className="text-[10px] text-center text-gray-400 leading-tight">
+                          {b.name}
+                        </span>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div className="text-xs text-gray-400">No brands yet</div>
+                )}
               </div>
-            )}
-          </section>
-        </div>
 
-        {/* Budget Summary Panel */}
-        <div className="rounded-[2.5rem] border border-white/10 bg-gradient-to-b from-white/10 to-transparent p-8 lg:p-10 space-y-8 sticky top-6">
-          <div className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-widest text-accent">
-            <Package className="w-5 h-5" />
-            <span>Package Summary</span>
-          </div>
-
-          <div className="space-y-2">
-            <span className="text-sm text-white/50 block font-medium">Total Support Budget Unlocked</span>
-            <span className="text-5xl lg:text-6xl font-light tracking-tight text-white block">
-              £{totalBudget.toLocaleString()}
-            </span>
-          </div>
-
-          <div className="pt-6 border-t border-white/10 space-y-4">
-            <div className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-widest text-accent">
-              <Zap className="w-4 h-4" />
-              <span>Unlocked Benefits</span>
-            </div>
-            
-            <ul className="space-y-3 text-sm font-light text-muted-foreground">
-              {listings.length === 0 ? (
-                <li className="italic">Add brand listings to unlock bespoke menu designs, custom event support, and POS merchandise.</li>
-              ) : (
-                <>
-                  <li className="flex items-start space-x-2">
-                    <span className="text-accent mr-1">✓</span>
-                    <span>Custom menu designs & print materials</span>
-                  </li>
-                  <li className="flex items-start space-x-2">
-                    <span className="text-accent mr-1">✓</span>
-                    <span>Staff incentive schemes & training sessions</span>
-                  </li>
-                  {listings.some(l => l.tier === "Gold" || l.tier === "Platinum") && (
-                    <li className="flex items-start space-x-2">
-                      <span className="text-accent mr-1">✓</span>
-                      <span>Co-branded local marketing events support</span>
-                    </li>
-                  )}
-                  {listings.some(l => l.tier === "Platinum") && (
-                    <li className="flex items-start space-x-2">
-                      <span className="text-accent mr-1">✓</span>
-                      <span>Bespoke venue terrace transformation support</span>
-                    </li>
-                  )}
-                </>
-              )}
-            </ul>
-          </div>
-        </div>
+              {/* Package info */}
+              <div className="p-5 border-t border-gray-100">
+                <h2
+                  className="text-lg font-medium mb-1"
+                  style={{ color: "var(--accent)" }}
+                >
+                  {template.name}
+                </h2>
+                <p className="text-xs leading-relaxed" style={{ color: "var(--muted-foreground)" }}>
+                  {template.description}
+                </p>
+                <div className="mt-3 flex items-center justify-between">
+                  <span
+                    className="text-xs tracking-widest uppercase font-semibold"
+                    style={{ color: "var(--gold)" }}
+                  >
+                    {templateBrands.length} brands
+                  </span>
+                  <span
+                    className="text-xs tracking-widest uppercase"
+                    style={{ color: "var(--accent)" }}
+                  >
+                    View &rarr;
+                  </span>
+                </div>
+              </div>
+            </Link>
+          );
+        })}
       </div>
     </div>
   );

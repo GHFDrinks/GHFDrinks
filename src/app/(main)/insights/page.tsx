@@ -1,104 +1,137 @@
 "use client";
 
 import React from "react";
-import { TrendingUp, Zap, Wine, ArrowRight } from "lucide-react";
-import { RevealAnimation } from "@/components/experience/RevealAnimation";
-
-const INSIGHTS = [
-  {
-    icon: Zap,
-    tag: "Sustainability",
-    title: "Eco-Conscious Spending Accelerates",
-    stat: "73%",
-    statLabel: "of premium consumers prioritize sustainable brands",
-    description: "Modern consumers are actively choosing brands with strong environmental credentials. Sapling's one-bottle-one-tree initiative directly aligns with this growing demand, proving to be a key driver for house pours in city center venues."
-  },
-  {
-    icon: TrendingUp,
-    tag: "No & Low Alc",
-    title: "The Mindful Drinking Surge",
-    stat: "+34%",
-    statLabel: "Volume growth in No & Low category year-on-year",
-    description: "The non-alcoholic market is no longer a niche trend. High-quality botanical alternatives like Everleaf offer operators the ability to maintain premium margins on non-drinkers while delivering a sophisticated experience."
-  },
-  {
-    icon: TrendingUp,
-    tag: "Demographics",
-    title: "Premiumization Among Gen Z & Millennials",
-    stat: "2.4x",
-    statLabel: "Higher spend per serve on craft & premium brands",
-    description: "Younger LDA cohorts drink less in volume but choose higher quality when they do. Aesthetic bottles, botanical storytellings, and local sourcing are essential elements to attract this high-spending audience."
-  }
-];
+import Link from "next/link";
+import { useBrands } from "@/hooks/useBrands";
 
 export default function InsightsPage() {
-  return (
-    <div className="space-y-16 pb-24 px-6 lg:px-12 pt-12">
-      <header>
-        <RevealAnimation direction="up" delay={0.1}>
-          <h1 className="text-6xl lg:text-8xl font-light tracking-tight mb-6">Category Insights</h1>
-        </RevealAnimation>
-        <RevealAnimation direction="up" delay={0.2}>
-          <p className="text-2xl lg:text-3xl text-muted-foreground max-w-3xl font-light leading-relaxed">
-            Support the sell-in story with data-driven insights on premium hospitality and beverage consumption trends.
-          </p>
-        </RevealAnimation>
-      </header>
+  const { brands, loading } = useBrands();
 
-      {/* Main Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {INSIGHTS.map((item, idx) => (
-          <RevealAnimation key={idx} direction="up" delay={0.3 + (idx * 0.1)}>
-            <div className="group rounded-[2.5rem] border border-white/10 bg-white/5 p-8 lg:p-10 backdrop-blur-md flex flex-col justify-between h-full hover:border-accent/30 transition-colors">
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div className="w-12 h-12 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent">
-                    <item.icon className="w-6 h-6" />
-                  </div>
-                  <span className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
-                    {item.tag}
-                  </span>
-                </div>
-                
-                <h3 className="text-2xl font-light text-white leading-snug">{item.title}</h3>
-                
-                {/* Big Stat Showcase */}
-                <div className="py-6 border-y border-white/5 space-y-2">
-                  <span className="text-5xl lg:text-6xl font-light tracking-tight text-accent block">
-                    {item.stat}
-                  </span>
-                  <span className="text-xs text-white/50 font-medium block">
-                    {item.statLabel}
-                  </span>
-                </div>
-                
-                <p className="text-sm text-muted-foreground font-light leading-relaxed">
-                  {item.description}
+  const totalSKUs = brands.reduce((acc, b) => acc + b.variants.length, 0);
+  const spirits = brands.filter((b) => b.category === "Spirits");
+  const wines = brands.filter((b) => b.category === "Wines");
+  const beer = brands.filter((b) => b.category === "Beer, Cider & Mixer");
+  const bcorpBrands = brands.filter((b) => b.bcorp);
+  const noAlcBrands = brands.filter((b) =>
+    b.variants.some((v) => v.abv === "0%" || v.abv === "0.5%")
+  );
+
+  const stats = [
+    { label: "Total Brands", value: brands.length },
+    { label: "Total SKUs", value: totalSKUs },
+    { label: "Spirits", value: spirits.length },
+    { label: "Wines", value: wines.length },
+    { label: "Beer, Cider & Mixer", value: beer.length },
+    { label: "B Corp Certified", value: bcorpBrands.length },
+    { label: "Low / No Alcohol", value: noAlcBrands.length },
+  ];
+
+  return (
+    <div className="p-10 min-h-screen bg-white">
+      <h1
+        className="text-4xl font-light mb-1 tracking-tight"
+        style={{ color: "var(--accent)" }}
+      >
+        Category Insights
+      </h1>
+      <p className="text-sm mb-10" style={{ color: "var(--muted-foreground)" }}>
+        Portfolio overview to support the sell-in story
+      </p>
+
+      {loading ? (
+        <p className="text-sm" style={{ color: "var(--muted-foreground)" }}>Loading...</p>
+      ) : (
+        <>
+          {/* Stats grid */}
+          <div className="grid grid-cols-4 gap-4 mb-12">
+            {stats.map((s) => (
+              <div
+                key={s.label}
+                className="border border-gray-200 rounded-xl p-5"
+              >
+                <p
+                  className="text-4xl font-light mb-1"
+                  style={{ color: "var(--accent)" }}
+                >
+                  {s.value}
+                </p>
+                <p
+                  className="text-xs tracking-widest uppercase"
+                  style={{ color: "var(--muted-foreground)" }}
+                >
+                  {s.label}
                 </p>
               </div>
+            ))}
+          </div>
 
-              <div className="pt-6 flex items-center space-x-2 text-xs text-accent font-semibold uppercase tracking-wider group-hover:text-white transition-colors cursor-pointer">
-                <span>View Full Report</span>
-                <ArrowRight className="w-4 h-4" />
+          {/* Category breakdown */}
+          {[
+            { label: "Spirits", list: spirits },
+            { label: "Wines", list: wines },
+            { label: "Beer, Cider & Mixer", list: beer },
+          ].map(({ label, list }) => (
+            <div key={label} className="mb-10">
+              <div className="flex items-center justify-between mb-4">
+                <h2
+                  className="text-xl font-medium"
+                  style={{ color: "var(--accent)" }}
+                >
+                  {label}
+                </h2>
+                <span
+                  className="text-xs tracking-widest uppercase"
+                  style={{ color: "var(--muted-foreground)" }}
+                >
+                  {list.length} brands ·{" "}
+                  {list.reduce((a, b) => a + b.variants.length, 0)} SKUs
+                </span>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                {list.map((b) => (
+                  <Link
+                    key={b.slug}
+                    href={`/brands/${b.slug}`}
+                    className="border border-gray-200 rounded-xl p-4 hover:border-gray-400 transition-colors"
+                  >
+                    <div className="flex items-start justify-between mb-1">
+                      <p
+                        className="text-sm font-medium"
+                        style={{ color: "var(--accent)" }}
+                      >
+                        {b.name}
+                      </p>
+                      {b.bcorp && (
+                        <span
+                          className="text-[9px] tracking-widest uppercase border rounded px-1 py-0.5"
+                          style={{
+                            borderColor: "var(--gold)",
+                            color: "var(--gold)",
+                          }}
+                        >
+                          B Corp
+                        </span>
+                      )}
+                    </div>
+                    <p
+                      className="text-xs leading-relaxed line-clamp-2"
+                      style={{ color: "var(--muted-foreground)" }}
+                    >
+                      {b.tagline}
+                    </p>
+                    <p
+                      className="text-xs mt-2 font-semibold"
+                      style={{ color: "var(--gold)" }}
+                    >
+                      {b.variants.length} SKUs
+                    </p>
+                  </Link>
+                ))}
               </div>
             </div>
-          </RevealAnimation>
-        ))}
-      </div>
-
-      {/* Retail / Trade Strategy Tip */}
-      <RevealAnimation direction="up" delay={0.6}>
-        <div className="rounded-[2.5rem] border border-white/10 bg-gradient-to-r from-accent/5 to-transparent p-8 lg:p-12 backdrop-blur-md space-y-6 max-w-4xl">
-          <div className="flex items-center space-x-3 text-xs font-semibold uppercase tracking-widest text-accent">
-            <Wine className="w-5 h-5" />
-            <span>GHF Retail Strategy Tip</span>
-          </div>
-          <h2 className="text-3xl font-light text-white">How to use these insights during client meetings</h2>
-          <p className="text-muted-foreground font-light leading-relaxed">
-            When pitching to luxury hotel groups or boutique bars, start the conversation with macro trends. Establish yourself as a category consultant by pointing to the mindful drinking surge or sustainability metrics. Once the account agrees on the consumer need, introduce GHF support packages and co-branded activations to secure the listing.
-          </p>
-        </div>
-      </RevealAnimation>
+          ))}
+        </>
+      )}
     </div>
   );
 }

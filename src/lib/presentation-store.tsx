@@ -110,3 +110,10 @@ export function usePresentationStore() {
   }
   return context;
 }
+
+export function usePresentation() {
+  const ctx = useContext(PresentationContext);
+  if (!ctx) throw new Error("usePresentation must be used inside PresentationProvider");
+  return ctx;
+}
+
