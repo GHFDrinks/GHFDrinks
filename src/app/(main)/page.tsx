@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { useBrands } from "@/hooks/useBrands";
 import { PRESENTATION_TEMPLATES } from "@/types/presentation";
+import { getBrandImages } from "@/lib/brand-images";
 
 export default function HomePage() {
   const { brands, loading } = useBrands();
@@ -84,28 +85,25 @@ export default function HomePage() {
                           className="w-full h-44 rounded-xl flex items-end justify-center pb-3 mb-3 overflow-hidden"
                           style={{ backgroundColor: "var(--muted)" }}
                         >
-                          {b.variants[0]?.image?.url ? (
-                            <img
-                              src={b.variants[0].image.url}
-                              alt={b.name}
-                              className="object-contain group-hover:scale-105 transition-transform duration-300"
-                              style={{ maxHeight: "160px", maxWidth: "100px" }}
-                            />
-                          ) : b.heroImage?.url ? (
-                            <img
-                              src={b.heroImage.url}
-                              alt={b.name}
-                              className="object-contain group-hover:scale-105 transition-transform duration-300"
-                              style={{ maxHeight: "160px", maxWidth: "120px" }}
-                            />
-                          ) : (
-                            <div
-                              className="text-xs text-center px-2 leading-tight"
-                              style={{ color: "var(--muted-foreground)" }}
-                            >
-                              {b.name}
-                            </div>
-                          )}
+                          {(() => {
+                            const local = getBrandImages(b.slug);
+                            const src = local?.variants?.[0] || local?.hero || b.variants[0]?.image?.url || b.heroImage?.url;
+                            return src ? (
+                              <img
+                                src={src}
+                                alt={b.name}
+                                className="object-contain group-hover:scale-105 transition-transform duration-300"
+                                style={{ maxHeight: "160px", maxWidth: "100px" }}
+                              />
+                            ) : (
+                              <div
+                                className="text-xs text-center px-2 leading-tight"
+                                style={{ color: "var(--muted-foreground)" }}
+                              >
+                                {b.name}
+                              </div>
+                            );
+                          })()}
                         </div>
                         <p
                           className="text-xs font-semibold text-center leading-tight"

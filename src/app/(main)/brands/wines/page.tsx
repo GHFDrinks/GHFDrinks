@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { useBrands } from "@/hooks/useBrands";
+import { getBrandImages } from "@/lib/brand-images";
 
 export default function WinesPage() {
   const { brands, loading } = useBrands();
@@ -34,14 +35,18 @@ export default function WinesPage() {
                 className="h-52 flex items-end justify-center pb-4"
                 style={{ backgroundColor: "var(--muted)" }}
               >
-                {b.variants[0]?.image?.url || b.heroImage?.url ? (
-                  <img
-                    src={b.variants[0]?.image?.url || b.heroImage?.url}
-                    alt={b.name}
-                    className="object-contain group-hover:scale-105 transition-transform duration-300"
-                    style={{ maxHeight: "180px" }}
-                  />
-                ) : null}
+                {(() => {
+                  const local = getBrandImages(b.slug);
+                  const src = local?.hero || local?.variants?.[0] || b.heroImage?.url;
+                  return src ? (
+                    <img
+                      src={src}
+                      alt={b.name}
+                      className="object-contain group-hover:scale-105 transition-transform duration-300"
+                      style={{ maxHeight: "180px" }}
+                    />
+                  ) : null;
+                })()}
               </div>
               <div className="p-5 border-t border-gray-100">
                 <h2

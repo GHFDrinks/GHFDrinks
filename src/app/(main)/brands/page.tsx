@@ -26,7 +26,7 @@ export default function BrandsPage() {
         <div className="grid grid-cols-3 gap-8">
           {brands.map((b) => {
             const local = getBrandImages(b.slug);
-            const heroSrc = local?.hero || b.heroImage?.url || "";
+            const heroSrc = local?.hero || local?.variants?.[0] || b.heroImage?.url || "";
             return (
               <Link
                 key={b.slug}

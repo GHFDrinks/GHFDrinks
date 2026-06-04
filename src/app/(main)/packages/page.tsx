@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { useBrands } from "@/hooks/useBrands";
 import { PRESENTATION_TEMPLATES } from "@/types/presentation";
+import { getBrandImages } from "@/lib/brand-images";
 
 export default function PackagesPage() {
   const { brands, loading } = useBrands();
@@ -41,8 +42,10 @@ export default function PackagesPage() {
                   <div className="text-xs text-gray-400">Loading...</div>
                 ) : templateBrands.length > 0 ? (
                   templateBrands.slice(0, 5).map((b) => {
-                    const imgUrl =
-                      b.variants[0]?.image?.url || b.heroImage?.url || "";
+                    const imgUrl = (() => {
+                      const local = getBrandImages(b.slug);
+                      return local?.variants?.[0] || local?.hero || b.heroImage?.url || "";
+                    })();
                     return imgUrl ? (
                       <img
                         key={b.slug}
