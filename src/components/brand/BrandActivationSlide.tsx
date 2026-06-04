@@ -2,8 +2,11 @@
 
 import React from "react";
 import { Brand } from "@/types/brand";
+import { getBrandImages } from "@/lib/brand-images";
 
 export function BrandActivationSlide({ brand }: { brand: Brand }) {
+  const localImages = getBrandImages(brand.slug);
+
   if (!brand.activations || brand.activations.length === 0) return null;
 
   const act1 = brand.activations[0];
@@ -72,7 +75,7 @@ export function BrandActivationSlide({ brand }: { brand: Brand }) {
             {/* Photo */}
             <div className="overflow-hidden" style={{ height: "65%" }}>
               <img
-                src={act1.photo1?.url || act1.image?.url || ""}
+                src={localImages?.activations?.[0] || act1.photo1?.url || act1.image?.url || ""}
                 alt={act1.title}
                 className="w-full h-full object-cover"
               />
@@ -110,7 +113,7 @@ export function BrandActivationSlide({ brand }: { brand: Brand }) {
           <div className="flex-1 flex flex-col overflow-hidden">
             <div className="overflow-hidden" style={{ height: "65%" }}>
               <img
-                src={act2.photo1?.url || act2.image?.url || ""}
+                src={localImages?.activations?.[1] || act2.photo1?.url || act2.image?.url || ""}
                 alt={act2.title}
                 className="w-full h-full object-cover"
               />

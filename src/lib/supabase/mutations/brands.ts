@@ -15,6 +15,7 @@ export async function saveBrand(brandData: any) {
     tagline: data.tagline,
     story_title: data.story?.title,
     story_description: data.story?.description,
+    promotion_active: data.promotionActive,
   };
 
   let response;

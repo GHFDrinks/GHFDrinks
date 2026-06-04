@@ -1,73 +1,138 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
-import { Plus, Wine, Image as ImageIcon, Users, FileText } from "lucide-react";
+import { useBrands } from "@/hooks/useBrands";
 
 export default function AdminDashboardPage() {
-  const stats = [
-    { label: "Active Brands", value: "19", icon: Wine },
-    { label: "Media Assets", value: "482", icon: ImageIcon },
-    { label: "Saved Presentations", value: "34", icon: FileText },
-    { label: "Admin Users", value: "5", icon: Users },
-  ];
+  const { brands, loading } = useBrands();
+
+  const spirits = brands.filter((b) => b.category === "Spirits").length;
+  const wines = brands.filter((b) => b.category === "Wines").length;
+  const beer = brands.filter((b) => b.category === "Beer, Cider & Mixer").length;
+  const totalSKUs = brands.reduce((a, b) => a + b.variants.length, 0);
 
   return (
-    <div className="space-y-12">
-      <header className="flex justify-between items-center">
-        <div>
-          <h1 className="text-4xl font-light tracking-tight mb-2">Welcome Back</h1>
-          <p className="text-muted-foreground font-light text-lg">Here's what's happening with your content today.</p>
-        </div>
-        <Link href="/admin/brands/new">
-          <button className="h-12 px-6 rounded-xl bg-white text-black font-medium hover:bg-white/90 transition-transform hover:scale-105 active:scale-95 flex items-center space-x-2">
-            <Plus className="w-5 h-5" />
-            <span>Add Brand</span>
-          </button>
-        </Link>
-      </header>
+    <div className="p-10 min-h-screen bg-white">
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat) => {
-          const Icon = stat.icon;
-          return (
-            <div key={stat.label} className="p-8 rounded-[2rem] bg-white/5 border border-white/10 relative overflow-hidden group">
-              <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                <Icon className="w-24 h-24" />
-              </div>
-              <div className="relative z-10">
-                <Icon className="w-8 h-8 text-accent mb-6" />
-                <h3 className="text-5xl font-light mb-2">{stat.value}</h3>
-                <p className="text-sm font-medium uppercase tracking-widest text-muted-foreground">{stat.label}</p>
-              </div>
-            </div>
-          );
-        })}
+      <div className="flex items-center justify-between mb-10">
+        <div>
+          <h1
+            className="text-4xl font-light mb-1 tracking-tight"
+            style={{ color: "var(--accent)" }}
+          >
+            GHF Admin
+          </h1>
+          <p className="text-sm" style={{ color: "var(--muted-foreground)" }}>
+            Manage your portfolio content
+          </p>
+        </div>
+        <Link
+          href="/admin/brands/new"
+          className="px-5 py-2.5 text-sm font-medium rounded-lg text-white"
+          style={{ backgroundColor: "var(--accent)" }}
+        >
+          + Add Brand
+        </Link>
       </div>
 
-      <section className="p-10 rounded-[2rem] bg-white/5 border border-white/10">
-        <h2 className="text-2xl font-light mb-8">Recent Activity</h2>
-        <div className="space-y-6">
-          <div className="flex items-center space-x-4 pb-6 border-b border-white/5">
-            <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center text-accent">
-              <Wine className="w-5 h-5" />
-            </div>
-            <div className="flex-1">
-              <p className="font-medium text-lg">Sapling Spirits updated</p>
-              <p className="text-muted-foreground text-sm">David updated the hero image and 2 variants.</p>
-            </div>
-            <span className="text-sm text-muted-foreground">2 hours ago</span>
+      {/* Stats */}
+      <div className="grid grid-cols-4 gap-4 mb-10">
+        {[
+          { label: "Total Brands", value: loading ? "—" : brands.length },
+          { label: "Spirits", value: loading ? "—" : spirits },
+          { label: "Wines", value: loading ? "—" : wines },
+          { label: "Total SKUs", value: loading ? "—" : totalSKUs },
+        ].map((s) => (
+          <div
+            key={s.label}
+            className="border border-gray-200 rounded-xl p-5"
+          >
+            <p
+              className="text-4xl font-light mb-1"
+              style={{ color: "var(--accent)" }}
+            >
+              {s.value}
+            </p>
+            <p
+              className="text-xs tracking-widest uppercase"
+              style={{ color: "var(--muted-foreground)" }}
+            >
+              {s.label}
+            </p>
           </div>
-          <div className="flex items-center space-x-4 pb-6 border-b border-white/5">
-            <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center text-accent">
-              <ImageIcon className="w-5 h-5" />
-            </div>
-            <div className="flex-1">
-              <p className="font-medium text-lg">New Media Uploaded</p>
-              <p className="text-muted-foreground text-sm">5 new images added to Everleaf's gallery.</p>
-            </div>
-            <span className="text-sm text-muted-foreground">Yesterday</span>
-          </div>
+        ))}
+      </div>
+
+      {/* Quick links */}
+      <div className="grid grid-cols-3 gap-6 mb-10">
+        {[
+          { label: "Edit Brands", desc: "Update descriptions, SKUs, activations", href: "/admin/brands" },
+          { label: "Manage Promotions", desc: "Turn live promotions on or off per brand", href: "/admin/brands" },
+          { label: "Media", desc: "View uploaded media assets", href: "/admin/media" },
+        ].map((item) => (
+          <Link
+            key={item.label}
+            href={item.href}
+            className="border border-gray-200 rounded-xl p-6 hover:border-gray-400 transition-colors"
+          >
+            <h2
+              className="text-base font-medium mb-1"
+              style={{ color: "var(--accent)" }}
+            >
+              {item.label}
+            </h2>
+            <p
+              className="text-xs leading-relaxed"
+              style={{ color: "var(--muted-foreground)" }}
+            >
+              {item.desc}
+            </p>
+          </Link>
+        ))}
+      </div>
+
+      {/* Brand list */}
+      <div>
+        <h2
+          className="text-xl font-medium mb-4"
+          style={{ color: "var(--accent)" }}
+        >
+          All Brands
+        </h2>
+        <div className="grid grid-cols-3 gap-4">
+          {brands.map((b) => (
+            <Link
+              key={b.slug}
+              href={`/admin/brands/${b.id}`}
+              className="flex items-center justify-between border border-gray-200 rounded-xl px-5 py-4 hover:border-gray-400 transition-colors"
+            >
+              <div>
+                <p
+                  className="text-sm font-medium"
+                  style={{ color: "var(--accent)" }}
+                >
+                  {b.name}
+                </p>
+                <p
+                  className="text-xs"
+                  style={{ color: "var(--muted-foreground)" }}
+                >
+                  {b.category} · {b.variants.length} SKUs
+                </p>
+              </div>
+              {b.promotionActive && (
+                <span
+                  className="text-[10px] font-bold tracking-widest uppercase border rounded px-2 py-0.5"
+                  style={{ borderColor: "var(--gold)", color: "var(--gold)" }}
+                >
+                  Promo Live
+                </span>
+              )}
+            </Link>
+          ))}
         </div>
-      </section>
+      </div>
     </div>
   );
 }

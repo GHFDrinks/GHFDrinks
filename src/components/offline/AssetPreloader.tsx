@@ -1,53 +1,33 @@
 "use client";
 
 import { useEffect } from "react";
-import { mockBrands } from "@/data/brands";
+import { BRAND_IMAGES } from "@/lib/brand-images";
 
-/**
- * Iterates through all brand data and forces the browser to fetch and cache
- * the high-res images so they are available offline.
- */
 export function AssetPreloader() {
   useEffect(() => {
-    // Only preload if we're online and the browser supports Service Workers
-    if (!navigator.onLine || !('serviceWorker' in navigator)) return;
+    if (!navigator.onLine || !("serviceWorker" in navigator)) return;
 
-    // Use requestIdleCallback so we don't block the main thread during initial load
-    const preloadAssets = () => {
-      const urlsToCache = new Set<string>();
+    const preload = () => {
+      const urls = new Set<string>();
 
-      mockBrands.forEach(brand => {
-        if (brand.heroImage?.url) urlsToCache.add(brand.heroImage.url);
-        if (brand.story?.image?.url) urlsToCache.add(brand.story.image.url);
-        
-        brand.variants.forEach(v => {
-          if (v.image?.url) urlsToCache.add(v.image.url);
-        });
-        
-        brand.serves.forEach(s => {
-          if (s.image?.url) urlsToCache.add(s.image.url);
-        });
-        
-        brand.activations.forEach(a => {
-          if (a.image?.url) urlsToCache.add(a.image.url);
-        });
-        
-        brand.mediaGallery.forEach(m => {
-          if (m.url) urlsToCache.add(m.url);
-        });
+      Object.values(BRAND_IMAGES).forEach((b) => {
+        if (b.hero) urls.add(b.hero);
+        if (b.logo) urls.add(b.logo);
+        b.lifestyle?.forEach((u) => urls.add(u));
+        b.activations?.forEach((u) => urls.add(u));
+        b.variants?.forEach((u) => urls.add(u));
       });
 
-      // Silently fetch all images to populate the PWA cache
-      urlsToCache.forEach(url => {
+      urls.forEach((url) => {
         const img = new Image();
         img.src = url;
       });
     };
 
-    if ('requestIdleCallback' in window) {
-      window.requestIdleCallback(preloadAssets);
+    if ("requestIdleCallback" in window) {
+      window.requestIdleCallback(preload);
     } else {
-      setTimeout(preloadAssets, 5000);
+      setTimeout(preload, 3000);
     }
   }, []);
 

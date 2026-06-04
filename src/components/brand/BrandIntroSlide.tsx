@@ -2,8 +2,10 @@
 
 import React from "react";
 import { Brand } from "@/types/brand";
+import { getBrandImages } from "@/lib/brand-images";
 
 export function BrandIntroSlide({ brand }: { brand: Brand }) {
+  const localImages = getBrandImages(brand.slug);
   return (
     <div className="flex h-screen w-full overflow-hidden bg-white">
 
@@ -12,23 +14,33 @@ export function BrandIntroSlide({ brand }: { brand: Brand }) {
 
         {/* 3 stacked lifestyle images */}
         <div className="flex flex-col h-full">
-          {brand.lifestyleImages.length > 0
-            ? brand.lifestyleImages.slice(0, 3).map((img, i) => (
-                <div key={i} className="flex-1 overflow-hidden relative">
-                  <img
-                    src={img.url}
-                    alt={img.alt}
-                    className="w-full h-full object-cover"
+          {(() => {
+            const items = [];
+            for (let i = 0; i < 3; i++) {
+              const src = localImages?.lifestyle?.[i] || brand.lifestyleImages?.[i]?.url;
+              const alt = brand.lifestyleImages?.[i]?.alt || "";
+              if (src) {
+                items.push(
+                  <div key={i} className="flex-1 overflow-hidden relative">
+                    <img
+                      src={src}
+                      alt={alt}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                );
+              } else {
+                items.push(
+                  <div
+                    key={i}
+                    className="flex-1"
+                    style={{ backgroundColor: "var(--muted)" }}
                   />
-                </div>
-              ))
-            : [0, 1, 2].map((i) => (
-                <div
-                  key={i}
-                  className="flex-1"
-                  style={{ backgroundColor: "var(--muted)" }}
-                />
-              ))}
+                );
+              }
+            }
+            return items;
+          })()}
         </div>
 
         {/* Venue badge circles overlaid on mosaic */}
@@ -70,24 +82,43 @@ export function BrandIntroSlide({ brand }: { brand: Brand }) {
         style={{ backgroundColor: "#f9f9f7" }}
       >
         <div className="flex items-end justify-center gap-3 px-4 h-5/6">
-          {brand.variants.length > 0
-            ? brand.variants.slice(0, 4).map((v, i) => (
+          {(() => {
+            const hasVariants = (localImages?.variants && localImages.variants.length > 0) || brand.variants.length > 0;
+            if (hasVariants) {
+              const maxLen = Math.max(localImages?.variants?.length || 0, brand.variants.length);
+              const items = [];
+              for (let i = 0; i < Math.min(maxLen, 4); i++) {
+                const src = localImages?.variants?.[i] || brand.variants[i]?.image?.url;
+                const alt = brand.variants[i]?.name || brand.name;
+                if (src) {
+                  items.push(
+                    <img
+                      key={i}
+                      src={src}
+                      alt={alt}
+                      className="object-contain max-h-full"
+                      style={{ maxWidth: "140px" }}
+                    />
+                  );
+                }
+              }
+              if (items.length > 0) return items;
+            }
+
+            const heroSrc = localImages?.hero || brand.heroImage?.url;
+            if (heroSrc) {
+              return (
                 <img
-                  key={i}
-                  src={v.image?.url}
-                  alt={v.name}
-                  className="object-contain max-h-full"
-                  style={{ maxWidth: "140px" }}
-                />
-              ))
-            : brand.heroImage?.url && (
-                <img
-                  src={brand.heroImage.url}
+                  src={heroSrc}
                   alt={brand.name}
                   className="object-contain max-h-full"
                   style={{ maxWidth: "220px" }}
                 />
-              )}
+              );
+            }
+
+            return null;
+          })()}
         </div>
       </div>
 
@@ -98,9 +129,9 @@ export function BrandIntroSlide({ brand }: { brand: Brand }) {
       >
 
         {/* Brand logo or name fallback */}
-        {brand.logo?.url ? (
+        {localImages?.logo || brand.logo?.url ? (
           <img
-            src={brand.logo.url}
+            src={localImages?.logo || brand.logo?.url}
             alt={brand.name + " logo"}
             className="max-h-20 max-w-xs object-contain mb-6"
           />

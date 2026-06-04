@@ -1,45 +1,37 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { AdminSidebar } from "@/components/admin/AdminSidebar";
-import { TouchOptimizedSidebar } from "@/components/tablet/TouchOptimizedSidebar";
-import { SessionRecovery } from "@/components/system/SessionRecovery";
-import "@/app/globals.css";
+import React from "react";
+import Link from "next/link";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-export const metadata: Metadata = {
-  title: "GHF Admin | Content Management",
-  description: "Secure content management system for GHF Drinks.",
-};
-
-export default function AdminLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
-    >
-      <body className="min-h-full flex bg-[#050505] text-foreground selection:bg-accent selection:text-accent-foreground pt-16 lg:pt-0">
-        <SessionRecovery />
-        <AdminSidebar className="hidden lg:flex" />
-        <TouchOptimizedSidebar />
-        <main className="flex-1 overflow-x-hidden relative">
-          <div className="max-w-7xl mx-auto px-6 lg:px-12 py-8 lg:py-12">
-            {children}
+    <div className="min-h-screen bg-white">
+      <div
+        className="flex items-center justify-between px-10 py-4 border-b border-gray-200"
+        style={{ backgroundColor: "var(--accent)" }}
+      >
+        <div className="flex items-center gap-6">
+          <div
+            className="w-8 h-8 rounded-full border-2 flex items-center justify-center text-[9px] font-bold tracking-widest"
+            style={{ borderColor: "var(--gold)", color: "var(--gold)" }}
+          >
+            GHF
           </div>
-        </main>
-      </body>
-    </html>
+          <span className="text-white text-sm font-medium tracking-wide">
+            Admin Panel
+          </span>
+        </div>
+        <div className="flex items-center gap-6">
+          <Link href="/admin/brands" className="text-xs text-white tracking-widest uppercase hover:opacity-70">
+            Brands
+          </Link>
+          <Link href="/admin/media" className="text-xs text-white tracking-widest uppercase hover:opacity-70">
+            Media
+          </Link>
+          <Link href="/" className="text-xs tracking-widest uppercase border border-white/30 rounded px-3 py-1.5 text-white hover:opacity-70">
+            View Site
+          </Link>
+        </div>
+      </div>
+      <div>{children}</div>
+    </div>
   );
 }

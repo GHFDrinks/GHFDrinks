@@ -10,48 +10,48 @@ const withPWA = withPWAInit({
     disableDevLogs: true,
     runtimeCaching: [
       {
-        urlPattern: /^https:\/\/images\.unsplash\.com\/.*/i,
-        handler: 'CacheFirst',
+        urlPattern: /\/brands\/.*\.(?:png|jpg|jpeg|webp|svg)$/i,
+        handler: "CacheFirst",
         options: {
-          cacheName: 'ghf-external-images',
+          cacheName: "ghf-brand-images",
           expiration: {
-            maxEntries: 100,
-            maxAgeSeconds: 30 * 24 * 60 * 60, // 30 Days
+            maxEntries: 500,
+            maxAgeSeconds: 90 * 24 * 60 * 60,
           },
-          cacheableResponse: {
-            statuses: [0, 200],
-          },
+          cacheableResponse: { statuses: [0, 200] },
         },
       },
       {
-        urlPattern: /\.(?:png|jpg|jpeg|svg|webp|gif)$/i,
-        handler: 'CacheFirst',
+        urlPattern: /\/fonts\/.*\.(?:otf|woff|woff2)$/i,
+        handler: "CacheFirst",
         options: {
-          cacheName: 'ghf-local-images',
-          expiration: {
-            maxEntries: 100,
-            maxAgeSeconds: 30 * 24 * 60 * 60,
-          },
+          cacheName: "ghf-fonts",
+          expiration: { maxEntries: 10, maxAgeSeconds: 365 * 24 * 60 * 60 },
+          cacheableResponse: { statuses: [0, 200] },
         },
       },
       {
-        urlPattern: /\/brands.*/i,
-        handler: 'NetworkFirst',
+        urlPattern: /^https:\/\/meitlqrtqebmuovjqtei\.supabase\.co\/.*/i,
+        handler: "NetworkFirst",
         options: {
-          cacheName: 'ghf-pages',
-          expiration: {
-            maxEntries: 50,
-          },
+          cacheName: "ghf-supabase",
+          networkTimeoutSeconds: 5,
+          expiration: { maxEntries: 100, maxAgeSeconds: 7 * 24 * 60 * 60 },
+          cacheableResponse: { statuses: [0, 200] },
         },
-      }
-    ]
-  }
+      },
+      {
+        urlPattern: /\.(?:js|css)$/i,
+        handler: "StaleWhileRevalidate",
+        options: {
+          cacheName: "ghf-static",
+          expiration: { maxEntries: 100 },
+        },
+      },
+    ],
+  },
 });
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  // config options here
-};
+const nextConfig = {};
 
 export default withPWA(nextConfig);
-

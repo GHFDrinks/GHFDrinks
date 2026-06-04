@@ -1,9 +1,28 @@
 const { createClient } = require("@supabase/supabase-js");
+const fs = require("fs");
+const path = require("path");
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+let url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+let key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!url || !key) {
+  try {
+    const env = fs.readFileSync(path.join(__dirname, "../.env.local"), "utf8");
+    env.split("\n").forEach((line) => {
+      const match = line.match(/^\s*([^#=\s]+)\s*=\s*(.*)$/);
+      if (match) {
+        const k = match[1];
+        const v = match[2].trim();
+        if (k === "NEXT_PUBLIC_SUPABASE_URL") url = v;
+        if (k === "SUPABASE_SERVICE_ROLE_KEY") key = v;
+      }
+    });
+  } catch (e) {
+    console.error("Failed to read .env.local", e);
+  }
+}
+
+const supabase = createClient(url, key);
 
 const brands = [
   // ─── SPIRITS ───────────────────────────────────────────
@@ -364,7 +383,23 @@ const brands = [
     ],
     activations: [],
   },
+  {
+    slug: "fever-tree",
+    name: "Fever-Tree",
+    category: "Beer, Cider & Mixer",
+    tagline: "If 3/4 of your drink is the mixer, mix with the best.",
+    description:
+      "Fever-Tree is the world's leading producer of premium carbonated mixers. By using the finest natural ingredients from around the world, Fever-Tree has created a range of mixers that complement and enhance premium spirits.",
+    bcorp: false,
+    promotion_active: false,
+    variants: [
+      { name: "Premium Indian Tonic Water", volume: "20cl", abv: "0%", sort_order: 1 },
+      { name: "Ginger Beer", volume: "20cl", abv: "0%", sort_order: 2 },
+    ],
+    activations: [],
+  },
 ];
+
 
 async function seed() {
   console.log("Starting seed...");
