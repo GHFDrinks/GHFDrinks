@@ -12,7 +12,7 @@ export function BrandDetailClient({ initialBrand }: { initialBrand: Brand }) {
 
   useEffect(() => {
     if (brands.length > 0) {
-      const live = brands.find((b) => b.slug === initialBrand.slug);
+      const live = brands.find(b => b.slug === initialBrand.slug);
       if (live) setBrand(live);
     }
   }, [brands, initialBrand.slug]);
