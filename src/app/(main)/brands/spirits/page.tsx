@@ -37,7 +37,7 @@ export default function SpiritsPage() {
               >
                 {(() => {
                   const local = getBrandImages(b.slug);
-                  const src = local?.hero || local?.variants?.[0] || b.heroImage?.url;
+                  const src = local?.hero || local?.variants?.[0] || b.heroImage?.url || "";
                   return src ? (
                     <img
                       src={src}
@@ -45,7 +45,11 @@ export default function SpiritsPage() {
                       className="object-contain group-hover:scale-105 transition-transform duration-300"
                       style={{ maxHeight: "180px" }}
                     />
-                  ) : null;
+                  ) : (
+                    <div className="text-xs text-center px-2 leading-tight" style={{ color: "var(--muted-foreground)" }}>
+                      {b.name}
+                    </div>
+                  );
                 })()}
               </div>
               <div className="p-5 border-t border-gray-100">

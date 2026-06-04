@@ -6,6 +6,7 @@ import { getBrandImages } from "@/lib/brand-images";
 
 export function BrandIntroSlide({ brand }: { brand: Brand }) {
   const local = getBrandImages(brand.slug);
+  console.log('Brand slug:', brand.slug, 'Local images:', local);
 
   const bottleShots = local?.variants?.length
     ? local.variants

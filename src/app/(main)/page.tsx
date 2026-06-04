@@ -87,7 +87,7 @@ export default function HomePage() {
                         >
                           {(() => {
                             const local = getBrandImages(b.slug);
-                            const src = local?.variants?.[0] || local?.hero || b.variants[0]?.image?.url || b.heroImage?.url;
+                            const src = local?.hero || local?.variants?.[0] || b.heroImage?.url || "";
                             return src ? (
                               <img
                                 src={src}
@@ -96,10 +96,7 @@ export default function HomePage() {
                                 style={{ maxHeight: "160px", maxWidth: "100px" }}
                               />
                             ) : (
-                              <div
-                                className="text-xs text-center px-2 leading-tight"
-                                style={{ color: "var(--muted-foreground)" }}
-                              >
+                              <div className="text-xs text-center px-2 leading-tight" style={{ color: "var(--muted-foreground)" }}>
                                 {b.name}
                               </div>
                             );
