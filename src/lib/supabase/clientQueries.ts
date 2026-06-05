@@ -11,13 +11,9 @@ export async function syncBrandsClient(
   try {
     const supabase = createClient();
 
-    const { data: brandsData, error } = await supabase
+    const { data, error } = await supabase
       .from('brands')
-      .select(`
-        *,
-        brand_variants (*),
-        activations (*)
-      `)
+      .select(`*, brand_variants(*), activations(*)`)
       .order('name');
 
     if (error) {
@@ -25,13 +21,31 @@ export async function syncBrandsClient(
       return;
     }
 
-    if (!brandsData || brandsData.length === 0) {
-      console.warn('No brands returned from Supabase');
+    if (!data || data.length === 0) {
+      console.warn('No brands returned');
       return;
     }
 
-    const mapped: Brand[] = brandsData.map((b: any) => {
-      const variants = (b.brand_variants || [])
+    const mapped: Brand[] = data.map((b: any) => ({
+      id: b.id,
+      slug: b.slug,
+      name: b.name,
+      category: b.category,
+      tagline: b.tagline || '',
+      heroImage: { url: b.hero_image_url || '', alt: b.name },
+      logo: b.logo_url ? { url: b.logo_url, alt: b.name } : undefined,
+      lifestyleImages: [
+        b.lifestyle_image_1, b.lifestyle_image_2, b.lifestyle_image_3
+      ].filter(Boolean).map((url: string) => ({ url, alt: '' })),
+      venueBadges: b.venue_badges || [],
+      promotionActive: b.promotion_active || false,
+      bcorp: b.bcorp || false,
+      story: {
+        title: b.story_title || '',
+        description: b.story_description || b.tagline || '',
+        founders: b.story_founders || [],
+      },
+      variants: (b.brand_variants || [])
         .sort((a: any, z: any) => (a.sort_order || 0) - (z.sort_order || 0))
         .map((v: any) => ({
           id: v.id,
@@ -43,9 +57,8 @@ export async function syncBrandsClient(
           tastingNotes: [],
           mixerPairings: [],
           serveInspiration: '',
-        }));
-
-      const activations = (b.activations || []).map((a: any) => ({
+        })),
+      activations: (b.activations || []).map((a: any) => ({
         id: a.id,
         title: a.title,
         date: a.date || '',
@@ -58,39 +71,14 @@ export async function syncBrandsClient(
         activationType: a.activation_type || '',
         keyDates: a.key_dates || [],
         mixerPairings: a.mixer_pairings || [],
-      }));
-
-      return {
-        id: b.id,
-        slug: b.slug,
-        name: b.name,
-        category: b.category,
-        tagline: b.tagline || '',
-        heroImage: { url: b.hero_image_url || '', alt: b.name },
-        logo: b.logo_url ? { url: b.logo_url, alt: b.name + ' logo' } : undefined,
-        lifestyleImages: [
-          b.lifestyle_image_1 ? { url: b.lifestyle_image_1, alt: '' } : null,
-          b.lifestyle_image_2 ? { url: b.lifestyle_image_2, alt: '' } : null,
-          b.lifestyle_image_3 ? { url: b.lifestyle_image_3, alt: '' } : null,
-        ].filter(Boolean) as any[],
-        venueBadges: b.venue_badges || [],
-        promotionActive: b.promotion_active || false,
-        bcorp: b.bcorp || false,
-        story: {
-          title: b.story_title || '',
-          description: b.story_description || b.tagline || '',
-          founders: b.story_founders || [],
-        },
-        variants,
-        activations,
-        supportPackages: [],
-        serves: [],
-        mediaGallery: [],
-      };
-    });
+      })),
+      supportPackages: [],
+      serves: [],
+      mediaGallery: [],
+    }));
 
     onSuccess(mapped);
   } catch (err) {
-    console.error('Failed to sync brands:', err);
+    console.error('Sync failed:', err);
   }
 }
