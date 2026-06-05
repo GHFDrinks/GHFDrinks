@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { useBrands } from "@/hooks/useBrands";
-import { getBrandImages } from "@/lib/brand-images";
+import { getCuratedBrandAssets } from "@/lib/brand-images";
 
 export default function WinesPage() {
   const { brands, loading } = useBrands();
@@ -25,29 +25,61 @@ export default function WinesPage() {
         <p className="text-sm" style={{ color: "var(--muted-foreground)" }}>Loading...</p>
       ) : (
         <div className="grid grid-cols-3 gap-8">
-          {wines.map((b) => (
-            <Link
-              key={b.slug}
-              href={`/brands/${b.slug}`}
-              className="group block border border-gray-200 rounded-xl overflow-hidden hover:border-gray-400 transition-colors"
-            >
-              <div className="h-52 flex items-center justify-center p-6 border-b border-gray-100" style={{ background: "linear-gradient(to bottom, #ffffff, #f9f9f6)" }}>
-                {(() => {
-                  const local = getBrandImages(b.slug);
-                  const src = local?.hero || local?.variants?.[0] || b.heroImage?.url || "";
-                  return src ? (
-                    <img src={src} alt={b.name}
-                         className="object-contain transition-transform duration-500 group-hover:scale-105"
-                         style={{
-                           maxHeight: "170px",
-                           maxWidth: "100%",
-                           width: "auto",
-                           height: "auto",
-                           mixBlendMode: "multiply"
-                         }} />
-                  ) : null;
-                })()}
-              </div>
+          {wines.map((b) => {
+            const curated = getCuratedBrandAssets(b.slug);
+            const bottleShot = curated.bottleShots[0];
+            const hasRealBottle = bottleShot && !['dropworks'].includes(b.slug);
+            const coverPhoto = curated.lifestyle[0] || curated.hero || b.heroImage?.url || "";
+
+            return (
+              <Link
+                key={b.slug}
+                href={`/brands/${b.slug}`}
+                className="group block border border-gray-200 rounded-xl overflow-hidden hover:border-gray-400 transition-colors bg-white shadow-sm hover:shadow-md"
+              >
+                <div
+                  className="h-52 relative flex items-center justify-center p-6 border-b border-gray-100 overflow-hidden"
+                  style={{ background: "linear-gradient(to bottom, #ffffff, #f9f9f6)" }}
+                >
+                  {hasRealBottle ? (
+                    <>
+                      {/* Blurred beautiful lifestyle background */}
+                      {coverPhoto && (
+                        <img
+                          src={coverPhoto}
+                          alt=""
+                          className="absolute inset-0 w-full h-full object-cover opacity-15 filter blur-[2px] transition-opacity duration-300 group-hover:opacity-20"
+                        />
+                      )}
+                      {/* Clean floating bottle shot */}
+                      <img
+                        src={bottleShot}
+                        alt={b.name}
+                        className="relative z-10 object-contain transition-transform duration-500 group-hover:scale-105"
+                        style={{
+                          maxHeight: "170px",
+                          maxWidth: "100%",
+                          width: "auto",
+                          height: "auto",
+                          mixBlendMode: "multiply",
+                          filter: "drop-shadow(0 12px 10px rgba(0,0,0,0.06))"
+                        }}
+                      />
+                    </>
+                  ) : (
+                    /* Elegant full cover lifestyle photo for brands without standalone bottles */
+                    coverPhoto && (
+                      <>
+                        <img
+                          src={coverPhoto}
+                          alt={b.name}
+                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-black/5" />
+                      </>
+                    )
+                  )}
+                </div>
               <div className="p-5 border-t border-gray-100">
                 <h2
                   className="text-lg font-medium mb-1"

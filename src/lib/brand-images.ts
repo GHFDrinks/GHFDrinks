@@ -130,7 +130,16 @@ export interface CuratedAssets {
 }
 
 export function getBrandImages(slug: string) {
-  return BRAND_IMAGES[slug] ?? null;
+  const curated = getCuratedBrandAssets(slug);
+  const raw = BRAND_IMAGES[slug];
+  if (!raw) return null;
+  return {
+    hero: curated.hero,
+    logo: curated.logo || undefined,
+    lifestyle: curated.lifestyle,
+    activations: raw.activations,
+    variants: curated.bottleShots,
+  };
 }
 
 export function getCuratedBrandAssets(slug: string): CuratedAssets {
