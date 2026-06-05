@@ -2,11 +2,12 @@ import { createClient } from './client';
 import { Brand } from '@/types/brand';
 
 export async function fetchBrandsClient(): Promise<Brand[]> {
-  // Always return empty on first load — let syncBrandsClient populate
   return [];
 }
 
-export async function syncBrandsClient(onSuccess: (brands: Brand[]) => void): Promise<void> {
+export async function syncBrandsClient(
+  onSuccess: (brands: Brand[]) => void
+): Promise<void> {
   try {
     const supabase = createClient();
 
@@ -19,14 +20,19 @@ export async function syncBrandsClient(onSuccess: (brands: Brand[]) => void): Pr
       `)
       .order('name');
 
-    if (error || !brandsData || brandsData.length === 0) {
-      console.error('Supabase fetch error or empty:', error);
+    if (error) {
+      console.error('Supabase error:', error.message);
+      return;
+    }
+
+    if (!brandsData || brandsData.length === 0) {
+      console.warn('No brands returned from Supabase');
       return;
     }
 
     const mapped: Brand[] = brandsData.map((b: any) => {
       const variants = (b.brand_variants || [])
-        .sort((a: any, b: any) => (a.sort_order || 0) - (b.sort_order || 0))
+        .sort((a: any, z: any) => (a.sort_order || 0) - (z.sort_order || 0))
         .map((v: any) => ({
           id: v.id,
           name: v.name,
@@ -34,9 +40,9 @@ export async function syncBrandsClient(onSuccess: (brands: Brand[]) => void): Pr
           abv: v.abv || '',
           volume: v.volume || '',
           image: { url: v.image_url || '', alt: v.name },
-          tastingNotes: v.tasting_notes || [],
-          mixerPairings: v.mixer_pairings || [],
-          serveInspiration: v.serve_inspiration || '',
+          tastingNotes: [],
+          mixerPairings: [],
+          serveInspiration: '',
         }));
 
       const activations = (b.activations || []).map((a: any) => ({
