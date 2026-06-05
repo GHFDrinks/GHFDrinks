@@ -1,5 +1,5 @@
 import { Brand } from '@/types/brand';
-import { getBrandImages } from './brand-images';
+import { getCuratedBrandAssets } from './brand-images';
 
 const RAW_BRANDS: any[] = [
   // ─── SPIRITS ───────────────────────────────────────────
@@ -378,7 +378,7 @@ const RAW_BRANDS: any[] = [
 ];
 
 export const STATIC_BRANDS: Brand[] = RAW_BRANDS.map((b, bIndex) => {
-  const local = getBrandImages(b.slug);
+  const curated = getCuratedBrandAssets(b.slug);
   const id = String(bIndex + 1);
 
   return {
@@ -387,11 +387,9 @@ export const STATIC_BRANDS: Brand[] = RAW_BRANDS.map((b, bIndex) => {
     name: b.name,
     category: b.category,
     tagline: b.tagline || '',
-    heroImage: { url: local?.hero || b.hero_image_url || '', alt: b.name },
-    logo: local?.logo ? { url: local.logo, alt: b.name } : undefined,
-    lifestyleImages: local?.lifestyle && local.lifestyle.length > 0
-      ? local.lifestyle.map((url: string) => ({ url, alt: '' }))
-      : [],
+    heroImage: { url: curated.hero || b.hero_image_url || '', alt: b.name },
+    logo: curated.logo ? { url: curated.logo, alt: b.name } : undefined,
+    lifestyleImages: curated.lifestyle.map((url: string) => ({ url, alt: '' })),
     venueBadges: [],
     promotionActive: b.promotion_active || false,
     bcorp: b.bcorp || false,
@@ -406,22 +404,25 @@ export const STATIC_BRANDS: Brand[] = RAW_BRANDS.map((b, bIndex) => {
       description: v.description || '',
       abv: v.abv || '',
       volume: v.volume || '',
-      image: { url: local?.variants?.[index] || '', alt: v.name },
+      image: { url: curated.bottleShots[index] || curated.bottleShots[0] || '', alt: v.name },
       tastingNotes: [],
       serveInspiration: '',
     })),
-    activations: (b.activations || []).map((a: any, index: number) => ({
-      id: `${id}-a-${index + 1}`,
-      title: a.title,
-      date: a.date || '',
-      location: a.location || '',
-      description: a.description || '',
-      type: a.type || 'upcoming',
-      image: { url: local?.activations?.[index] || '', alt: a.title },
-      activationType: a.activation_type || '',
-      keyDates: a.key_dates || [],
-      mixerPairings: [],
-    })),
+    activations: (b.activations || []).map((a: any, index: number) => {
+      const rawLocal = getCuratedBrandAssets(b.slug);
+      return {
+        id: `${id}-a-${index + 1}`,
+        title: a.title,
+        date: a.date || '',
+        location: a.location || '',
+        description: a.description || '',
+        type: a.type || 'upcoming',
+        image: { url: rawLocal.lifestyle[index % rawLocal.lifestyle.length] || '', alt: a.title },
+        activationType: a.activation_type || '',
+        keyDates: a.key_dates || [],
+        mixerPairings: [],
+      };
+    }),
     supportPackages: [],
     serves: [],
     mediaGallery: [],
