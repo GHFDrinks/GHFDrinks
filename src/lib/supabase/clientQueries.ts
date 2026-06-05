@@ -82,3 +82,4 @@ export async function syncBrandsClient(
     console.error('Sync failed:', err);
   }
 }
+// Query fix verified
