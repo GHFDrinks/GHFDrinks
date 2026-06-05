@@ -209,6 +209,28 @@ const COLUMNS = ["Education", "Engagement", "Experience"] as const;
 
 type ColumnKey = (typeof COLUMNS)[number];
 
+function getSupportItemImage(title: string): string {
+  const mapping: Record<string, string> = {
+    "Staff Incentives": "/brands/sapling/lifestyle-2.jpg",
+    "WSET Courses": "/brands/pensador/lifestyle-2.jpg",
+    "Founder Masterclasses": "/brands/fielden/lifestyle-1.jpg",
+    "Cocktail Competitions": "/brands/dropworks/lifestyle-3.jpg",
+    "Brand Immersions": "/brands/sapling/lifestyle-3.jpg",
+    "Cocktail Photography": "/brands/everleaf/lifestyle-1.jpg",
+    "Staff Wine Training": "/brands/mirabeau/lifestyle-2.jpg",
+    "WSET Wine Courses": "/brands/craggy-range/lifestyle-2.jpg",
+    "Winemaker Dinners": "/brands/mirabeau/lifestyle-1.jpg",
+    "Wine Flight Menus": "/brands/coates-and-seely/lifestyle-2.jpg",
+    "Vineyard Trips": "/brands/quinta-da-romaneira/lifestyle-3.jpg",
+    "Wine Photography": "/brands/coates-and-seely/lifestyle-3.jpg",
+    "Brand Training": "/brands/pensador/lifestyle-1.jpg",
+    "Launch Event": "/brands/desdeya/lifestyle-3.jpg",
+    "Tasting Sessions": "/brands/dreamsake/lifestyle-2.jpg",
+    "Content Creation": "/brands/cote-citron/lifestyle-3.jpg",
+  };
+  return mapping[title] || "/brands/sapling/lifestyle-1.jpg";
+}
+
 export default function SupportPage() {
   const [activeId, setActiveId] = useState(SUPPORT_BUNDLES[0].id);
 
@@ -289,17 +311,16 @@ export default function SupportPage() {
                   key={i}
                   className="relative border border-gray-200 rounded-xl overflow-hidden bg-gray-50"
                 >
-                  {/* Photo placeholder — replace with real images via admin */}
+                  {/* Photo for the support bundle item */}
                   <div
-                    className="w-full flex items-center justify-center"
-                    style={{ height: "140px", backgroundColor: "var(--muted)" }}
+                    className="w-full overflow-hidden flex items-center justify-center bg-gray-100"
+                    style={{ height: "145px" }}
                   >
-                    <span
-                      className="text-xs tracking-widest uppercase"
-                      style={{ color: "var(--muted-foreground)" }}
-                    >
-                      Photo
-                    </span>
+                    <img
+                      src={getSupportItemImage(item.title)}
+                      alt={item.title}
+                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                    />
                   </div>
 
                   {/* Price circle — top right over photo */}
