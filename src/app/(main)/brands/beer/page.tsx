@@ -80,30 +80,31 @@ export default function BeerPage() {
                     )
                   )}
                 </div>
-              <div className="p-5 border-t border-gray-100">
-                <h2
-                  className="text-lg font-medium mb-1"
-                  style={{ color: "var(--accent)" }}
-                >
-                  {b.name}
-                </h2>
-                <p
-                  className="text-xs leading-relaxed line-clamp-2"
-                  style={{ color: "var(--muted-foreground)" }}
-                >
-                  {b.tagline}
-                </p>
-                {b.variants.length > 0 && (
-                  <p
-                    className="text-xs mt-3 tracking-widest uppercase font-semibold"
-                    style={{ color: "var(--gold)" }}
+                <div className="p-5 border-t border-gray-100">
+                  <h2
+                    className="text-lg font-medium mb-1"
+                    style={{ color: "var(--accent)" }}
                   >
-                    {b.variants.length} SKUs
+                    {b.name}
+                  </h2>
+                  <p
+                    className="text-xs leading-relaxed line-clamp-2"
+                    style={{ color: "var(--muted-foreground)" }}
+                  >
+                    {b.tagline}
                   </p>
-                )}
-              </div>
-            </Link>
-          ))}
+                  {b.variants.length > 0 && (
+                    <p
+                      className="text-xs mt-3 tracking-widest uppercase font-semibold"
+                      style={{ color: "var(--gold)" }}
+                    >
+                      {b.variants.length} SKUs
+                    </p>
+                  )}
+                </div>
+              </Link>
+            );
+          })}
         </div>
       )}
     </div>
