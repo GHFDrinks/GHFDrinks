@@ -55,7 +55,13 @@ export function BrandIntroSlide({ brand }: { brand: Brand }) {
           {bottleShots.length > 0
             ? bottleShots.slice(0, 4).map((src, i) => (
                 <img key={i} src={src as string} alt={brand.name}
-                     className="object-contain max-h-full" style={{ maxWidth: "140px" }} />
+                     className="object-contain max-h-full transition-transform duration-500 hover:scale-105"
+                     style={{
+                       maxWidth: "140px",
+                       width: "auto",
+                       height: "auto",
+                       mixBlendMode: "multiply"
+                     }} />
               ))
             : null}
         </div>

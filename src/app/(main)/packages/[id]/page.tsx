@@ -61,8 +61,8 @@ export default function PackageDetailPage() {
           >
             {/* Bottle shot */}
             <div
-              className="h-52 flex items-end justify-center px-4 pb-4"
-              style={{ backgroundColor: "var(--muted)" }}
+              className="h-52 flex items-center justify-center p-6 border-b border-gray-100"
+              style={{ background: "linear-gradient(to bottom, #ffffff, #f9f9f6)" }}
             >
               {(() => {
                 const local = getBrandImages(brand.slug);
@@ -71,8 +71,14 @@ export default function PackageDetailPage() {
                   <img
                     src={imgSrc}
                     alt={brand.name}
-                    className="object-contain"
-                    style={{ maxHeight: "180px" }}
+                    className="object-contain transition-transform duration-500 group-hover:scale-105"
+                    style={{
+                      maxHeight: "170px",
+                      maxWidth: "100%",
+                      width: "auto",
+                      height: "auto",
+                      mixBlendMode: "multiply"
+                    }}
                   />
                 ) : (
                   <div className="text-xs text-gray-400">{brand.name}</div>

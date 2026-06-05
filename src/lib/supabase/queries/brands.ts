@@ -1,28 +1,27 @@
-"use server";
-
 import { createClient } from '../client';
-import { Database } from '../types/database';
 import { Brand } from '@/types/brand';
 import { mockBrands } from '@/data/brands';
 import { getBrandImages } from '@/lib/brand-images';
+import { STATIC_BRANDS } from '@/lib/static-brands';
 
 export async function getBrands(): Promise<Brand[]> {
-  const supabase = await createClient();
-  
-  const { data: brandsData, error } = await supabase
-    .from('brands')
-    .select(`
-      *,
-      brand_variants (*),
-      activations (*),
-      support_packages (*),
-      serves (*)
-    `);
+  try {
+    const supabase = await createClient();
+    
+    const { data: brandsData, error } = await supabase
+      .from('brands')
+      .select(`
+        *,
+        brand_variants (*),
+        activations (*),
+        support_packages (*),
+        serves (*)
+      `);
 
-  if (error) {
-    console.error('Error fetching brands:', error);
-    return [];
-  }
+    if (error || !brandsData || brandsData.length === 0) {
+      console.warn('Error fetching brands from Supabase, using static fallback:', error);
+      return STATIC_BRANDS;
+    }
 
   // Map to frontend Brand type
   return brandsData.map((b: any) => {
@@ -119,6 +118,10 @@ export async function getBrands(): Promise<Brand[]> {
       mediaGallery: mock?.mediaGallery || [],
     };
   });
+  } catch (err) {
+    console.error('Error in getBrands query, using static fallback:', err);
+    return STATIC_BRANDS;
+  }
 }
 
 export async function getBrandBySlug(slug: string): Promise<Brand | null> {

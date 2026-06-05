@@ -35,8 +35,8 @@ export default function PackagesPage() {
             >
               {/* Bottle grid */}
               <div
-                className="h-52 flex items-end justify-center gap-2 px-4 pb-4 overflow-hidden"
-                style={{ backgroundColor: "var(--muted)" }}
+                className="h-52 flex items-center justify-center gap-2 p-6 overflow-hidden border-b border-gray-100"
+                style={{ background: "linear-gradient(to bottom, #ffffff, #f9f9f6)" }}
               >
                 {loading ? (
                   <div className="text-xs text-gray-400">Loading...</div>
@@ -51,14 +51,20 @@ export default function PackagesPage() {
                         key={b.slug}
                         src={imgUrl}
                         alt={b.name}
-                        className="object-contain"
-                        style={{ maxHeight: "160px", maxWidth: "80px" }}
+                        className="object-contain transition-transform duration-500 group-hover:scale-105"
+                        style={{
+                          maxHeight: "150px",
+                          maxWidth: "60px",
+                          width: "auto",
+                          height: "auto",
+                          mixBlendMode: "multiply"
+                        }}
                       />
                     ) : (
                       <div
                         key={b.slug}
-                        className="flex items-end justify-center"
-                        style={{ height: "160px", width: "60px" }}
+                        className="flex items-center justify-center"
+                        style={{ height: "150px", width: "50px" }}
                       >
                         <span className="text-[10px] text-center text-gray-400 leading-tight">
                           {b.name}

@@ -34,15 +34,21 @@ export default function BrandsPage() {
                 className="group block border border-gray-200 rounded-xl overflow-hidden hover:border-gray-400 transition-colors"
               >
                 <div
-                  className="h-52 flex items-end justify-center pb-4"
-                  style={{ backgroundColor: "var(--muted)" }}
+                  className="h-52 flex items-center justify-center p-6 border-b border-gray-100"
+                  style={{ background: "linear-gradient(to bottom, #ffffff, #f9f9f6)" }}
                 >
                   {heroSrc && (
                     <img
                       src={heroSrc}
                       alt={b.name}
-                      className="object-contain group-hover:scale-105 transition-transform duration-300"
-                      style={{ maxHeight: "180px" }}
+                      className="object-contain transition-transform duration-500 group-hover:scale-105"
+                      style={{
+                        maxHeight: "170px",
+                        maxWidth: "100%",
+                        width: "auto",
+                        height: "auto",
+                        mixBlendMode: "multiply"
+                      }}
                     />
                   )}
                 </div>
