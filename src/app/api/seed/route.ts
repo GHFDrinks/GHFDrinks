@@ -1,10 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const key = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-
-const supabase = createClient(url, key);
+export const dynamic = "force-dynamic";
 
 const brands = [
   // ─── SPIRITS ───────────────────────────────────────────
@@ -338,6 +335,13 @@ const brands = [
 
 export async function GET() {
   try {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+    if (!url || !key) {
+      return NextResponse.json({ success: false, error: "Missing Supabase env variables" }, { status: 500 });
+    }
+    const supabase = createClient(url, key);
+
     const results = [];
     for (const brand of brands) {
       const { variants, activations, ...brandData } = brand;
