@@ -1,152 +1,90 @@
 import { createClient } from './client';
 import { Brand } from '@/types/brand';
-import { mockBrands } from '@/data/brands';
-
-const CACHE_KEY = 'ghf_brands_cache';
 
 export async function fetchBrandsClient(): Promise<Brand[]> {
-  try {
-    if (typeof window !== 'undefined') {
-      const cached = localStorage.getItem(CACHE_KEY);
-      if (cached) {
-        try {
-          return JSON.parse(cached);
-        } catch (e) {
-          console.error('Error parsing cached brands', e);
-        }
-      }
-    }
-  } catch (err) {
-    console.error('Failed to access localStorage:', err);
-  }
-
-  // Fallback to mockBrands initially
-  return mockBrands;
+  // Always return empty on first load — let syncBrandsClient populate
+  return [];
 }
 
 export async function syncBrandsClient(onSuccess: (brands: Brand[]) => void): Promise<void> {
   try {
     const supabase = createClient();
-    
-    // Fetch live brands
+
     const { data: brandsData, error } = await supabase
       .from('brands')
       .select(`
         *,
-        media_assets (*),
         brand_variants (*),
-        activations (*),
-        support_packages (*),
-        serves (*)
-      `);
+        activations (*)
+      `)
+      .order('name');
 
-    if (error) {
-      console.error('Error fetching brands client:', error);
+    if (error || !brandsData || brandsData.length === 0) {
+      console.error('Supabase fetch error or empty:', error);
       return;
     }
 
-    if (!brandsData || brandsData.length === 0) {
-      return;
-    }
+    const mapped: Brand[] = brandsData.map((b: any) => {
+      const variants = (b.brand_variants || [])
+        .sort((a: any, b: any) => (a.sort_order || 0) - (b.sort_order || 0))
+        .map((v: any) => ({
+          id: v.id,
+          name: v.name,
+          description: v.description || '',
+          abv: v.abv || '',
+          volume: v.volume || '',
+          image: { url: v.image_url || '', alt: v.name },
+          tastingNotes: v.tasting_notes || [],
+          mixerPairings: v.mixer_pairings || [],
+          serveInspiration: v.serve_inspiration || '',
+        }));
 
-    // Map to frontend Brand type
-    const mapped = brandsData.map((b: any) => {
-      const mock = mockBrands.find(m => m.slug === b.slug);
-
-      const heroImage = b.media_assets?.find((m: any) => m.type === 'hero') || mock?.heroImage || { url: '', alt: '' };
-      const storyImage = b.media_assets?.find((m: any) => m.type === 'story') || mock?.story?.image || null;
-
-      const variants = b.brand_variants && b.brand_variants.length > 0
-        ? b.brand_variants.map((v: any) => ({
-            id: v.id,
-            name: v.name,
-            description: v.description || '',
-            abv: v.abv || '',
-            volume: v.volume || '',
-            image: { url: v.image_url || '', alt: v.name },
-          }))
-        : mock?.variants || [];
-
-      const activations = b.activations && b.activations.length > 0
-        ? b.activations.map((a: any) => ({
-            id: a.id,
-            title: a.title,
-            date: a.date || "",
-            location: a.location || "",
-            description: a.description || "",
-            type: (a.type as any) || "upcoming",
-            image: { url: a.image_url || "", alt: a.title },
-            photo1: a.photo_1_url ? { url: a.photo_1_url, alt: a.title } : undefined,
-            photo2: a.photo_2_url ? { url: a.photo_2_url, alt: a.title } : undefined,
-            activationType: a.activation_type || "",
-            keyDates: a.key_dates || [],
-            mixerPairings: a.mixer_pairings || [],
-          }))
-        : mock?.activations || [];
-
-      const supportPackages = b.support_packages && b.support_packages.length > 0
-        ? b.support_packages.map((p: any) => ({
-            id: p.id,
-            tier: p.tier as any,
-            title: p.title,
-            investment: p.investment || '',
-            benefits: p.benefits || [],
-          }))
-        : mock?.supportPackages || [];
-
-      const serves = b.serves && b.serves.length > 0
-        ? b.serves.map((s: any) => ({
-            id: s.id,
-            name: s.name,
-            ingredients: s.ingredients || [],
-            instructions: s.instructions || '',
-            image: s.image_url ? { url: s.image_url, alt: s.name } : undefined,
-          }))
-        : mock?.serves || [];
-
-      const mediaGallery = b.media_assets?.filter((m: any) => m.type === 'gallery').map((m: any) => ({
-        id: m.id,
-        url: m.url,
-        alt: m.alt || '',
-      })) || mock?.mediaGallery || [];
+      const activations = (b.activations || []).map((a: any) => ({
+        id: a.id,
+        title: a.title,
+        date: a.date || '',
+        location: a.location || '',
+        description: a.description || '',
+        type: a.type || 'upcoming',
+        image: { url: a.image_url || '', alt: a.title },
+        photo1: a.photo_1_url ? { url: a.photo_1_url, alt: a.title } : undefined,
+        photo2: a.photo_2_url ? { url: a.photo_2_url, alt: a.title } : undefined,
+        activationType: a.activation_type || '',
+        keyDates: a.key_dates || [],
+        mixerPairings: a.mixer_pairings || [],
+      }));
 
       return {
         id: b.id,
         slug: b.slug,
         name: b.name,
         category: b.category,
-        tagline: b.tagline || mock?.tagline || '',
-        heroImage: { url: heroImage.url, alt: heroImage.alt || '' },
-        logo: b.logo_url ? { url: b.logo_url, alt: b.name + " logo" } : undefined,
+        tagline: b.tagline || '',
+        heroImage: { url: b.hero_image_url || '', alt: b.name },
+        logo: b.logo_url ? { url: b.logo_url, alt: b.name + ' logo' } : undefined,
         lifestyleImages: [
-          b.lifestyle_image_1 ? { url: b.lifestyle_image_1, alt: "" } : null,
-          b.lifestyle_image_2 ? { url: b.lifestyle_image_2, alt: "" } : null,
-          b.lifestyle_image_3 ? { url: b.lifestyle_image_3, alt: "" } : null,
+          b.lifestyle_image_1 ? { url: b.lifestyle_image_1, alt: '' } : null,
+          b.lifestyle_image_2 ? { url: b.lifestyle_image_2, alt: '' } : null,
+          b.lifestyle_image_3 ? { url: b.lifestyle_image_3, alt: '' } : null,
         ].filter(Boolean) as any[],
         venueBadges: b.venue_badges || [],
         promotionActive: b.promotion_active || false,
         bcorp: b.bcorp || false,
         story: {
-          title: b.story_title || mock?.story?.title || '',
-          description: b.story_description || mock?.story?.description || '',
-          founders: b.story_founders || mock?.story?.founders || [],
-          image: storyImage ? { url: storyImage.url, alt: storyImage.alt || '' } : undefined,
+          title: b.story_title || '',
+          description: b.story_description || b.tagline || '',
+          founders: b.story_founders || [],
         },
         variants,
         activations,
-        supportPackages,
-        serves,
-        mediaGallery,
+        supportPackages: [],
+        serves: [],
+        mediaGallery: [],
       };
     });
 
-    // Save to cache
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(CACHE_KEY, JSON.stringify(mapped));
-    }
-
     onSuccess(mapped);
   } catch (err) {
-    console.error('Failed to sync brands client (might be offline):', err);
+    console.error('Failed to sync brands:', err);
   }
 }
