@@ -26,6 +26,7 @@ import { useBrands } from "@/hooks/useBrands";
 import { GripVertical, X, Check, Save, Play, Plus, Image as ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { v4 as uuidv4 } from "uuid";
+import { getBrandImages } from "@/lib/brand-images";
 
 // Sortable Brand Item Component
 function SortableBrandItem({ brand, onRemove }: { brand: Brand, onRemove: () => void }) {
@@ -48,7 +49,7 @@ function SortableBrandItem({ brand, onRemove }: { brand: Brand, onRemove: () => 
         <GripVertical className="w-5 h-5" />
       </button>
       <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0">
-        <img src={brand.heroImage.url} alt={brand.name} className="w-full h-full object-cover" />
+        <img src={brand.heroImage.url || getBrandImages(brand.slug)?.hero || ""} alt={brand.name} className="w-full h-full object-cover" />
       </div>
       <div className="flex-1 min-w-0">
         <h4 className="font-medium truncate">{brand.name}</h4>
@@ -222,7 +223,7 @@ export function PresentationBuilder() {
                   className="w-full flex items-center p-3 rounded-xl hover:bg-white/5 transition-colors group text-left"
                 >
                   <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 mr-4">
-                    <img src={brand.heroImage.url} alt={brand.name} className="w-full h-full object-cover" />
+                    <img src={brand.heroImage.url || getBrandImages(brand.slug)?.hero || ""} alt={brand.name} className="w-full h-full object-cover" />
                   </div>
                   <div className="flex-1">
                     <div className="font-medium text-sm">{brand.name}</div>
@@ -289,7 +290,7 @@ export function PresentationBuilder() {
                   <div className="grid grid-cols-2 gap-6">
                     {/* Intro Slide */}
                     <div className="aspect-video rounded-2xl border border-white/10 overflow-hidden relative group bg-black">
-                      <img src={brand.heroImage.url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-50" />
+                      <img src={brand.heroImage.url || getBrandImages(brand.slug)?.hero || ""} alt="" className="absolute inset-0 w-full h-full object-cover opacity-50" />
                       <div className="absolute inset-0 flex items-center justify-center p-6 text-center">
                         <h3 className="text-2xl font-light uppercase tracking-widest">{brand.name}</h3>
                       </div>
@@ -303,7 +304,7 @@ export function PresentationBuilder() {
                         <div className="flex space-x-4">
                           {brand.variants.map(v => (
                             <div key={v.id} className="w-12 h-20 bg-white/5 rounded-lg flex items-center justify-center p-2">
-                              <img src={v.image.url} className="max-h-full object-contain" alt="" />
+                              <img src={v.image.url || getBrandImages(brand.slug)?.variants?.[brand.variants.indexOf(v)] || ""} className="max-h-full object-contain" alt="" />
                             </div>
                           ))}
                         </div>

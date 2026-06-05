@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useBrands } from "@/hooks/useBrands";
 import { PRESENTATION_TEMPLATES } from "@/types/presentation";
+import { getBrandImages } from "@/lib/brand-images";
 
 export default function PackageDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -63,16 +64,20 @@ export default function PackageDetailPage() {
               className="h-52 flex items-end justify-center px-4 pb-4"
               style={{ backgroundColor: "var(--muted)" }}
             >
-              {brand.variants[0]?.image?.url || brand.heroImage?.url ? (
-                <img
-                  src={brand.variants[0]?.image?.url || brand.heroImage?.url}
-                  alt={brand.name}
-                  className="object-contain"
-                  style={{ maxHeight: "180px" }}
-                />
-              ) : (
-                <div className="text-xs text-gray-400">{brand.name}</div>
-              )}
+              {(() => {
+                const local = getBrandImages(brand.slug);
+                const imgSrc = brand.variants[0]?.image?.url || local?.variants?.[0] || brand.heroImage?.url || local?.hero || "";
+                return imgSrc ? (
+                  <img
+                    src={imgSrc}
+                    alt={brand.name}
+                    className="object-contain"
+                    style={{ maxHeight: "180px" }}
+                  />
+                ) : (
+                  <div className="text-xs text-gray-400">{brand.name}</div>
+                );
+              })()}
             </div>
 
             {/* Brand info */}

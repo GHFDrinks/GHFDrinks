@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usePresentation } from "@/lib/presentation-store";
 import { useBrands } from "@/hooks/useBrands";
+import { getBrandImages } from "@/lib/brand-images";
 
 export default function PresentationsPage() {
   const { savedPresentations, deletePresentation } = usePresentation();
@@ -71,8 +72,8 @@ export default function PresentationsPage() {
                   style={{ backgroundColor: "var(--muted)" }}
                 >
                   {presentationBrands.slice(0, 5).map((b) => {
-                    const imgUrl =
-                      b.variants[0]?.image?.url || b.heroImage?.url || "";
+                    const local = getBrandImages(b.slug);
+                    const imgUrl = b.variants[0]?.image?.url || local?.variants?.[0] || b.heroImage?.url || local?.hero || "";
                     return imgUrl ? (
                       <img
                         key={b.id}

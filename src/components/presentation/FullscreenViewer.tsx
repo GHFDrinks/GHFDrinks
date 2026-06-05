@@ -12,6 +12,7 @@ import { SwipeSlideNavigator } from "@/components/tablet/SwipeSlideNavigator";
 import { TabletPresentationDock } from "@/components/tablet/TabletPresentationDock";
 import { useBrands } from "@/hooks/useBrands";
 import { Brand } from "@/types/brand";
+import { getBrandImages } from "@/lib/brand-images";
 
 // Simplified generic components for the presentation mode slide renderer
 // Real implementation would reuse the actual components but wrapped for 100vh layout
@@ -24,14 +25,20 @@ function SlideRenderer({ brandId, type, brands }: { brandId: string, type: Slide
     case "intro":
       return (
         <div className="w-full h-full relative flex flex-col justify-end p-24 text-white overflow-hidden">
-          <motion.img 
-            initial={{ scale: 1.1 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-            src={brand.heroImage.url} 
-            alt="" 
-            className="absolute inset-0 w-full h-full object-cover opacity-60" 
-          />
+          {(() => {
+            const local = getBrandImages(brand.slug);
+            const imgSrc = brand.heroImage.url || local?.hero || "";
+            return imgSrc ? (
+              <motion.img 
+                initial={{ scale: 1.1 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+                src={imgSrc} 
+                alt="" 
+                className="absolute inset-0 w-full h-full object-cover opacity-60" 
+              />
+            ) : null;
+          })()}
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
           <div className="relative z-10 max-w-4xl">
             <RevealAnimation direction="up" delay={0.2}>
@@ -58,26 +65,34 @@ function SlideRenderer({ brandId, type, brands }: { brandId: string, type: Slide
                 <h3 className="text-5xl font-light mb-12">Signature Serves</h3>
               </RevealAnimation>
               <div className="space-y-8">
-                {brand.variants.map((v, i) => (
-                  <RevealAnimation key={v.id} direction="up" delay={0.4 + i * 0.1}>
-                    <div className="glass p-8 rounded-3xl flex space-x-6 items-center">
-                      <img src={v.image.url} alt="" className="w-20 h-40 object-contain hover:scale-105 transition-transform duration-500" />
-                      <div>
-                        <h4 className="text-2xl font-medium mb-2">{v.name}</h4>
-                        <p className="text-white/60 mb-4 font-light">{v.description}</p>
-                        <span className="text-accent tracking-widest uppercase text-xs font-medium">{v.abv} • {v.volume}</span>
+                {brand.variants.map((v, i) => {
+                  const local = getBrandImages(brand.slug);
+                  const vImg = v.image.url || local?.variants?.[i] || "";
+                  return (
+                    <RevealAnimation key={v.id} direction="up" delay={0.4 + i * 0.1}>
+                      <div className="glass p-8 rounded-3xl flex space-x-6 items-center">
+                        <img src={vImg} alt="" className="w-20 h-40 object-contain hover:scale-105 transition-transform duration-500" />
+                        <div>
+                          <h4 className="text-2xl font-medium mb-2">{v.name}</h4>
+                          <p className="text-white/60 mb-4 font-light">{v.description}</p>
+                          <span className="text-accent tracking-widest uppercase text-xs font-medium">{v.abv} • {v.volume}</span>
+                        </div>
                       </div>
-                    </div>
-                  </RevealAnimation>
-                ))}
+                    </RevealAnimation>
+                  );
+                })}
               </div>
             </div>
             <div className="flex items-center justify-center">
-              {brand.story.image && (
-                <RevealAnimation direction="left" delay={0.4}>
-                  <img src={brand.story.image.url} alt="" className="rounded-[2rem] h-[700px] w-full object-cover shadow-2xl" />
-                </RevealAnimation>
-              )}
+              {(() => {
+                const local = getBrandImages(brand.slug);
+                const storyImg = brand.story.image?.url || local?.lifestyle?.[0] || "";
+                return storyImg ? (
+                  <RevealAnimation direction="left" delay={0.4}>
+                    <img src={storyImg} alt="" className="rounded-[2rem] h-[700px] w-full object-cover shadow-2xl" />
+                  </RevealAnimation>
+                ) : null;
+              })()}
             </div>
           </div>
         </div>
@@ -87,14 +102,20 @@ function SlideRenderer({ brandId, type, brands }: { brandId: string, type: Slide
       if (!act) return null;
       return (
         <div className="w-full h-full relative overflow-hidden">
-          <motion.img 
-            initial={{ scale: 1.1 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-            src={act.image.url} 
-            alt="" 
-            className="absolute inset-0 w-full h-full object-cover opacity-40" 
-          />
+          {(() => {
+            const local = getBrandImages(brand.slug);
+            const actImg = act.image.url || local?.activations?.[0] || "";
+            return actImg ? (
+              <motion.img 
+                initial={{ scale: 1.1 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+                src={actImg} 
+                alt="" 
+                className="absolute inset-0 w-full h-full object-cover opacity-40" 
+              />
+            ) : null;
+          })()}
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
           <div className="relative z-10 h-full flex flex-col items-center justify-center text-center p-24 max-w-5xl mx-auto">
             <RevealAnimation direction="up" delay={0.2}>
