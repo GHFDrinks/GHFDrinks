@@ -23,7 +23,7 @@ export function BrandIntroSlide({ brand }: { brand: Brand }) {
   const venueBadges = brand.venueBadges || [];
 
   return (
-    <section className="w-full h-screen flex overflow-hidden bg-white">
+    <section className="w-full h-screen flex overflow-hidden bg-[var(--background)]">
 
       {/* LEFT — lifestyle mosaic, fixed 18% width, fills full height */}
       <div className="relative h-full flex-shrink-0" style={{ width: "18%" }}>
@@ -45,12 +45,12 @@ export function BrandIntroSlide({ brand }: { brand: Brand }) {
             {venueBadges.slice(0, 3).map((v, i) => (
               <div
                 key={i}
-                className="w-16 h-16 rounded-full bg-white shadow-lg flex items-center justify-center p-2 border border-gray-100"
+                className="w-16 h-16 rounded-full bg-[var(--background)] shadow-lg flex items-center justify-center p-2 border border-[var(--border)]"
               >
                 {v.logoUrl ? (
                   <img src={v.logoUrl} alt={v.name} className="w-full h-full object-contain" />
                 ) : (
-                  <span className="text-[9px] font-bold leading-tight text-gray-700 uppercase text-center">
+                  <span className="text-[9px] font-bold leading-tight text-[var(--foreground)]/80 uppercase text-center">
                     {v.name}
                   </span>
                 )}
@@ -104,7 +104,7 @@ export function BrandIntroSlide({ brand }: { brand: Brand }) {
           </h1>
         )}
 
-        <p className="text-base leading-relaxed text-gray-700 mb-8 max-w-md">
+        <p className="text-base leading-relaxed text-[var(--foreground)]/80 mb-8 max-w-md">
           {brand.story?.description || brand.tagline}
         </p>
 
@@ -115,7 +115,7 @@ export function BrandIntroSlide({ brand }: { brand: Brand }) {
             </p>
             <ul className="space-y-1.5">
               {brand.variants.map((v) => (
-                <li key={v.id} className="text-sm text-gray-700">
+                <li key={v.id} className="text-sm text-[var(--foreground)]/80">
                   {v.name}
                   {v.volume ? ` ${v.volume}` : ""}
                 </li>

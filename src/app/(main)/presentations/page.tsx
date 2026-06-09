@@ -13,7 +13,7 @@ export default function PresentationsPage() {
   const router = useRouter();
 
   return (
-    <div className="p-10 min-h-screen bg-white">
+    <div className="p-10 min-h-screen bg-[var(--background)]">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1
@@ -64,7 +64,7 @@ export default function PresentationsPage() {
             return (
               <div
                 key={p.id}
-                className="border border-gray-200 rounded-xl overflow-hidden bg-white hover:border-gray-400 transition-colors"
+                className="border border-[var(--border)] rounded-xl overflow-hidden bg-[var(--background)] hover:border-[var(--gold)] transition-colors"
               >
                 {/* Mini brand strip */}
                 <div
@@ -85,7 +85,7 @@ export default function PresentationsPage() {
                     ) : (
                       <div
                         key={b.id}
-                        className="text-[9px] text-center text-gray-400 leading-tight"
+                        className="text-[9px] text-center text-[var(--muted-foreground)] leading-tight"
                         style={{ width: "50px" }}
                       >
                         {b.name}

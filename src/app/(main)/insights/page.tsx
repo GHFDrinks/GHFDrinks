@@ -27,7 +27,7 @@ export default function InsightsPage() {
   ];
 
   return (
-    <div className="p-10 min-h-screen bg-white">
+    <div className="p-10 min-h-screen bg-[var(--background)]">
       <h1
         className="text-4xl font-light mb-1 tracking-tight"
         style={{ color: "var(--accent)" }}
@@ -47,7 +47,7 @@ export default function InsightsPage() {
             {stats.map((s) => (
               <div
                 key={s.label}
-                className="border border-gray-200 rounded-xl p-5"
+                className="border border-[var(--border)] rounded-xl p-5"
               >
                 <p
                   className="text-4xl font-light mb-1"
@@ -92,7 +92,7 @@ export default function InsightsPage() {
                   <Link
                     key={b.slug}
                     href={`/brands/${b.slug}`}
-                    className="border border-gray-200 rounded-xl p-4 hover:border-gray-400 transition-colors"
+                    className="border border-[var(--border)] rounded-xl p-4 hover:border-[var(--gold)] transition-colors"
                   >
                     <div className="flex items-start justify-between mb-1">
                       <p

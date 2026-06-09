@@ -13,7 +13,7 @@ export default function TastingNotesPage() {
   );
 
   return (
-    <div className="p-10 min-h-screen bg-white">
+    <div className="p-10 min-h-screen bg-[var(--background)]">
       <h1
         className="text-4xl font-light mb-1 tracking-tight"
         style={{ color: "var(--accent)" }}
@@ -37,7 +37,7 @@ export default function TastingNotesPage() {
               <Link
                 key={b.slug}
                 href={`/brands/${b.slug}`}
-                className="border border-gray-200 rounded-xl p-5 hover:border-gray-400 transition-colors"
+                className="border border-[var(--border)] rounded-xl p-5 hover:border-[var(--gold)] transition-colors"
               >
                 <p
                   className="text-xs tracking-widest uppercase mb-1"
@@ -66,13 +66,13 @@ export default function TastingNotesPage() {
           {brandsWithNotes.map((b) => (
             <div
               key={b.slug}
-              className="border border-gray-200 rounded-xl overflow-hidden"
+              className="border border-[var(--border)] rounded-xl overflow-hidden"
             >
               <button
                 onClick={() =>
                   setActiveSlug(activeSlug === b.slug ? null : b.slug)
                 }
-                className="w-full flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors"
+                className="w-full flex items-center justify-between px-6 py-4 hover:bg-[var(--card)] transition-colors"
               >
                 <div className="flex items-center gap-3">
                   <span
@@ -97,7 +97,7 @@ export default function TastingNotesPage() {
               </button>
 
               {activeSlug === b.slug && (
-                <div className="border-t border-gray-100 px-6 py-5 grid grid-cols-2 gap-6">
+                <div className="border-t border-[var(--border)] px-6 py-5 grid grid-cols-2 gap-6">
                   {b.variants.map((v) => (
                     <div key={v.id}>
                       <p

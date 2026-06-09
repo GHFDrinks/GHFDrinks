@@ -59,7 +59,7 @@ export function ImmersiveBrandStage({
           transition={{ duration: 1, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
           className="mb-6"
         >
-          <span className="px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-medium uppercase tracking-[0.2em] text-white">
+          <span className="px-4 py-1.5 rounded-full bg-[var(--background)]/10 backdrop-blur-md border border-white/20 text-xs font-medium uppercase tracking-[0.2em] text-white">
             Featured Presentation
           </span>
         </motion.div>

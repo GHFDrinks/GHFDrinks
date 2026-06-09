@@ -41,7 +41,7 @@ export default function CalendarPage() {
   );
 
   return (
-    <div className="p-10 min-h-screen bg-white">
+    <div className="p-10 min-h-screen bg-[var(--background)]">
       <h1
         className="text-4xl font-light mb-1 tracking-tight"
         style={{ color: "var(--accent)" }}
@@ -59,13 +59,13 @@ export default function CalendarPage() {
           {Object.entries(byMonth).map(([month, entries]) => (
             <div
               key={month}
-              className="border border-gray-200 rounded-xl overflow-hidden"
+              className="border border-[var(--border)] rounded-xl overflow-hidden"
             >
               <button
                 onClick={() =>
                   setActiveMonth(activeMonth === month ? null : month)
                 }
-                className="w-full flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors"
+                className="w-full flex items-center justify-between px-6 py-4 hover:bg-[var(--card)] transition-colors"
               >
                 <span
                   className="text-base font-medium"
@@ -82,12 +82,12 @@ export default function CalendarPage() {
               </button>
 
               {activeMonth === month && (
-                <div className="border-t border-gray-100">
+                <div className="border-t border-[var(--border)]">
                   {entries.map((e, i) => (
                     <Link
                       key={i}
                       href={`/brands/${e.brandSlug}`}
-                      className="flex items-start gap-4 px-6 py-3 border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors"
+                      className="flex items-start gap-4 px-6 py-3 border-b border-[var(--border)] last:border-0 hover:bg-[var(--card)] transition-colors"
                     >
                       <div className="flex-1">
                         <p
@@ -129,12 +129,12 @@ export default function CalendarPage() {
 
           {/* Ungrouped dates */}
           {ungrouped.length > 0 && (
-            <div className="border border-gray-200 rounded-xl overflow-hidden">
+            <div className="border border-[var(--border)] rounded-xl overflow-hidden">
               <button
                 onClick={() =>
                   setActiveMonth(activeMonth === "other" ? null : "other")
                 }
-                className="w-full flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors"
+                className="w-full flex items-center justify-between px-6 py-4 hover:bg-[var(--card)] transition-colors"
               >
                 <span
                   className="text-base font-medium"
@@ -150,12 +150,12 @@ export default function CalendarPage() {
                 </span>
               </button>
               {activeMonth === "other" && (
-                <div className="border-t border-gray-100">
+                <div className="border-t border-[var(--border)]">
                   {ungrouped.map((e, i) => (
                     <Link
                       key={i}
                       href={`/brands/${e.brandSlug}`}
-                      className="flex items-start gap-4 px-6 py-3 border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors"
+                      className="flex items-start gap-4 px-6 py-3 border-b border-[var(--border)] last:border-0 hover:bg-[var(--card)] transition-colors"
                     >
                       <div className="flex-1">
                         <p

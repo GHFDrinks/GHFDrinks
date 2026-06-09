@@ -138,7 +138,7 @@ export function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (op
               {isActive && (
                 <motion.div
                   layoutId="active-nav"
-                  className="absolute inset-0 bg-white/10 rounded-xl"
+                  className="absolute inset-0 bg-[var(--background)]/10 rounded-xl"
                   initial={false}
                   transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 />
@@ -169,9 +169,9 @@ export function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (op
       {/* Footer Area */}
       <Link 
         href="/profile" 
-        className="p-6 border-t border-white/5 flex items-center space-x-4 hover:bg-white/5 transition-colors cursor-pointer block"
+        className="p-6 border-t border-white/5 flex items-center space-x-4 hover:bg-[var(--background)]/5 transition-colors cursor-pointer block"
       >
-        <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-xs font-semibold text-accent">
+        <div className="w-10 h-10 rounded-full bg-[var(--background)]/5 border border-white/10 flex items-center justify-center text-xs font-semibold text-accent">
           {user ? user.initials : "JD"}
         </div>
         <div className="flex flex-col">

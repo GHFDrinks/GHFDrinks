@@ -10,7 +10,7 @@ export default function PackagesPage() {
   const { brands, loading } = useBrands();
 
   return (
-    <div className="p-10 min-h-screen bg-white">
+    <div className="p-10 min-h-screen bg-[var(--background)]">
       <h1
         className="text-4xl font-light mb-1 tracking-tight"
         style={{ color: "var(--accent)" }}
@@ -31,15 +31,15 @@ export default function PackagesPage() {
             <Link
               key={template.id}
               href={`/packages/${template.id}`}
-              className="group block rounded-xl overflow-hidden border border-gray-200 hover:border-gray-400 transition-colors bg-white"
+              className="group block rounded-xl overflow-hidden border border-[var(--border)] hover:border-[var(--gold)] transition-colors bg-[var(--background)]"
             >
               {/* Bottle grid */}
               <div
-                className="h-52 flex items-center justify-center gap-2 p-6 overflow-hidden border-b border-gray-100"
+                className="h-52 flex items-center justify-center gap-2 p-6 overflow-hidden border-b border-[var(--border)]"
                 style={{ background: "linear-gradient(to bottom, #ffffff, #f9f9f6)" }}
               >
                 {loading ? (
-                  <div className="text-xs text-gray-400">Loading...</div>
+                  <div className="text-xs text-[var(--muted-foreground)]">Loading...</div>
                 ) : templateBrands.length > 0 ? (
                   templateBrands.slice(0, 5).map((b) => {
                     const imgUrl = (() => {
@@ -66,19 +66,19 @@ export default function PackagesPage() {
                         className="flex items-center justify-center"
                         style={{ height: "150px", width: "50px" }}
                       >
-                        <span className="text-[10px] text-center text-gray-400 leading-tight">
+                        <span className="text-[10px] text-center text-[var(--muted-foreground)] leading-tight">
                           {b.name}
                         </span>
                       </div>
                     );
                   })
                 ) : (
-                  <div className="text-xs text-gray-400">No brands yet</div>
+                  <div className="text-xs text-[var(--muted-foreground)]">No brands yet</div>
                 )}
               </div>
 
               {/* Package info */}
-              <div className="p-5 border-t border-gray-100">
+              <div className="p-5 border-t border-[var(--border)]">
                 <h2
                   className="text-lg font-medium mb-1"
                   style={{ color: "var(--accent)" }}

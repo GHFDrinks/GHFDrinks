@@ -20,9 +20,9 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[var(--background)]">
       {/* Header */}
-      <div className="px-12 py-14 border-b border-gray-100" style={{ backgroundColor: "var(--accent)" }}>
+      <div className="px-12 py-14 border-b border-[var(--border)]" style={{ backgroundColor: "var(--accent)" }}>
         <div className="w-16 h-16 rounded-full border-2 flex items-center justify-center mb-6"
              style={{ borderColor: "var(--gold)", color: "var(--gold)" }}>
           <span className="text-xs font-bold tracking-widest">GHF</span>
@@ -79,7 +79,7 @@ export default function HomePage() {
         )}
 
         {/* Packages strip */}
-        <div className="mt-14 pt-10 border-t border-gray-100">
+        <div className="mt-14 pt-10 border-t border-[var(--border)]">
           <div className="flex items-center justify-between mb-5">
             <h2 className="text-xl font-medium tracking-tight" style={{ color: "var(--accent)" }}>Packages</h2>
             <Link href="/packages" className="text-xs tracking-widest uppercase" style={{ color: "var(--muted-foreground)" }}>
@@ -89,7 +89,7 @@ export default function HomePage() {
           <div className="grid grid-cols-3 gap-4">
             {PRESENTATION_TEMPLATES.map((t) => (
               <Link key={t.id} href={`/packages/${t.id}`}
-                    className="border border-gray-200 rounded-xl p-4 hover:border-gray-400 transition-colors">
+                    className="border border-[var(--border)] rounded-xl p-4 hover:border-[var(--gold)] transition-colors">
                 <p className="text-sm font-medium mb-1" style={{ color: "var(--accent)" }}>{t.name}</p>
                 <p className="text-xs leading-relaxed" style={{ color: "var(--muted-foreground)" }}>{t.description}</p>
               </Link>

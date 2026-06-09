@@ -29,7 +29,7 @@ export function TouchOptimizedSidebar() {
         </Link>
         <button 
           onClick={() => setIsOpen(true)}
-          className="w-12 h-12 -mr-3 rounded-full flex items-center justify-center text-white active:bg-white/10 transition-colors"
+          className="w-12 h-12 -mr-3 rounded-full flex items-center justify-center text-white active:bg-[var(--background)]/10 transition-colors"
         >
           <Menu className="w-6 h-6" />
         </button>
@@ -59,7 +59,7 @@ export function TouchOptimizedSidebar() {
                 </Link>
                 <button 
                   onClick={() => setIsOpen(false)}
-                  className="w-12 h-12 -mr-3 rounded-full flex items-center justify-center text-white/50 active:bg-white/10 active:text-white transition-colors"
+                  className="w-12 h-12 -mr-3 rounded-full flex items-center justify-center text-white/50 active:bg-[var(--background)]/10 active:text-white transition-colors"
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -75,7 +75,7 @@ export function TouchOptimizedSidebar() {
                         "flex items-center space-x-4 px-4 py-4 rounded-2xl transition-all active:scale-95 touch-manipulation",
                         isActive 
                           ? "bg-accent/10 text-accent font-medium border border-accent/20" 
-                          : "text-white/60 hover:bg-white/5 hover:text-white"
+                          : "text-white/60 hover:bg-[var(--background)]/5 hover:text-white"
                       )}>
                         <Icon className={cn("w-6 h-6", isActive ? "text-accent" : "text-white/40")} />
                         <span className="text-lg">{item.name}</span>

@@ -44,7 +44,7 @@ function SortableBrandItem({ brand, onRemove }: { brand: Brand, onRemove: () => 
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="flex items-center space-x-4 bg-white/5 border border-white/10 rounded-2xl p-4 group">
+    <div ref={setNodeRef} style={style} className="flex items-center space-x-4 bg-[var(--background)]/5 border border-white/10 rounded-2xl p-4 group">
       <button {...attributes} {...listeners} className="cursor-grab text-white/30 hover:text-white transition-colors">
         <GripVertical className="w-5 h-5" />
       </button>
@@ -55,7 +55,7 @@ function SortableBrandItem({ brand, onRemove }: { brand: Brand, onRemove: () => 
         <h4 className="font-medium truncate">{brand.name}</h4>
         <p className="text-xs text-muted-foreground truncate">{brand.category}</p>
       </div>
-      <button onClick={onRemove} className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10 text-white/50 hover:text-white transition-colors shrink-0">
+      <button onClick={onRemove} className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-[var(--background)]/10 text-white/50 hover:text-white transition-colors shrink-0">
         <X className="w-4 h-4" />
       </button>
     </div>
@@ -164,7 +164,7 @@ export function PresentationBuilder() {
   return (
     <div className="flex h-full bg-background">
       {/* Left Sidebar - Brand Selection & Ordering */}
-      <div className="w-[400px] border-r border-white/5 flex flex-col bg-white/[0.01]">
+      <div className="w-[400px] border-r border-white/5 flex flex-col bg-[var(--background)]/[0.01]">
         <div className="p-6 border-b border-white/5">
           <input
             type="text"
@@ -212,7 +212,7 @@ export function PresentationBuilder() {
               placeholder="Search brands..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-accent transition-colors mb-4"
+              className="w-full bg-[var(--background)]/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-accent transition-colors mb-4"
             />
             
             <div className="space-y-2">
@@ -220,7 +220,7 @@ export function PresentationBuilder() {
                 <button
                   key={brand.id}
                   onClick={() => toggleBrand(brand)}
-                  className="w-full flex items-center p-3 rounded-xl hover:bg-white/5 transition-colors group text-left"
+                  className="w-full flex items-center p-3 rounded-xl hover:bg-[var(--background)]/5 transition-colors group text-left"
                 >
                   <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 mr-4">
                     <img src={brand.heroImage.url || getBrandImages(brand.slug)?.hero || ""} alt={brand.name} className="w-full h-full object-cover" />
@@ -247,7 +247,7 @@ export function PresentationBuilder() {
             <button 
               onClick={handleSave}
               disabled={selectedBrands.length === 0}
-              className="flex-1 py-3 rounded-full border border-white/20 flex items-center justify-center space-x-2 hover:bg-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 py-3 rounded-full border border-white/20 flex items-center justify-center space-x-2 hover:bg-[var(--background)]/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Save className="w-4 h-4" />
               <span>Save</span>
@@ -255,7 +255,7 @@ export function PresentationBuilder() {
             <button 
               onClick={handlePresent}
               disabled={selectedBrands.length === 0}
-              className="flex-1 py-3 rounded-full bg-accent text-accent-foreground font-medium flex items-center justify-center space-x-2 hover:bg-white/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 py-3 rounded-full bg-accent text-accent-foreground font-medium flex items-center justify-center space-x-2 hover:bg-[var(--background)]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Play className="w-4 h-4 fill-current" />
               <span>Present</span>
@@ -281,9 +281,9 @@ export function PresentationBuilder() {
               {selectedBrands.map((brand, bIdx) => (
                 <div key={brand.id} className="space-y-6">
                   <div className="flex items-center space-x-4 mb-6">
-                    <div className="h-px flex-1 bg-white/10" />
+                    <div className="h-px flex-1 bg-[var(--background)]/10" />
                     <span className="text-xs uppercase tracking-widest text-accent font-medium">{brand.name} Sequence</span>
-                    <div className="h-px flex-1 bg-white/10" />
+                    <div className="h-px flex-1 bg-[var(--background)]/10" />
                   </div>
                   
                   {/* Mock Slide Preview Cards */}
@@ -303,12 +303,12 @@ export function PresentationBuilder() {
                         <h4 className="text-sm text-white/50 uppercase tracking-widest mb-4">The Collection</h4>
                         <div className="flex space-x-4">
                           {brand.variants.map(v => (
-                            <div key={v.id} className="w-12 h-20 bg-white/5 rounded-lg flex items-center justify-center p-2">
+                            <div key={v.id} className="w-12 h-20 bg-[var(--background)]/5 rounded-lg flex items-center justify-center p-2">
                               <img src={v.image.url || getBrandImages(brand.slug)?.variants?.[brand.variants.indexOf(v)] || ""} className="max-h-full object-contain" alt="" />
                             </div>
                           ))}
                         </div>
-                        <div className="absolute top-3 left-3 px-2 py-1 bg-white/10 backdrop-blur-md rounded text-[10px] uppercase font-medium">Tasting & Variants</div>
+                        <div className="absolute top-3 left-3 px-2 py-1 bg-[var(--background)]/10 backdrop-blur-md rounded text-[10px] uppercase font-medium">Tasting & Variants</div>
                       </div>
                     )}
                   </div>

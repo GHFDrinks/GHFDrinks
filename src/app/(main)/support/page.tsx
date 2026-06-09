@@ -238,7 +238,7 @@ export default function SupportPage() {
 
   return (
     <div
-      className="flex flex-col min-h-screen bg-white overflow-hidden"
+      className="flex flex-col min-h-screen bg-[var(--background)] overflow-hidden"
       style={{ maxHeight: "100vh" }}
     >
       {/* Bundle selector tabs */}
@@ -290,7 +290,7 @@ export default function SupportPage() {
       </div>
 
       {/* Divider */}
-      <div className="mx-10 border-t border-gray-200 flex-shrink-0" />
+      <div className="mx-10 border-t border-[var(--border)] flex-shrink-0" />
 
       {/* 3-column grid */}
       <div className="flex-1 grid grid-cols-3 gap-6 px-10 py-6 overflow-auto">
@@ -309,7 +309,7 @@ export default function SupportPage() {
               {(bundle.columns[col as ColumnKey] || []).map((item, i) => (
                 <div
                   key={i}
-                  className="relative border border-gray-200 rounded-xl overflow-hidden bg-gray-50"
+                  className="relative border border-[var(--border)] rounded-xl overflow-hidden bg-gray-50"
                 >
                   {/* Photo for the support bundle item */}
                   <div
@@ -325,7 +325,7 @@ export default function SupportPage() {
 
                   {/* Price circle — top right over photo */}
                   <div
-                    className="absolute top-2 right-2 w-11 h-11 rounded-full bg-white border-2 flex items-center justify-center text-xs font-bold shadow-sm"
+                    className="absolute top-2 right-2 w-11 h-11 rounded-full bg-[var(--background)] border-2 flex items-center justify-center text-xs font-bold shadow-sm"
                     style={{
                       borderColor: "var(--accent)",
                       color: "var(--accent)",

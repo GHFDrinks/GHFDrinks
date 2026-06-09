@@ -20,7 +20,7 @@ export function TopNav({ toggleSidebar }: { toggleSidebar: () => void }) {
       <div className="flex items-center">
         <button
           onClick={toggleSidebar}
-          className="mr-6 p-2 -ml-2 rounded-full hover:bg-white/5 transition-colors lg:hidden text-white"
+          className="mr-6 p-2 -ml-2 rounded-full hover:bg-[var(--background)]/5 transition-colors lg:hidden text-white"
         >
           <Menu className="w-5 h-5" />
         </button>
@@ -29,10 +29,10 @@ export function TopNav({ toggleSidebar }: { toggleSidebar: () => void }) {
 
       <div className="flex items-center space-x-4">
         <InstallPrompt />
-        <button className="w-10 h-10 rounded-full hover:bg-white/5 flex items-center justify-center transition-colors text-muted-foreground hover:text-white">
+        <button className="w-10 h-10 rounded-full hover:bg-[var(--background)]/5 flex items-center justify-center transition-colors text-muted-foreground hover:text-white">
           <Search className="w-5 h-5" strokeWidth={1.5} />
         </button>
-        <button className="relative w-10 h-10 rounded-full hover:bg-white/5 flex items-center justify-center transition-colors text-muted-foreground hover:text-white">
+        <button className="relative w-10 h-10 rounded-full hover:bg-[var(--background)]/5 flex items-center justify-center transition-colors text-muted-foreground hover:text-white">
           <Bell className="w-5 h-5" strokeWidth={1.5} />
           <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-accent border-2 border-background"></span>
         </button>

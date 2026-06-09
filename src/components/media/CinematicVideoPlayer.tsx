@@ -120,7 +120,7 @@ export function CinematicVideoPlayer({
             <div className="flex items-center space-x-6">
               <button 
                 onClick={togglePlay}
-                className="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+                className="w-12 h-12 rounded-full bg-[var(--background)]/10 hover:bg-[var(--background)]/20 backdrop-blur-md border border-white/20 flex items-center justify-center transition-all hover:scale-105 active:scale-95"
               >
                 {isPlaying ? (
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-white">

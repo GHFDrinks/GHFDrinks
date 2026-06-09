@@ -13,7 +13,7 @@ export function TastingNotes({ notes }: { notes: TastingNote[] }) {
             <span className="font-medium text-white/90">{note.flavor}</span>
             <span className="text-white/40">{note.intensity}%</span>
           </div>
-          <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+          <div className="h-1.5 w-full bg-[var(--background)]/10 rounded-full overflow-hidden">
             <motion.div
               initial={{ width: 0 }}
               whileInView={{ width: `${note.intensity}%` }}

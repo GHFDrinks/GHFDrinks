@@ -128,7 +128,7 @@ function SlideRenderer({ brandId, type, brands }: { brandId: string, type: Slide
               <p className="text-3xl text-white/80 font-light mb-12 leading-relaxed font-serif italic drop-shadow-xl">{act.description}</p>
             </RevealAnimation>
             <RevealAnimation direction="up" delay={0.5}>
-              <div className="flex items-center justify-center space-x-12 text-xl font-medium px-8 py-4 bg-white/5 backdrop-blur-md rounded-full border border-white/10">
+              <div className="flex items-center justify-center space-x-12 text-xl font-medium px-8 py-4 bg-[var(--background)]/5 backdrop-blur-md rounded-full border border-white/10">
                 <span>{act.date}</span>
                 <span className="text-accent">•</span>
                 <span>{act.location}</span>
@@ -248,7 +248,7 @@ export function FullscreenViewer({ presentationId }: { presentationId: string })
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center text-white p-24 text-center">
               <h1 className="text-6xl font-light mb-8">Presentation Complete</h1>
-              <button onClick={exitFullscreen} className="px-8 py-4 rounded-full bg-white text-black font-medium text-lg">
+              <button onClick={exitFullscreen} className="px-8 py-4 rounded-full bg-[var(--background)] text-black font-medium text-lg">
                 Exit Presentation
               </button>
             </div>
@@ -261,7 +261,7 @@ export function FullscreenViewer({ presentationId }: { presentationId: string })
         <div className="text-white/60 font-medium tracking-widest text-sm uppercase">
           {presentation.name}
         </div>
-        <button onClick={exitFullscreen} className="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center backdrop-blur-md transition-colors text-white pointer-events-auto">
+        <button onClick={exitFullscreen} className="w-12 h-12 rounded-full bg-[var(--background)]/10 hover:bg-[var(--background)]/20 flex items-center justify-center backdrop-blur-md transition-colors text-white pointer-events-auto">
           <X className="w-6 h-6" />
         </button>
       </div>

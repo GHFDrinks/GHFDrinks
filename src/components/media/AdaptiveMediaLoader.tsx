@@ -21,7 +21,7 @@ export function AdaptiveMediaLoader({ src, type, alt, className = "" }: Adaptive
   }, [src]);
 
   return (
-    <div className={`relative overflow-hidden bg-white/5 ${className}`}>
+    <div className={`relative overflow-hidden bg-[var(--background)]/5 ${className}`}>
       <AnimatePresence>
         {!isLoaded && !error && (
           <motion.div

@@ -34,7 +34,7 @@ export function ActivationSection({ activations }: { activations: Activation[] }
             
             <div className="absolute inset-0 p-8 flex flex-col justify-end">
               <div className="flex items-center space-x-2 mb-4">
-                <span className="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-medium uppercase tracking-widest text-white">
+                <span className="px-3 py-1 bg-[var(--background)]/20 backdrop-blur-md rounded-full text-xs font-medium uppercase tracking-widest text-white">
                   {activation.type}
                 </span>
               </div>

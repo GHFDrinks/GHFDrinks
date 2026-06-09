@@ -32,7 +32,7 @@ export function SessionRecovery() {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 50 }}
-          className="fixed bottom-6 right-6 z-50 flex items-center p-4 bg-white text-black rounded-2xl shadow-2xl space-x-4 max-w-sm"
+          className="fixed bottom-6 right-6 z-50 flex items-center p-4 bg-[var(--background)] text-black rounded-2xl shadow-2xl space-x-4 max-w-sm"
         >
           <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center shrink-0">
             <Save className="w-5 h-5 text-accent" />

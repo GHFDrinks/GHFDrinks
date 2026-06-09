@@ -12,7 +12,7 @@ export default function ActivationsPage() {
   );
 
   return (
-    <div className="p-10 min-h-screen bg-white">
+    <div className="p-10 min-h-screen bg-[var(--background)]">
       <h1
         className="text-4xl font-light mb-1 tracking-tight"
         style={{ color: "var(--accent)" }}
@@ -35,7 +35,7 @@ export default function ActivationsPage() {
             <Link
               key={a.id}
               href={`/brands/${a.brandSlug}`}
-              className="group block border border-gray-200 rounded-xl overflow-hidden hover:border-gray-400 transition-colors"
+              className="group block border border-[var(--border)] rounded-xl overflow-hidden hover:border-[var(--gold)] transition-colors"
             >
               {a.image?.url && (
                 <div className="h-48 overflow-hidden">

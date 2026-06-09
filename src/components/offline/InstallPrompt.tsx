@@ -53,7 +53,7 @@ export function InstallPrompt() {
   return (
     <button 
       onClick={handleInstallClick}
-      className="p-2 hover:bg-white/5 rounded-full transition-colors group flex items-center justify-center relative text-white"
+      className="p-2 hover:bg-[var(--background)]/5 rounded-full transition-colors group flex items-center justify-center relative text-white"
       title="Install Presentation App"
     >
       <Download className="w-5 h-5" />

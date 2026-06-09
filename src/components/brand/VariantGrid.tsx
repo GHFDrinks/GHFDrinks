@@ -23,7 +23,7 @@ export function VariantGrid({ variants }: { variants: BrandVariant[] }) {
             transition={{ delay: idx * 0.1, duration: 0.8 }}
             className="glass rounded-3xl p-8 flex flex-col h-full"
           >
-            <div className="relative h-80 w-full mb-8 rounded-2xl overflow-hidden bg-white/5 flex items-center justify-center p-8">
+            <div className="relative h-80 w-full mb-8 rounded-2xl overflow-hidden bg-[var(--background)]/5 flex items-center justify-center p-8">
               <img
                 src={variant.image.url}
                 alt={variant.image.alt}

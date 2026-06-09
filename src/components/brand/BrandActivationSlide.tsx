@@ -20,14 +20,14 @@ export function BrandActivationSlide({ brand }: { brand: Brand }) {
   const tickerText = allDates.length > 0 ? allDates.join("    ·    ") : "";
 
   return (
-    <section className="w-full h-screen flex flex-col overflow-hidden bg-white">
+    <section className="w-full h-screen flex flex-col overflow-hidden bg-[var(--background)]">
 
       {/* MAIN ROW */}
       <div className="flex flex-1 min-h-0 overflow-hidden">
 
         {/* LEFT COLUMN — activation type badge + mixer strip, fixed 90px */}
         <div
-          className="h-full flex-shrink-0 flex flex-col items-center justify-between py-10 border-r border-gray-100"
+          className="h-full flex-shrink-0 flex flex-col items-center justify-between py-10 border-r border-[var(--border)]"
           style={{ width: "90px" }}
         >
           {act1?.activationType ? (
@@ -46,7 +46,7 @@ export function BrandActivationSlide({ brand }: { brand: Brand }) {
           {act1?.mixerPairings && act1.mixerPairings[0] ? (
             <div className="flex flex-col items-center gap-3">
               <span
-                className="text-[9px] tracking-widest uppercase text-gray-400"
+                className="text-[9px] tracking-widest uppercase text-[var(--muted-foreground)]"
                 style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
               >
                 Try with...
@@ -71,7 +71,7 @@ export function BrandActivationSlide({ brand }: { brand: Brand }) {
               key={act.id}
               className={
                 "flex-1 min-w-0 h-full flex flex-col" +
-                (idx === 0 ? " border-r border-gray-100" : "")
+                (idx === 0 ? " border-r border-[var(--border)]" : "")
               }
             >
               {/* Photo — fills top 62% */}
@@ -92,7 +92,7 @@ export function BrandActivationSlide({ brand }: { brand: Brand }) {
 
               {/* Text */}
               <div className="flex-1 min-h-0 px-8 py-6 overflow-hidden">
-                <p className="text-[11px] tracking-[0.2em] uppercase text-gray-400 mb-2">
+                <p className="text-[11px] tracking-[0.2em] uppercase text-[var(--muted-foreground)] mb-2">
                   Activation
                 </p>
                 <h3
@@ -101,7 +101,7 @@ export function BrandActivationSlide({ brand }: { brand: Brand }) {
                 >
                   {act.title}
                 </h3>
-                <p className="text-sm text-gray-600 leading-relaxed mb-4">
+                <p className="text-sm text-[var(--foreground)]/80 leading-relaxed mb-4">
                   {act.description}
                 </p>
                 {act.keyDates && act.keyDates.length > 0 && (
@@ -109,7 +109,7 @@ export function BrandActivationSlide({ brand }: { brand: Brand }) {
                     <p className="text-[11px] font-bold tracking-[0.2em] uppercase mb-1">
                       Key Dates
                     </p>
-                    <p className="text-sm text-gray-700 leading-relaxed">
+                    <p className="text-sm text-[var(--foreground)]/80 leading-relaxed">
                       {act.keyDates.join(" | ")}
                     </p>
                   </div>
@@ -123,7 +123,7 @@ export function BrandActivationSlide({ brand }: { brand: Brand }) {
       {/* SCROLLING TICKER */}
       {tickerText && (
         <div
-          className="h-9 flex-shrink-0 flex items-center overflow-hidden border-t border-gray-200"
+          className="h-9 flex-shrink-0 flex items-center overflow-hidden border-t border-[var(--border)]"
           style={{ backgroundColor: "var(--muted)" }}
         >
           <div className="flex animate-marquee whitespace-nowrap">

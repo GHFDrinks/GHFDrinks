@@ -46,7 +46,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
             </div>
             <button
               onClick={this.resetError}
-              className="px-8 py-4 rounded-full bg-white text-black font-medium hover:bg-white/90 transition-transform hover:scale-105 active:scale-95 flex items-center justify-center space-x-3 w-full"
+              className="px-8 py-4 rounded-full bg-[var(--background)] text-black font-medium hover:bg-[var(--background)]/90 transition-transform hover:scale-105 active:scale-95 flex items-center justify-center space-x-3 w-full"
             >
               <RefreshCcw className="w-5 h-5" />
               <span>Recover Session</span>

@@ -67,10 +67,10 @@ export default function NewPresentationPage() {
     .filter(Boolean) as typeof brands;
 
   return (
-    <div className="flex min-h-screen bg-white">
+    <div className="flex min-h-screen bg-[var(--background)]">
 
       {/* LEFT — brand picker */}
-      <div className="flex-1 p-10 border-r border-gray-100 overflow-y-auto">
+      <div className="flex-1 p-10 border-r border-[var(--border)] overflow-y-auto">
         <h1
           className="text-3xl font-light mb-1 tracking-tight"
           style={{ color: "var(--accent)" }}
@@ -166,7 +166,7 @@ export default function NewPresentationPage() {
 
       {/* RIGHT — selected order + save */}
       <div
-        className="w-72 flex-shrink-0 flex flex-col p-6 border-l border-gray-100"
+        className="w-72 flex-shrink-0 flex flex-col p-6 border-l border-[var(--border)]"
         style={{ backgroundColor: "var(--muted)" }}
       >
         <h2
@@ -189,7 +189,7 @@ export default function NewPresentationPage() {
             {selectedBrands.map((b, idx) => (
               <div
                 key={b.id}
-                className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-3 py-2"
+                className="flex items-center gap-2 bg-[var(--background)] border border-[var(--border)] rounded-lg px-3 py-2"
               >
                 {/* Index */}
                 <span
@@ -209,14 +209,14 @@ export default function NewPresentationPage() {
                   <button
                     onClick={() => moveUp(b.id)}
                     disabled={idx === 0}
-                    className="text-gray-400 hover:text-gray-700 disabled:opacity-20 text-xs leading-none"
+                    className="text-[var(--muted-foreground)] hover:text-[var(--foreground)]/80 disabled:opacity-20 text-xs leading-none"
                   >
                     ▲
                   </button>
                   <button
                     onClick={() => moveDown(b.id)}
                     disabled={idx === selectedBrands.length - 1}
-                    className="text-gray-400 hover:text-gray-700 disabled:opacity-20 text-xs leading-none"
+                    className="text-[var(--muted-foreground)] hover:text-[var(--foreground)]/80 disabled:opacity-20 text-xs leading-none"
                   >
                     ▼
                   </button>

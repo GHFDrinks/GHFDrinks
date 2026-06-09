@@ -10,7 +10,7 @@ export default function BeerPage() {
   const beer = brands.filter((b) => b.category === "Beer, Cider & Mixer");
 
   return (
-    <div className="p-10 min-h-screen bg-white">
+    <div className="p-10 min-h-screen bg-[var(--background)]">
       <h1
         className="text-4xl font-light mb-1 tracking-tight"
         style={{ color: "var(--accent)" }}
@@ -35,10 +35,10 @@ export default function BeerPage() {
               <Link
                 key={b.slug}
                 href={`/brands/${b.slug}`}
-                className="group block border border-gray-200 rounded-xl overflow-hidden hover:border-gray-400 transition-colors bg-white shadow-sm hover:shadow-md"
+                className="group block border border-[var(--border)] rounded-xl overflow-hidden hover:border-[var(--gold)] transition-colors bg-[var(--background)] shadow-sm hover:shadow-md"
               >
                 <div
-                  className="h-52 relative flex items-center justify-center p-6 border-b border-gray-100 overflow-hidden"
+                  className="h-52 relative flex items-center justify-center p-6 border-b border-[var(--border)] overflow-hidden"
                   style={{ background: "linear-gradient(to bottom, #ffffff, #f9f9f6)" }}
                 >
                   {hasRealBottle ? (
@@ -80,7 +80,7 @@ export default function BeerPage() {
                     )
                   )}
                 </div>
-                <div className="p-5 border-t border-gray-100">
+                <div className="p-5 border-t border-[var(--border)]">
                   <h2
                     className="text-lg font-medium mb-1"
                     style={{ color: "var(--accent)" }}

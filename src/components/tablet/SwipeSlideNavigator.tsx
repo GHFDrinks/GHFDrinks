@@ -98,14 +98,14 @@ export function SwipeSlideNavigator({ currentIndex, totalSlides, onNext, onPrev,
         <button 
           onClick={(e) => { e.stopPropagation(); paginate(-1); }}
           disabled={currentIndex === 0}
-          className="w-16 h-16 rounded-full bg-black/40 backdrop-blur-2xl border border-white/10 flex items-center justify-center hover:bg-white/20 transition-colors disabled:opacity-30 disabled:pointer-events-none pointer-events-auto active:scale-95"
+          className="w-16 h-16 rounded-full bg-black/40 backdrop-blur-2xl border border-white/10 flex items-center justify-center hover:bg-[var(--background)]/20 transition-colors disabled:opacity-30 disabled:pointer-events-none pointer-events-auto active:scale-95"
         >
           <ChevronLeft className="w-8 h-8 text-white" />
         </button>
         <button 
           onClick={(e) => { e.stopPropagation(); paginate(1); }}
           disabled={currentIndex === totalSlides - 1}
-          className="w-16 h-16 rounded-full bg-black/40 backdrop-blur-2xl border border-white/10 flex items-center justify-center hover:bg-white/20 transition-colors disabled:opacity-30 disabled:pointer-events-none pointer-events-auto active:scale-95"
+          className="w-16 h-16 rounded-full bg-black/40 backdrop-blur-2xl border border-white/10 flex items-center justify-center hover:bg-[var(--background)]/20 transition-colors disabled:opacity-30 disabled:pointer-events-none pointer-events-auto active:scale-95"
         >
           <ChevronRight className="w-8 h-8 text-white" />
         </button>

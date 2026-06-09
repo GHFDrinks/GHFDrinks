@@ -41,14 +41,14 @@ export function SyncConflictResolver() {
               <div className="space-y-3">
                 <button 
                   onClick={() => setConflict(null)}
-                  className="w-full px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl flex items-center justify-between text-sm transition-colors group"
+                  className="w-full px-4 py-3 bg-[var(--background)]/5 hover:bg-[var(--background)]/10 border border-white/10 rounded-xl flex items-center justify-between text-sm transition-colors group"
                 >
                   <span className="font-medium text-white/80 group-hover:text-white">Keep Local Version</span>
                   <Check className="w-4 h-4 text-white/40 group-hover:text-accent" />
                 </button>
                 <button 
                   onClick={() => setConflict(null)}
-                  className="w-full px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl flex items-center justify-between text-sm transition-colors group"
+                  className="w-full px-4 py-3 bg-[var(--background)]/5 hover:bg-[var(--background)]/10 border border-white/10 rounded-xl flex items-center justify-between text-sm transition-colors group"
                 >
                   <span className="font-medium text-white/80 group-hover:text-white">Use Cloud Version</span>
                   <Check className="w-4 h-4 text-white/40 group-hover:text-accent" />

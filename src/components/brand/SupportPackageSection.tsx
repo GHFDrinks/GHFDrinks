@@ -23,7 +23,7 @@ export function SupportPackageSection({ packages }: { packages: SupportPackage[]
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ delay: idx * 0.1, duration: 0.8 }}
-            className="p-8 rounded-[2rem] border border-white/10 bg-white/[0.02] hover:bg-white/[0.04] transition-colors relative overflow-hidden"
+            className="p-8 rounded-[2rem] border border-white/10 bg-[var(--background)]/[0.02] hover:bg-[var(--background)]/[0.04] transition-colors relative overflow-hidden"
           >
             <div className="absolute top-0 right-0 p-8 opacity-10">
               {/* Optional background watermarks */}
@@ -46,7 +46,7 @@ export function SupportPackageSection({ packages }: { packages: SupportPackage[]
             </ul>
             
             <div className="mt-12 relative z-10">
-              <button className="w-full py-4 rounded-full border border-white/20 hover:bg-white text-white hover:text-black transition-colors font-medium">
+              <button className="w-full py-4 rounded-full border border-white/20 hover:bg-[var(--background)] text-white hover:text-black transition-colors font-medium">
                 Inquire Now
               </button>
             </div>

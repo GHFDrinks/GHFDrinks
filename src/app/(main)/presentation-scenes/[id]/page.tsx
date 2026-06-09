@@ -41,7 +41,7 @@ export default function PresentationScenePage({ params }: { params: Promise<{ id
             <div className="flex items-center space-x-6">
               <button 
                 onClick={() => setIsPlaying(!isPlaying)}
-                className="w-16 h-16 rounded-full bg-white text-black flex items-center justify-center hover:scale-110 transition-transform active:scale-95"
+                className="w-16 h-16 rounded-full bg-[var(--background)] text-black flex items-center justify-center hover:scale-110 transition-transform active:scale-95"
               >
                 {isPlaying ? <Expand className="w-6 h-6" /> : <Play className="w-6 h-6 ml-1" />}
               </button>
@@ -55,18 +55,18 @@ export default function PresentationScenePage({ params }: { params: Promise<{ id
 
       <button 
         onClick={() => setShowContent(!showContent)}
-        className="absolute bottom-12 right-12 px-6 py-3 rounded-full bg-black/40 backdrop-blur-xl border border-white/20 text-sm font-medium uppercase tracking-widest hover:bg-white/10 transition-colors z-50"
+        className="absolute bottom-12 right-12 px-6 py-3 rounded-full bg-black/40 backdrop-blur-xl border border-white/20 text-sm font-medium uppercase tracking-widest hover:bg-[var(--background)]/10 transition-colors z-50"
       >
         {showContent ? "Hide UI" : "Show UI"}
       </button>
 
       <div className="absolute top-12 right-12 z-50 flex items-center space-x-4">
         <Link href="/presentations">
-          <button className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-xl border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors">
+          <button className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-xl border border-white/10 flex items-center justify-center hover:bg-[var(--background)]/10 transition-colors">
             <ArrowLeft className="w-5 h-5" />
           </button>
         </Link>
-        <button className="w-12 h-12 rounded-full bg-accent text-black flex items-center justify-center hover:bg-white transition-colors">
+        <button className="w-12 h-12 rounded-full bg-accent text-black flex items-center justify-center hover:bg-[var(--background)] transition-colors">
           <ArrowRight className="w-5 h-5" />
         </button>
       </div>

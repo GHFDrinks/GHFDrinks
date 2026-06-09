@@ -21,19 +21,19 @@ export default function BrandStoryPage({ params }: { params: Promise<{ slug: str
         <div className="flex justify-center space-x-6">
           <button 
             onClick={() => setActiveTab("heritage")}
-            className={`px-6 py-2.5 rounded-full backdrop-blur-md border transition-all text-sm font-medium uppercase tracking-widest ${activeTab === "heritage" ? 'bg-white text-black border-white' : 'bg-black/40 text-white border-white/20 hover:bg-white/10'}`}
+            className={`px-6 py-2.5 rounded-full backdrop-blur-md border transition-all text-sm font-medium uppercase tracking-widest ${activeTab === "heritage" ? 'bg-[var(--background)] text-black border-white' : 'bg-black/40 text-white border-white/20 hover:bg-[var(--background)]/10'}`}
           >
             Heritage
           </button>
           <button 
             onClick={() => setActiveTab("botanicals")}
-            className={`px-6 py-2.5 rounded-full backdrop-blur-md border transition-all text-sm font-medium uppercase tracking-widest ${activeTab === "botanicals" ? 'bg-white text-black border-white' : 'bg-black/40 text-white border-white/20 hover:bg-white/10'}`}
+            className={`px-6 py-2.5 rounded-full backdrop-blur-md border transition-all text-sm font-medium uppercase tracking-widest ${activeTab === "botanicals" ? 'bg-[var(--background)] text-black border-white' : 'bg-black/40 text-white border-white/20 hover:bg-[var(--background)]/10'}`}
           >
             Botanicals
           </button>
           <button 
             onClick={() => setActiveTab("sustainability")}
-            className={`px-6 py-2.5 rounded-full backdrop-blur-md border transition-all text-sm font-medium uppercase tracking-widest ${activeTab === "sustainability" ? 'bg-white text-black border-white' : 'bg-black/40 text-white border-white/20 hover:bg-white/10'}`}
+            className={`px-6 py-2.5 rounded-full backdrop-blur-md border transition-all text-sm font-medium uppercase tracking-widest ${activeTab === "sustainability" ? 'bg-[var(--background)] text-black border-white' : 'bg-black/40 text-white border-white/20 hover:bg-[var(--background)]/10'}`}
           >
             Sustainability
           </button>
@@ -75,7 +75,7 @@ export default function BrandStoryPage({ params }: { params: Promise<{ slug: str
       </AnimatePresence>
 
       <Link href="/presentations">
-        <button className="absolute top-8 left-8 w-12 h-12 rounded-full bg-black/40 backdrop-blur-xl border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors z-50 text-white">
+        <button className="absolute top-8 left-8 w-12 h-12 rounded-full bg-black/40 backdrop-blur-xl border border-white/10 flex items-center justify-center hover:bg-[var(--background)]/10 transition-colors z-50 text-white">
           <ArrowLeft className="w-5 h-5" />
         </button>
       </Link>

@@ -150,9 +150,9 @@ export default function ImmersivePresentationViewer({ params }: { params: Promis
               <button 
                 onMouseEnter={() => setShowHotspotDetails(hotspot.label)}
                 onMouseLeave={() => setShowHotspotDetails(null)}
-                className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md border border-white/40 flex items-center justify-center group transition-transform hover:scale-125"
+                className="w-8 h-8 rounded-full bg-[var(--background)]/20 backdrop-blur-md border border-white/40 flex items-center justify-center group transition-transform hover:scale-125"
               >
-                <div className="w-2 h-2 rounded-full bg-white group-hover:bg-accent transition-colors" />
+                <div className="w-2 h-2 rounded-full bg-[var(--background)] group-hover:bg-accent transition-colors" />
               </button>
               <AnimatePresence>
                 {showHotspotDetails === hotspot.label && (
@@ -174,7 +174,7 @@ export default function ImmersivePresentationViewer({ params }: { params: Promis
       {/* Persistent Presentation Overlay UI */}
       <div className="absolute top-0 left-0 right-0 p-8 flex justify-between items-start z-50 pointer-events-none">
         <Link href="/presentations" className="pointer-events-auto">
-          <button className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-xl border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors">
+          <button className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-xl border border-white/10 flex items-center justify-center hover:bg-[var(--background)]/10 transition-colors">
             <X className="w-5 h-5 text-white/70" />
           </button>
         </Link>
@@ -210,7 +210,7 @@ export default function ImmersivePresentationViewer({ params }: { params: Promis
           <button 
             key={idx}
             onClick={() => setCurrentSceneIdx(idx)}
-            className={`h-1.5 rounded-full transition-all duration-500 ${idx === currentSceneIdx ? 'w-12 bg-white' : 'w-4 bg-white/20 hover:bg-white/40'}`}
+            className={`h-1.5 rounded-full transition-all duration-500 ${idx === currentSceneIdx ? 'w-12 bg-[var(--background)]' : 'w-4 bg-[var(--background)]/20 hover:bg-[var(--background)]/40'}`}
           />
         ))}
       </div>

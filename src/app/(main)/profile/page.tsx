@@ -217,7 +217,7 @@ export default function ProfilePage() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Jane Doe"
-                      className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:border-accent transition-colors"
+                      className="w-full bg-[var(--background)]/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:border-accent transition-colors"
                     />
                   </div>
                 </div>
@@ -231,7 +231,7 @@ export default function ProfilePage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="jane.doe@ghfdrinks.com"
-                      className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:border-accent transition-colors"
+                      className="w-full bg-[var(--background)]/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:border-accent transition-colors"
                     />
                   </div>
                 </div>
@@ -257,7 +257,7 @@ export default function ProfilePage() {
 
             <button
               onClick={handleSaveLocal}
-              className="w-full py-4 mt-8 rounded-full bg-white/15 text-white hover:bg-white/20 transition-all font-medium flex items-center justify-center space-x-2 border border-white/10 active:scale-95 transform"
+              className="w-full py-4 mt-8 rounded-full bg-[var(--background)]/15 text-white hover:bg-[var(--background)]/20 transition-all font-medium flex items-center justify-center space-x-2 border border-white/10 active:scale-95 transform"
             >
               <Save className="w-4 h-4" />
               <span>Apply Offline Profile</span>
@@ -285,7 +285,7 @@ export default function ProfilePage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-accent transition-colors"
+                    className="w-full bg-[var(--background)]/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-accent transition-colors"
                   />
                   <p className="text-[10px] text-muted-foreground">Min. 6 characters. Stores profile metadata in cloud.</p>
                 </div>
@@ -295,7 +295,7 @@ export default function ProfilePage() {
             <button
               onClick={handleSignUpCloud}
               disabled={loading}
-              className="w-full py-4 mt-8 rounded-full bg-accent text-accent-foreground font-semibold flex items-center justify-center space-x-2 hover:bg-white transition-all active:scale-95 transform disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-4 mt-8 rounded-full bg-accent text-accent-foreground font-semibold flex items-center justify-center space-x-2 hover:bg-[var(--background)] transition-all active:scale-95 transform disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <Loader2 className="w-4 h-4 animate-spin text-accent-foreground" />

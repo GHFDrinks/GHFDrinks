@@ -17,7 +17,7 @@ export default function PackageDetailPage() {
   if (!template) {
     return (
       <div className="p-10">
-        <p className="text-gray-400">Package not found.</p>
+        <p className="text-[var(--muted-foreground)]">Package not found.</p>
         <Link href="/packages" className="text-sm underline mt-4 block" style={{ color: "var(--accent)" }}>
           Back to Packages
         </Link>
@@ -30,7 +30,7 @@ export default function PackageDetailPage() {
   );
 
   return (
-    <div className="p-10 min-h-screen bg-white">
+    <div className="p-10 min-h-screen bg-[var(--background)]">
 
       {/* Header */}
       <button
@@ -57,11 +57,11 @@ export default function PackageDetailPage() {
           <Link
             key={brand.slug}
             href={`/brands/${brand.slug}`}
-            className="group block rounded-xl overflow-hidden border border-gray-200 hover:border-gray-400 transition-colors bg-white"
+            className="group block rounded-xl overflow-hidden border border-[var(--border)] hover:border-[var(--gold)] transition-colors bg-[var(--background)]"
           >
             {/* Bottle shot */}
             <div
-              className="h-52 flex items-center justify-center p-6 border-b border-gray-100"
+              className="h-52 flex items-center justify-center p-6 border-b border-[var(--border)]"
               style={{ background: "linear-gradient(to bottom, #ffffff, #f9f9f6)" }}
             >
               {(() => {
@@ -81,13 +81,13 @@ export default function PackageDetailPage() {
                     }}
                   />
                 ) : (
-                  <div className="text-xs text-gray-400">{brand.name}</div>
+                  <div className="text-xs text-[var(--muted-foreground)]">{brand.name}</div>
                 );
               })()}
             </div>
 
             {/* Brand info */}
-            <div className="p-5 border-t border-gray-100">
+            <div className="p-5 border-t border-[var(--border)]">
               <p
                 className="text-xs tracking-widest uppercase mb-1"
                 style={{ color: "var(--muted-foreground)" }}

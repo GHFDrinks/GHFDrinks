@@ -38,7 +38,7 @@ export function AdminSidebar({ className }: { className?: string }) {
                 "flex items-center space-x-3 px-4 py-3 rounded-xl transition-all font-medium text-sm",
                 isActive 
                   ? "bg-accent text-accent-foreground shadow-lg shadow-accent/20" 
-                  : "text-white/60 hover:text-white hover:bg-white/5"
+                  : "text-white/60 hover:text-white hover:bg-[var(--background)]/5"
               )}
             >
               <Icon className="w-5 h-5" strokeWidth={isActive ? 2 : 1.5} />
