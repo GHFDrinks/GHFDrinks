@@ -7,6 +7,7 @@ import { useBrands } from "@/hooks/useBrands";
 import { BrandIntroSlide } from "@/components/brand/BrandIntroSlide";
 import { BrandActivationSlide } from "@/components/brand/BrandActivationSlide";
 import { Brand } from "@/types/brand";
+import { mockBrands } from "@/data/brands";
 
 export default function PresentModePage() {
   const { id } = useParams<{ id: string }>();
@@ -18,16 +19,44 @@ export default function PresentModePage() {
 
   const presentation = savedPresentations.find((p) => p.id === id);
 
-  // Build ordered slide list: for each brand, intro then activation
+  // Build ordered slide list:
+  // For each brand, include intro, and include activation ONLY if the brand has activations
   const slides = presentation
-    ? presentation.brands.flatMap((brandId) => {
-        const brand = brands.find((b) => b.id === brandId);
-        if (!brand) return [];
-        return [
-          { brand, type: "intro" as const },
-          { brand, type: "activation" as const },
-        ];
-      })
+    ? (() => {
+        const availableBrands = brands.length > 0 ? brands : mockBrands;
+        const list: { brand: Brand; type: "intro" | "activation" }[] = [];
+
+        // If saved presentation has a slides array, map it
+        if (presentation.slides && presentation.slides.length > 0) {
+          presentation.slides.forEach((slide) => {
+            const brand = availableBrands.find((b) => b.id === slide.brandId);
+            if (brand) {
+              if (slide.type === "intro") {
+                list.push({ brand, type: "intro" });
+              } else if (slide.type === "activation") {
+                if (brand.activations && brand.activations.length > 0) {
+                  list.push({ brand, type: "activation" });
+                }
+              }
+            }
+          });
+        }
+
+        // Compatibility fallback: if slides list is still empty, build from brand IDs
+        if (list.length === 0) {
+          presentation.brands.forEach((brandId) => {
+            const brand = availableBrands.find((b) => b.id === brandId);
+            if (brand) {
+              list.push({ brand, type: "intro" });
+              if (brand.activations && brand.activations.length > 0) {
+                list.push({ brand, type: "activation" });
+              }
+            }
+          });
+        }
+
+        return list;
+      })()
     : [];
 
   const total = slides.length;
@@ -58,7 +87,7 @@ export default function PresentModePage() {
 
   if (!presentation) {
     return (
-      <div className="flex items-center justify-center h-screen bg-white">
+      <div className="flex items-center justify-center h-screen" style={{ backgroundColor: "var(--background)" }}>
         <div className="text-center">
           <p
             className="text-lg mb-4"
@@ -69,7 +98,7 @@ export default function PresentModePage() {
           <button
             onClick={exit}
             className="text-sm underline"
-            style={{ color: "var(--accent)" }}
+            style={{ color: "var(--gold)" }}
           >
             Back to Presentations
           </button>
@@ -80,14 +109,14 @@ export default function PresentModePage() {
 
   if (total === 0 || !current) {
     return (
-      <div className="flex items-center justify-center h-screen bg-white">
+      <div className="flex items-center justify-center h-screen" style={{ backgroundColor: "var(--background)" }}>
         <p style={{ color: "var(--muted-foreground)" }}>Loading slides...</p>
       </div>
     );
   }
 
   return (
-    <div className="relative h-screen w-screen overflow-hidden bg-white">
+    <div className="relative h-screen w-screen overflow-hidden" style={{ backgroundColor: "var(--background)" }}>
 
       {/* Slide content */}
       {current.type === "intro" ? (
@@ -98,12 +127,12 @@ export default function PresentModePage() {
 
       {/* Navigation overlay */}
       <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between px-6 py-3 z-50"
-           style={{ backgroundColor: "rgba(255,255,255,0.9)", borderTop: "1px solid var(--border)" }}>
+           style={{ backgroundColor: "rgba(11,19,16,0.95)", borderTop: "1px solid var(--border)", backdropFilter: "blur(8px)" }}>
 
         {/* Exit */}
         <button
           onClick={exit}
-          className="text-xs tracking-widest uppercase"
+          className="text-xs tracking-widest uppercase hover:text-[var(--gold)] transition-colors"
           style={{ color: "var(--muted-foreground)" }}
         >
           ✕ Exit
@@ -121,7 +150,7 @@ export default function PresentModePage() {
                 height: "6px",
                 backgroundColor:
                   i === slideIndex
-                    ? "var(--accent)"
+                    ? "var(--gold)"
                     : "var(--border)",
               }}
             />
@@ -133,8 +162,8 @@ export default function PresentModePage() {
           <button
             onClick={goPrev}
             disabled={slideIndex === 0}
-            className="text-xs tracking-widest uppercase disabled:opacity-30"
-            style={{ color: "var(--accent)" }}
+            className="text-xs tracking-widest uppercase disabled:opacity-30 hover:text-[var(--gold)] transition-colors"
+            style={{ color: "var(--gold)" }}
           >
             ← Prev
           </button>
@@ -147,8 +176,8 @@ export default function PresentModePage() {
           <button
             onClick={goNext}
             disabled={slideIndex === total - 1}
-            className="text-xs tracking-widest uppercase disabled:opacity-30"
-            style={{ color: "var(--accent)" }}
+            className="text-xs tracking-widest uppercase disabled:opacity-30 hover:text-[var(--gold)] transition-colors"
+            style={{ color: "var(--gold)" }}
           >
             Next →
           </button>
