@@ -169,7 +169,7 @@ export function getCuratedBrandAssets(slug: string): CuratedAssets {
       return {
         bottleShots: [`${BASE}/fielden/bottle-1.png`],
         lifestyle: [`${BASE}/fielden/lifestyle-1.jpg`, `${BASE}/fielden/lifestyle-2.jpg`, `${BASE}/fielden/lifestyle-3.jpg`, `${BASE}/fielden/bottle-2.png`],
-        logo: null, // Fever-Tree Ginger Ale logo mismatch
+        logo: `${BASE}/fielden/logo.png`,
         hero: `${BASE}/fielden/hero.png`,
       };
 
@@ -185,7 +185,7 @@ export function getCuratedBrandAssets(slug: string): CuratedAssets {
       return {
         bottleShots: [`${BASE}/desdeya/bottle-1.png`],
         lifestyle: [`${BASE}/desdeya/lifestyle-1.jpg`, `${BASE}/desdeya/lifestyle-2.jpg`, `${BASE}/desdeya/lifestyle-3.jpg`],
-        logo: null, // Fever-Tree Mexican Lime Soda logo mismatch
+        logo: `${BASE}/desdeya/logo.png`,
         hero: `${BASE}/desdeya/hero.png`,
       };
 
@@ -193,7 +193,7 @@ export function getCuratedBrandAssets(slug: string): CuratedAssets {
       return {
         bottleShots: [`${BASE}/pensador/bottle-1.png`],
         lifestyle: [`${BASE}/pensador/lifestyle-1.jpg`, `${BASE}/pensador/lifestyle-2.jpg`, `${BASE}/pensador/lifestyle-3.jpg`, `${BASE}/pensador/bottle-2.png`],
-        logo: null, // Fever-Tree Pink Grapefruit Soda logo mismatch
+        logo: `${BASE}/pensador/logo.png`,
         hero: `${BASE}/pensador/hero.png`,
       };
 
@@ -201,7 +201,7 @@ export function getCuratedBrandAssets(slug: string): CuratedAssets {
       return {
         bottleShots: [`${BASE}/everleaf/bottle-1.png`, `${BASE}/everleaf/bottle-3.png`],
         lifestyle: [`${BASE}/everleaf/lifestyle-1.jpg`, `${BASE}/everleaf/lifestyle-2.jpg`, `${BASE}/everleaf/lifestyle-3.jpg`, `${BASE}/everleaf/bottle-2.png`],
-        logo: null, // Fever-Tree Tonic Water logo mismatch
+        logo: `${BASE}/everleaf/logo.png`,
         hero: `${BASE}/everleaf/hero.png`,
       };
 
@@ -235,7 +235,7 @@ export function getCuratedBrandAssets(slug: string): CuratedAssets {
           `${BASE}/craggy-range/lifestyle-1.jpg`,
           `${BASE}/craggy-range/lifestyle-2.jpg`,
         ],
-        logo: null, // Bottle + Red Wine glass lifestyle shot mismatch
+        logo: `${BASE}/craggy-range/logo.png`,
         hero: `${BASE}/craggy-range/hero.png`,
       };
 
@@ -253,7 +253,7 @@ export function getCuratedBrandAssets(slug: string): CuratedAssets {
           `${BASE}/coates-and-seely/lifestyle-1.jpg`,
           `${BASE}/coates-and-seely/lifestyle-2.jpg`,
         ],
-        logo: null, // Champagne pouring lifestyle shot mismatch
+        logo: `${BASE}/coates-and-seely/logo.png`,
         hero: `${BASE}/coates-and-seely/hero.png`,
       };
 
@@ -270,7 +270,7 @@ export function getCuratedBrandAssets(slug: string): CuratedAssets {
           `${BASE}/quinta-da-romaneira/lifestyle-2.jpg`,
           `${BASE}/quinta-da-romaneira/lifestyle-3.jpg`,
         ],
-        logo: null, // Close up neck shot mismatch
+        logo: `${BASE}/quinta-da-romaneira/logo.png`,
         hero: `${BASE}/quinta-da-romaneira/hero.png`,
       };
 
@@ -284,7 +284,7 @@ export function getCuratedBrandAssets(slug: string): CuratedAssets {
           `${BASE}/dreamsake/lifestyle-2.jpg`,
           `${BASE}/dreamsake/lifestyle-3.jpg`,
         ],
-        logo: null, // Fever-Tree Soda Water bottle mismatch
+        logo: `${BASE}/dreamsake/logo.png`,
         hero: `${BASE}/dreamsake/hero.png`,
       };
 
@@ -302,7 +302,7 @@ export function getCuratedBrandAssets(slug: string): CuratedAssets {
           `${BASE}/wild-idol/lifestyle-2.jpg`,
           `${BASE}/wild-idol/lifestyle-3.jpg`,
         ],
-        logo: null, // Everleaf bottle mismatch
+        logo: `${BASE}/wild-idol/logo.png`,
         hero: `${BASE}/wild-idol/hero.png`,
       };
 
