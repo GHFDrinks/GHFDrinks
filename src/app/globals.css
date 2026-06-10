@@ -4,7 +4,6 @@
   font-family: "Cadiz";
   src: url("/fonts/Cadiz-Regular.otf") format("opentype");
   font-weight: 400;
-  font-style: normal;
   font-display: swap;
 }
 
@@ -40,7 +39,7 @@
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans);
+  font-family: "Cadiz", -apple-system, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }

@@ -2,99 +2,115 @@
 
 import React from "react";
 import Link from "next/link";
-import { useBrands } from "@/hooks/useBrands";
-import { getBrandImages } from "@/lib/brand-images";
-import { PRESENTATION_TEMPLATES } from "@/types/presentation";
+import { useRouter } from "next/navigation";
+
+const ROWS = [
+  {
+    label: "CATEGORY",
+    cards: [
+      { title: "Spirits", href: "/brands/spirits" },
+      { title: "Wines", href: "/brands/wines" },
+      { title: "Beer. Cider. Mixer.", href: "/brands/beer" },
+    ],
+  },
+  {
+    label: "OCCASION",
+    cards: [
+      { title: "Crafted & Discerning", href: "/packages/crafted-and-discerning" },
+      { title: "Elevated & Sophisticated", href: "/packages/elevated-and-sophisticated" },
+      { title: "Contemporary & Creative", href: "/packages/contemporary-and-creative" },
+    ],
+  },
+  {
+    label: "CULTURE",
+    cards: [
+      { title: "Best of British", href: "/packages/best-of-british" },
+      { title: "European Lifestyle", href: "/packages/european-lifestyle" },
+      { title: "Sustainability Focus", href: "/packages/sustainable" },
+    ],
+  },
+];
 
 export default function HomePage() {
-  const { brands, loading } = useBrands();
-
-  const spirits = brands.filter((b) => b.category === "Spirits");
-  const wines = brands.filter((b) => b.category === "Wines");
-  const beer = brands.filter((b) => b.category === "Beer, Cider & Mixer");
-
-  const categories = [
-    { label: "Spirits", brands: spirits },
-    { label: "Wines", brands: wines },
-    { label: "Beer. Cider. Mixer.", brands: beer },
-  ];
+  const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-[var(--background)]">
+    <div className="min-h-screen flex flex-col px-12 py-10" style={{ backgroundColor: "var(--background)" }}>
+
       {/* Header */}
-      <div className="px-12 py-14 border-b border-[var(--border)]" style={{ backgroundColor: "var(--accent)" }}>
-        <div className="w-16 h-16 rounded-full border-2 flex items-center justify-center mb-6"
-             style={{ borderColor: "var(--gold)", color: "var(--gold)" }}>
-          <span className="text-xs font-bold tracking-widest">GHF</span>
+      <div className="mb-10">
+        <div
+          className="w-14 h-14 rounded-full border-2 flex items-center justify-center mb-5"
+          style={{ borderColor: "var(--gold)", color: "var(--gold)" }}
+        >
+          <span className="text-[11px] font-bold tracking-widest">GHF</span>
         </div>
-        <h1 className="text-5xl font-light text-white mb-2 tracking-tight">Portfolio Presenter</h1>
-        <p className="text-sm tracking-widest uppercase" style={{ color: "var(--gold)" }}>
-          Building Iconic Drinks Brands
+        <h1 className="text-5xl font-light tracking-tight mb-2" style={{ color: "var(--foreground)" }}>
+          GHF Drinks Packages
+        </h1>
+        <p className="text-sm" style={{ color: "var(--muted-foreground)" }}>
+          Tailored packages of drinks brands, perfect for your customers.
         </p>
       </div>
 
-      <div className="px-12 py-10">
-        {loading && brands.length === 0 ? (
-          <p className="text-sm" style={{ color: "var(--muted-foreground)" }}>Loading portfolio...</p>
-        ) : (
-          <div className="space-y-12">
-            {categories.map(({ label, brands: catBrands }) => (
-              <div key={label}>
-                <div className="flex items-center justify-between mb-5">
-                  <h2 className="text-xl font-medium tracking-tight" style={{ color: "var(--accent)" }}>{label}</h2>
-                </div>
-                {catBrands.length === 0 ? (
-                  <p className="text-sm" style={{ color: "var(--muted-foreground)" }}>Loading...</p>
-                ) : (
-                  <div className="flex gap-6 overflow-x-auto pb-2">
-                    {catBrands.map((b) => {
-                      const local = getBrandImages(b.slug);
-                      const src = local?.hero || local?.variants?.[0] || b.heroImage?.url || "";
-                      return (
-                        <Link key={b.slug} href={`/brands/${b.slug}`}
-                              className="flex-shrink-0 group" style={{ width: "140px" }}>
-                          <div className="w-full h-44 rounded-xl flex items-end justify-center pb-3 mb-3 overflow-hidden"
-                               style={{ backgroundColor: "var(--muted)" }}>
-                            {src ? (
-                              <img src={src} alt={b.name}
-                                   className="object-contain group-hover:scale-105 transition-transform duration-300"
-                                   style={{ maxHeight: "160px", maxWidth: "100px" }} />
-                            ) : (
-                              <div className="text-xs text-center px-2 leading-tight"
-                                   style={{ color: "var(--muted-foreground)" }}>{b.name}</div>
-                            )}
-                          </div>
-                          <p className="text-xs font-semibold text-center leading-tight" style={{ color: "var(--accent)" }}>{b.name}</p>
-                          {b.bcorp && (
-                            <p className="text-[9px] text-center mt-0.5 tracking-widest uppercase" style={{ color: "var(--gold)" }}>B Corp</p>
-                          )}
-                        </Link>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
+      {/* 3x3 grid with row labels */}
+      <div className="flex-1 flex flex-col gap-5 max-w-5xl">
+        {ROWS.map((row) => (
+          <div key={row.label} className="flex items-stretch gap-5">
+            {/* Rotated row label */}
+            <div className="flex-shrink-0 flex items-center justify-center" style={{ width: "34px" }}>
+              <span
+                className="text-[10px] font-bold tracking-[0.35em] uppercase select-none"
+                style={{
+                  color: "var(--muted-foreground)",
+                  writingMode: "vertical-rl",
+                  transform: "rotate(180deg)",
+                }}
+              >
+                {row.label}
+              </span>
+            </div>
 
-        {/* Packages strip */}
-        <div className="mt-14 pt-10 border-t border-[var(--border)]">
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="text-xl font-medium tracking-tight" style={{ color: "var(--accent)" }}>Packages</h2>
-            <Link href="/packages" className="text-xs tracking-widest uppercase" style={{ color: "var(--muted-foreground)" }}>
-              View all →
-            </Link>
+            {/* Cards */}
+            <div className="flex-1 grid grid-cols-3 gap-5">
+              {row.cards.map((card) => (
+                <Link
+                  key={card.title}
+                  href={card.href}
+                  className="group rounded-xl border flex items-center justify-center text-center px-6 transition-all hover:border-[var(--gold)] hover:scale-[1.02]"
+                  style={{
+                    borderColor: "var(--border)",
+                    backgroundColor: "var(--card)",
+                    minHeight: "150px",
+                  }}
+                >
+                  <span
+                    className="text-xl font-light tracking-wide group-hover:text-[var(--gold)] transition-colors"
+                    style={{ color: "var(--foreground)" }}
+                  >
+                    {card.title}
+                  </span>
+                </Link>
+              ))}
+            </div>
           </div>
-          <div className="grid grid-cols-3 gap-4">
-            {PRESENTATION_TEMPLATES.map((t) => (
-              <Link key={t.id} href={`/packages/${t.id}`}
-                    className="border border-[var(--border)] rounded-xl p-4 hover:border-[var(--gold)] transition-colors">
-                <p className="text-sm font-medium mb-1" style={{ color: "var(--accent)" }}>{t.name}</p>
-                <p className="text-xs leading-relaxed" style={{ color: "var(--muted-foreground)" }}>{t.description}</p>
-              </Link>
-            ))}
-          </div>
+        ))}
+
+        {/* Build your own CTA — arrow banner */}
+        <div className="flex items-stretch gap-5 mt-1">
+          <div className="flex-shrink-0" style={{ width: "34px" }} />
+          <button
+            onClick={() => router.push("/presentations/new")}
+            className="flex-1 relative flex items-center justify-center py-5 transition-all hover:opacity-90"
+            style={{
+              backgroundColor: "var(--gold)",
+              clipPath: "polygon(0 0, calc(100% - 36px) 0, 100% 50%, calc(100% - 36px) 100%, 0 100%)",
+            }}
+          >
+            <span className="text-sm font-bold tracking-[0.25em] uppercase" style={{ color: "#0b1310" }}>
+              Build your own drinks package&nbsp;&nbsp;→&nbsp;&nbsp;Brand Selection
+            </span>
+          </button>
         </div>
       </div>
     </div>
