@@ -1,193 +1,122 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
-import { useBrands } from "@/hooks/useBrands";
+import React from "react";
 
-const MONTHS = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
+interface CalEvent { name: string; date?: string; }
+interface CalMonth { month: string; ghfActivation?: string; events: CalEvent[]; }
+
+const CALENDAR_2026: CalMonth[] = [
+  { month: "January", ghfActivation: "Dry January", events: [] },
+  { month: "February", events: [
+    { name: "Waitangi Day", date: "Friday 6th" },
+    { name: "Syrah Day", date: "Monday 16th" },
+    { name: "Margarita Day", date: "Sunday 22nd" },
+  ]},
+  { month: "March", events: [{ name: "B-Corp Month", date: "Month" }] },
+  { month: "April", ghfActivation: "Earth Month", events: [
+    { name: "Record Store Day", date: "Saturday 18th" },
+    { name: "Earth Day", date: "Wednesday 22nd" },
+  ]},
+  { month: "May", ghfActivation: "Summer Sip & Spritz", events: [
+    { name: "Sauvignon Blanc Day", date: "Friday 1st" },
+    { name: "World Cocktail Day", date: "Wednesday 13th" },
+    { name: "World Whisky Day", date: "Saturday 16th" },
+    { name: "Paloma Day", date: "Friday 22nd" },
+  ]},
+  { month: "June", ghfActivation: "Summer Sip & Spritz", events: [
+    { name: "Environment Day", date: "Friday 5th" },
+    { name: "Rosé Day", date: "Saturday 13th" },
+    { name: "Sushi Day", date: "Thursday 18th" },
+    { name: "Martini Day", date: "Friday 19th" },
+  ]},
+  { month: "July", ghfActivation: "Summer Sip & Spritz", events: [
+    { name: "Tequila Day", date: "Friday 24th" },
+  ]},
+  { month: "August", ghfActivation: "Summer Sip & Spritz", events: [
+    { name: "Spritz Day", date: "Saturday 1st" },
+    { name: "Rum Day", date: "Sunday 16th" },
+    { name: "Pinot Noir Day", date: "Tuesday 18th" },
+  ]},
+  { month: "September", ghfActivation: "Negroni Week", events: [
+    { name: "Zero Waste Week", date: "Week 1" },
+    { name: "Mexican Independence", date: "Wednesday 16th" },
+    { name: "Harvest Festival" },
+  ]},
+  { month: "October", events: [
+    { name: "World Sake Day", date: "Thursday 1st" },
+    { name: "Buy British Day", date: "Saturday 3rd" },
+    { name: "Vodka Day", date: "Sunday 4th" },
+    { name: "Mezcal Day", date: "Wednesday 21st" },
+  ]},
+  { month: "November", events: [{ name: "Day of the Dead", date: "Monday 2nd" }] },
+  { month: "December", ghfActivation: "Festive", events: [] },
 ];
 
 export default function CalendarPage() {
-  const { brands, loading } = useBrands();
-  const [activeMonth, setActiveMonth] = useState<string | null>(null);
-
-  // Build a flat list of all key dates across all activations
-  const allEntries = brands.flatMap((b) =>
-    (b.activations || []).flatMap((a) =>
-      (a.keyDates || []).map((date) => ({
-        date,
-        activationTitle: a.title,
-        activationType: a.activationType,
-        brandName: b.name,
-        brandSlug: b.slug,
-      }))
-    )
-  );
-
-  // Group by which month keyword appears in the date string
-  const byMonth: Record<string, typeof allEntries> = {};
-  MONTHS.forEach((m) => {
-    const matches = allEntries.filter((e) =>
-      e.date.toLowerCase().includes(m.toLowerCase())
-    );
-    if (matches.length > 0) byMonth[m] = matches;
-  });
-
-  // Entries not matching any month
-  const ungrouped = allEntries.filter(
-    (e) => !MONTHS.some((m) => e.date.toLowerCase().includes(m.toLowerCase()))
-  );
-
   return (
-    <div className="p-10 min-h-screen bg-[var(--background)]">
-      <h1
-        className="text-4xl font-light mb-1 tracking-tight"
-        style={{ color: "var(--accent)" }}
-      >
-        Activation Calendar
-      </h1>
-      <p className="text-sm mb-10" style={{ color: "var(--muted-foreground)" }}>
-        Key dates across the GHF portfolio
-      </p>
+    <div className="min-h-screen px-10 py-10" style={{ backgroundColor: "var(--background)" }}>
+      <div className="flex gap-8 items-stretch">
 
-      {loading ? (
-        <p className="text-sm" style={{ color: "var(--muted-foreground)" }}>Loading...</p>
-      ) : (
-        <div className="space-y-4">
-          {Object.entries(byMonth).map(([month, entries]) => (
+        {/* Vertical 2026 numeral */}
+        <div className="flex-shrink-0 flex items-end">
+          <span
+            className="font-light leading-none select-none"
+            style={{
+              writingMode: "vertical-rl",
+              transform: "rotate(180deg)",
+              fontSize: "120px",
+              color: "transparent",
+              WebkitTextStroke: "1.5px var(--gold)",
+              letterSpacing: "0.05em",
+            }}
+          >
+            2026
+          </span>
+        </div>
+
+        {/* 12-month grid: 4 cols x 3 rows */}
+        <div className="flex-1 grid grid-cols-4 gap-4">
+          {CALENDAR_2026.map((m) => (
             <div
-              key={month}
-              className="border border-[var(--border)] rounded-xl overflow-hidden"
+              key={m.month}
+              className="border rounded-lg p-4 flex flex-col"
+              style={{ borderColor: "var(--border)", backgroundColor: "var(--card)", minHeight: "200px" }}
             >
-              <button
-                onClick={() =>
-                  setActiveMonth(activeMonth === month ? null : month)
-                }
-                className="w-full flex items-center justify-between px-6 py-4 hover:bg-[var(--card)] transition-colors"
-              >
-                <span
-                  className="text-base font-medium"
-                  style={{ color: "var(--accent)" }}
-                >
-                  {month}
-                </span>
-                <span
-                  className="text-xs tracking-widest"
-                  style={{ color: "var(--muted-foreground)" }}
-                >
-                  {entries.length} event{entries.length !== 1 ? "s" : ""}
-                </span>
-              </button>
+              <h2 className="text-lg font-medium mb-2" style={{ color: "var(--foreground)" }}>
+                {m.month}
+              </h2>
 
-              {activeMonth === month && (
-                <div className="border-t border-[var(--border)]">
-                  {entries.map((e, i) => (
-                    <Link
-                      key={i}
-                      href={`/brands/${e.brandSlug}`}
-                      className="flex items-start gap-4 px-6 py-3 border-b border-[var(--border)] last:border-0 hover:bg-[var(--card)] transition-colors"
-                    >
-                      <div className="flex-1">
-                        <p
-                          className="text-xs font-semibold tracking-widest uppercase mb-0.5"
-                          style={{ color: "var(--gold)" }}
-                        >
-                          {e.brandName}
-                        </p>
-                        <p
-                          className="text-sm"
-                          style={{ color: "var(--accent)" }}
-                        >
-                          {e.activationTitle}
-                        </p>
-                        <p
-                          className="text-xs mt-0.5"
-                          style={{ color: "var(--muted-foreground)" }}
-                        >
-                          {e.date}
-                        </p>
-                      </div>
-                      {e.activationType && (
-                        <span
-                          className="text-[10px] tracking-widest uppercase border rounded px-2 py-0.5 flex-shrink-0"
-                          style={{
-                            borderColor: "var(--border)",
-                            color: "var(--muted-foreground)",
-                          }}
-                        >
-                          {e.activationType}
-                        </span>
-                      )}
-                    </Link>
-                  ))}
+              {m.ghfActivation && (
+                <div
+                  className="mb-3 px-2 py-1.5 rounded text-center"
+                  style={{ backgroundColor: "rgba(201,168,76,0.18)", border: "1px solid var(--gold)" }}
+                >
+                  <p className="text-[9px] tracking-[0.25em] uppercase" style={{ color: "var(--gold)" }}>GHF Activation</p>
+                  <p className="text-[11px] font-bold tracking-[0.15em] uppercase" style={{ color: "var(--gold)" }}>{m.ghfActivation}</p>
                 </div>
               )}
+
+              <div className="space-y-2">
+                {m.events.map((e, i) => (
+                  <div key={i}>
+                    <p className="text-xs font-semibold leading-tight" style={{ color: "var(--foreground)" }}>• {e.name}</p>
+                    {e.date && (
+                      <p className="text-[10px] tracking-[0.2em] uppercase pl-3" style={{ color: "var(--muted-foreground)" }}>{e.date}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
-
-          {/* Ungrouped dates */}
-          {ungrouped.length > 0 && (
-            <div className="border border-[var(--border)] rounded-xl overflow-hidden">
-              <button
-                onClick={() =>
-                  setActiveMonth(activeMonth === "other" ? null : "other")
-                }
-                className="w-full flex items-center justify-between px-6 py-4 hover:bg-[var(--card)] transition-colors"
-              >
-                <span
-                  className="text-base font-medium"
-                  style={{ color: "var(--accent)" }}
-                >
-                  Seasonal / Ongoing
-                </span>
-                <span
-                  className="text-xs tracking-widest"
-                  style={{ color: "var(--muted-foreground)" }}
-                >
-                  {ungrouped.length} events
-                </span>
-              </button>
-              {activeMonth === "other" && (
-                <div className="border-t border-[var(--border)]">
-                  {ungrouped.map((e, i) => (
-                    <Link
-                      key={i}
-                      href={`/brands/${e.brandSlug}`}
-                      className="flex items-start gap-4 px-6 py-3 border-b border-[var(--border)] last:border-0 hover:bg-[var(--card)] transition-colors"
-                    >
-                      <div className="flex-1">
-                        <p
-                          className="text-xs font-semibold tracking-widest uppercase mb-0.5"
-                          style={{ color: "var(--gold)" }}
-                        >
-                          {e.brandName}
-                        </p>
-                        <p className="text-sm" style={{ color: "var(--accent)" }}>
-                          {e.activationTitle}
-                        </p>
-                        <p
-                          className="text-xs mt-0.5"
-                          style={{ color: "var(--muted-foreground)" }}
-                        >
-                          {e.date}
-                        </p>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {Object.keys(byMonth).length === 0 && ungrouped.length === 0 && (
-            <p className="text-sm" style={{ color: "var(--muted-foreground)" }}>
-              No key dates yet. Add them to activations via the admin panel.
-            </p>
-          )}
         </div>
-      )}
+      </div>
+
+      <h1 className="text-4xl font-light mt-8 tracking-tight" style={{ color: "var(--gold)" }}>
+        Activation Calendar
+      </h1>
+      <p className="text-sm mt-1" style={{ color: "var(--muted-foreground)" }}>
+        Key dates and GHF activations across 2026
+      </p>
     </div>
   );
 }
