@@ -32,16 +32,17 @@ export default function TastingNotesPage() {
               <button
                 key={slug}
                 onClick={() => { setActiveSlug(slug); setVariantIdx(0); }}
-                className="border rounded-lg px-6 py-8 flex items-center justify-center transition-colors hover:border-[var(--gold)]"
-                style={{ borderColor: "var(--border)", backgroundColor: "var(--card)", minHeight: "110px" }}
+                className="border rounded-lg px-6 py-6 flex flex-col items-center justify-center gap-3 transition-colors hover:border-[var(--gold)]"
+                style={{ borderColor: "var(--border)", backgroundColor: "var(--card)", minHeight: "135px" }}
               >
-                {local?.logo ? (
-                  <img src={local.logo} alt={brand?.name || slug} className="max-h-12 max-w-[140px] object-contain" />
-                ) : (
-                  <span className="text-base font-medium text-center" style={{ color: "var(--foreground)" }}>
-                    {brand?.name || slug}
-                  </span>
+                {local?.logo && (
+                  <div className="h-12 flex items-center justify-center">
+                    <img src={local.logo} alt={brand?.name || slug} className="max-h-12 max-w-[140px] object-contain" />
+                  </div>
                 )}
+                <span className="text-sm font-semibold tracking-wide text-center" style={{ color: "var(--foreground)" }}>
+                  {brand?.name || slug}
+                </span>
               </button>
             );
           })}
