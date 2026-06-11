@@ -32,9 +32,19 @@ export function BrandActivationSlide({ brand }: { brand: Brand }) {
             Activations & Campaigns
           </span>
         </div>
-        <span className="text-xs tracking-[0.2em] uppercase text-[var(--muted-foreground)]">
-          {brand.name}
-        </span>
+        <div className="flex items-center gap-3">
+          <span className="text-xs tracking-[0.2em] uppercase text-[var(--muted-foreground)]">
+            {brand.name}
+          </span>
+          <a
+            href={`/brands/${brand.slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[9px] font-bold tracking-widest uppercase text-[var(--gold)] hover:text-white transition-colors border border-[var(--gold)]/30 hover:border-[var(--gold)] px-2.5 py-1 rounded bg-[var(--card)]"
+          >
+            Story ↗
+          </a>
+        </div>
       </div>
 
       {/* Main Activation Area */}
@@ -50,13 +60,22 @@ export function BrandActivationSlide({ brand }: { brand: Brand }) {
                 className="flex flex-col bg-[var(--card)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-2xl transition-all duration-300 hover:border-[var(--gold)]/30 group"
               >
                 {/* Photo container with fixed ratio & border bottom */}
-                <div className="relative aspect-[16/9] w-full overflow-hidden border-b border-[var(--border)] flex-shrink-0 bg-[#070b09]">
+                <div className="relative aspect-[16/9] w-full overflow-hidden border-b border-[var(--border)] flex-shrink-0 bg-[#070b09] flex items-center justify-center">
                   {photo ? (
-                    <img
-                      src={photo}
-                      alt={act.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                    />
+                    <>
+                      {/* Blurred background image to fill the 16/9 space */}
+                      <img
+                        src={photo}
+                        alt=""
+                        className="absolute inset-0 w-full h-full object-cover blur-lg opacity-25 scale-110 pointer-events-none"
+                      />
+                      {/* Crisp foreground image contained cleanly */}
+                      <img
+                        src={photo}
+                        alt={act.title}
+                        className="relative z-10 h-full w-auto object-contain transition-transform duration-700 ease-out group-hover:scale-105"
+                      />
+                    </>
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-[#13201b] to-[#0b1310]" />
                   )}

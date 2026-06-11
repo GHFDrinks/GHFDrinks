@@ -86,7 +86,7 @@ export default function PresentModePage() {
         }
         return prevIndex + 1;
       });
-    }, 6000); // 6 seconds per slide
+    }, 4500); // 4.5 seconds per slide
 
     return () => clearInterval(timer);
   }, [isPlaying, total]);

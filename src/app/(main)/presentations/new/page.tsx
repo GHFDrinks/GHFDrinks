@@ -83,7 +83,7 @@ export default function BrandSelectionPage() {
 
       {/* Header */}
       <div className="mb-8">
-        <button onClick={() => router.push("/")} className="text-xs tracking-widest uppercase mb-4 block"
+        <button onClick={() => router.push("/presentations")} className="text-xs tracking-widest uppercase mb-4 block"
                 style={{ color: "var(--muted-foreground)" }}>
           ← Back
         </button>

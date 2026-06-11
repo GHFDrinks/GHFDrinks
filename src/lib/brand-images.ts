@@ -175,8 +175,8 @@ export function getCuratedBrandAssets(slug: string): CuratedAssets {
 
     case 'dropworks':
       return {
-        bottleShots: [`${BASE}/dropworks/bottle-1.png`, `${BASE}/dropworks/bottle-2.png`, `${BASE}/dropworks/bottle-3.png`],
-        lifestyle: [`${BASE}/dropworks/lifestyle-1.jpg`, `${BASE}/dropworks/lifestyle-2.jpg`, `${BASE}/dropworks/lifestyle-3.jpg`],
+        bottleShots: [`${BASE}/dropworks/lifestyle-1.jpg`, `${BASE}/dropworks/lifestyle-2.jpg`, `${BASE}/dropworks/lifestyle-3.jpg`],
+        lifestyle: [`${BASE}/dropworks/bottle-1.png`, `${BASE}/dropworks/bottle-2.png`, `${BASE}/dropworks/bottle-3.png`],
         logo: null, // Missing logo
         hero: `${BASE}/dropworks/hero.png`,
       };

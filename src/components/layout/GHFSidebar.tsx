@@ -16,6 +16,8 @@ const PACKAGE_NAV = [
 ];
 
 const STATIC_NAV = [
+  { label: "Presentations", href: "/presentations" },
+  { label: "Build Presentation", href: "/presentations/new" },
   { label: "GHF Activations", href: "/activations" },
   { label: "GHF Support", href: "/support" },
   { label: "Activation Calendars", href: "/calendar" },

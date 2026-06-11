@@ -81,9 +81,19 @@ export function BrandIntroSlide({ brand }: { brand: Brand }) {
           )}
         </div>
 
-        {/* Bottom indicator */}
-        <div className="text-[10px] tracking-widest text-[var(--muted-foreground)] uppercase">
-          GHF Portfolio © 2026
+        {/* Bottom indicator with brand story link */}
+        <div className="flex items-center justify-between">
+          <div className="text-[10px] tracking-widest text-[var(--muted-foreground)] uppercase">
+            GHF Portfolio © 2026
+          </div>
+          <a
+            href={`/brands/${brand.slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--gold)] hover:text-white transition-colors flex items-center gap-1.5 border border-[var(--gold)]/30 hover:border-[var(--gold)] px-3.5 py-1.5 rounded-full bg-[var(--card)]"
+          >
+            Explore Brand Story ↗
+          </a>
         </div>
       </div>
 
@@ -108,6 +118,11 @@ export function BrandIntroSlide({ brand }: { brand: Brand }) {
 
         {/* Floating Overlapping Bottle Shot lineup */}
         <div className="relative z-10 flex items-end justify-center w-full h-[78%] px-12 pb-4">
+          {/* Luxury soft gold glow platform */}
+          {bottleShots.length > 0 && (
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-4/5 h-6 bg-[var(--gold)]/15 rounded-full blur-xl z-0 pointer-events-none animate-pulse" />
+          )}
+
           {bottleShots.length > 0 ? (
             bottleShots.slice(0, 3).map((src, i) => {
               // Calculate beautiful overlapping offsets
@@ -143,19 +158,22 @@ export function BrandIntroSlide({ brand }: { brand: Brand }) {
               return (
                 <div
                   key={i}
-                  className="relative transition-all duration-500 ease-out hover:scale-[1.1] hover:z-30 hover:-translate-y-4"
+                  className="relative transition-all duration-500 ease-out hover:scale-[1.1] hover:z-30 hover:-translate-y-4 flex items-end justify-center"
                   style={{
                     zIndex,
                     transform: `translateX(${transX}px) translateY(${transY}px) scale(${scale})`,
-                    maxHeight: "90%",
+                    height: "90%",
                     width: bottleShots.length > 1 ? "36%" : "55%",
                   }}
                 >
                   <img
                     src={src}
                     alt={brand.name}
-                    className="h-full w-auto object-contain mx-auto filter drop-shadow-[0_30px_50px_rgba(0,0,0,0.95)]"
-                    style={{ maxHeight: "58vh" }}
+                    className="h-full w-auto object-contain mx-auto transition-transform duration-300"
+                    style={{
+                      maxHeight: "56vh",
+                      filter: "drop-shadow(0 20px 30px rgba(0,0,0,0.65))"
+                    }}
                   />
                 </div>
               );
