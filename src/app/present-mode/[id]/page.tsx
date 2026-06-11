@@ -16,6 +16,7 @@ export default function PresentModePage() {
   const { brands } = useBrands();
 
   const [slideIndex, setSlideIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const presentation = savedPresentations.find((p) => p.id === id);
 
@@ -73,6 +74,22 @@ export default function PresentModePage() {
   const exit = useCallback(() => {
     router.push("/presentations");
   }, [router]);
+
+  // Slideshow auto-play effect
+  useEffect(() => {
+    if (!isPlaying || total === 0) return;
+
+    const timer = setInterval(() => {
+      setSlideIndex((prevIndex) => {
+        if (prevIndex === total - 1) {
+          return 0; // Wrap back to the beginning
+        }
+        return prevIndex + 1;
+      });
+    }, 6000); // 6 seconds per slide
+
+    return () => clearInterval(timer);
+  }, [isPlaying, total]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -167,12 +184,32 @@ export default function PresentModePage() {
           >
             ← Prev
           </button>
+
+          {/* Slideshow Play/Pause Toggle */}
+          <button
+            onClick={() => setIsPlaying(!isPlaying)}
+            className="w-8 h-8 rounded-full border border-[var(--border)] flex items-center justify-center hover:border-[var(--gold)] hover:text-[var(--gold)] hover:scale-105 active:scale-95 transition-all bg-[var(--card)]"
+            title={isPlaying ? "Pause Slideshow" : "Play Slideshow"}
+            style={{ color: isPlaying ? "var(--gold)" : "var(--muted-foreground)" }}
+          >
+            {isPlaying ? (
+              <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+              </svg>
+            ) : (
+              <svg className="w-3.5 h-3.5 fill-current ml-0.5" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            )}
+          </button>
+
           <span
             className="text-xs"
             style={{ color: "var(--muted-foreground)" }}
           >
             {slideIndex + 1} / {total}
           </span>
+          
           <button
             onClick={goNext}
             disabled={slideIndex === total - 1}

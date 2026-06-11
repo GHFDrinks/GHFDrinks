@@ -19,119 +19,118 @@ export function BrandActivationSlide({ brand }: { brand: Brand }) {
   const allDates = brand.activations.flatMap((a) => a.keyDates || []);
   const tickerText = allDates.length > 0 ? allDates.join("    ·    ") : "";
 
+  const hasTwo = !!act2;
+
   return (
-    <section className="w-full h-screen flex flex-col overflow-hidden bg-[var(--background)]">
-
-      {/* MAIN ROW */}
-      <div className="flex flex-1 min-h-0 overflow-hidden">
-
-        {/* LEFT COLUMN — activation type badge + mixer strip, fixed 90px */}
-        <div
-          className="h-full flex-shrink-0 flex flex-col items-center justify-between py-10 border-r border-[var(--border)]"
-          style={{ width: "90px" }}
-        >
-          {act1?.activationType ? (
-            <div
-              className="w-16 h-16 rounded-full border-2 flex items-center justify-center text-center p-1"
-              style={{ borderColor: "var(--accent)", color: "var(--accent)" }}
-            >
-              <span className="text-[8px] font-bold leading-tight uppercase">
-                {act1.activationType}
-              </span>
-            </div>
-          ) : (
-            <div />
-          )}
-
-          {act1?.mixerPairings && act1.mixerPairings[0] ? (
-            <div className="flex flex-col items-center gap-3">
-              <span
-                className="text-[9px] tracking-widest uppercase text-[var(--muted-foreground)]"
-                style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
-              >
-                Try with...
-              </span>
-              <img
-                src={act1.mixerPairings[0].imageUrl}
-                alt={act1.mixerPairings[0].name}
-                className="w-10 object-contain"
-              />
-            </div>
-          ) : (
-            <div />
-          )}
+    <section className="w-full h-screen flex flex-col overflow-hidden bg-[var(--background)] p-12 justify-between">
+      
+      {/* Top Editorial Header */}
+      <div className="flex items-center justify-between border-b border-[var(--border)] pb-4 flex-shrink-0">
+        <div className="flex items-center gap-4">
+          <span className="w-2.5 h-2.5 rounded-full bg-[var(--gold)] animate-pulse" />
+          <span className="text-[10px] tracking-[0.35em] uppercase text-[var(--gold)] font-bold">
+            Activations & Campaigns
+          </span>
         </div>
-
-        {/* ACTIVATION COLUMNS */}
-        {[act1, act2].map((act, idx) => {
-          if (!act) return null;
-          const photo = idx === 0 ? act1Photo : act2Photo;
-          return (
-            <div
-              key={act.id}
-              className={
-                "flex-1 min-w-0 h-full flex flex-col" +
-                (idx === 0 ? " border-r border-[var(--border)]" : "")
-              }
-            >
-              {/* Photo — fills top 62% */}
-              <div className="overflow-hidden" style={{ height: "62%" }}>
-                {photo ? (
-                  <img
-                    src={photo}
-                    alt={act.title}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div
-                    className="w-full h-full"
-                    style={{ backgroundColor: "var(--muted)" }}
-                  />
-                )}
-              </div>
-
-              {/* Text */}
-              <div className="flex-1 min-h-0 px-8 py-6 overflow-hidden">
-                <p className="text-[11px] tracking-[0.2em] uppercase text-[var(--muted-foreground)] mb-2">
-                  Activation
-                </p>
-                <h3
-                  className="text-2xl font-light mb-3 leading-tight"
-                  style={{ color: "var(--accent)" }}
-                >
-                  {act.title}
-                </h3>
-                <p className="text-sm text-[var(--foreground)]/80 leading-relaxed mb-4">
-                  {act.description}
-                </p>
-                {act.keyDates && act.keyDates.length > 0 && (
-                  <div>
-                    <p className="text-[11px] font-bold tracking-[0.2em] uppercase mb-1">
-                      Key Dates
-                    </p>
-                    <p className="text-sm text-[var(--foreground)]/80 leading-relaxed">
-                      {act.keyDates.join(" | ")}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
+        <span className="text-xs tracking-[0.2em] uppercase text-[var(--muted-foreground)]">
+          {brand.name}
+        </span>
       </div>
 
-      {/* SCROLLING TICKER */}
-      {tickerText && (
+      {/* Main Activation Area */}
+      <div className="flex-1 my-auto flex items-center justify-center py-6">
+        <div className={`grid ${hasTwo ? "grid-cols-2 gap-8" : "grid-cols-1 max-w-2xl"} w-full h-full max-h-[70vh]`}>
+          {[act1, act2].map((act, idx) => {
+            if (!act) return null;
+            const photo = idx === 0 ? act1Photo : act2Photo;
+            
+            return (
+              <div
+                key={act.id}
+                className="flex flex-col bg-[var(--card)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-2xl transition-all duration-300 hover:border-[var(--gold)]/30 group"
+              >
+                {/* Photo container with fixed ratio & border bottom */}
+                <div className="relative aspect-[16/9] w-full overflow-hidden border-b border-[var(--border)] flex-shrink-0 bg-[#070b09]">
+                  {photo ? (
+                    <img
+                      src={photo}
+                      alt={act.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-[#13201b] to-[#0b1310]" />
+                  )}
+                  
+                  {/* Category overlay badge */}
+                  <div className="absolute top-4 left-4 bg-[var(--background)]/90 backdrop-blur px-3 py-1 rounded-full border border-[var(--border)]">
+                    <span className="text-[9px] font-bold tracking-widest uppercase text-[var(--gold)]">
+                      {act.activationType || "Campaign"}
+                    </span>
+                  </div>
+
+                  {/* Mixer Pairing overlay */}
+                  {act.mixerPairings && act.mixerPairings[0] && (
+                    <div className="absolute bottom-4 right-4 bg-[var(--background)]/90 backdrop-blur px-3 py-1.5 rounded-xl border border-[var(--border)] flex items-center gap-2">
+                      <span className="text-[9px] tracking-wider uppercase text-[var(--muted-foreground)]">
+                        Serve with:
+                      </span>
+                      <img
+                        src={act.mixerPairings[0].imageUrl}
+                        alt={act.mixerPairings[0].name}
+                        className="w-5 h-5 object-contain"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* Content Body */}
+                <div className="flex-1 p-6 flex flex-col justify-between min-h-0 overflow-y-auto scrollbar-hide">
+                  <div className="space-y-3">
+                    <h3 className="text-xl font-light tracking-wide text-[var(--foreground)] group-hover:text-[var(--gold)] transition-colors">
+                      {act.title}
+                    </h3>
+                    <p className="text-xs text-[var(--muted-foreground)] leading-relaxed">
+                      {act.description}
+                    </p>
+                  </div>
+
+                  {act.keyDates && act.keyDates.length > 0 && (
+                    <div className="pt-4 border-t border-[var(--border)] mt-4">
+                      <p className="text-[9px] font-bold tracking-[0.2em] uppercase text-[var(--muted-foreground)] mb-2">
+                        Key Activation Windows
+                      </p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {act.keyDates.map((date, i) => (
+                          <span
+                            key={i}
+                            className="text-[9px] px-2.5 py-1 rounded bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]/80 font-medium"
+                          >
+                            {date}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Bottom Ticker */}
+      {tickerText ? (
         <div
-          className="h-9 flex-shrink-0 flex items-center overflow-hidden border-t border-[var(--border)]"
-          style={{ backgroundColor: "var(--muted)" }}
+          className="h-8 flex-shrink-0 flex items-center overflow-hidden border-t border-[var(--border)] mt-4 bg-[var(--card)] rounded-lg"
         >
           <div className="flex animate-marquee whitespace-nowrap">
-            <span className="text-[11px] tracking-[0.2em] uppercase text-gray-500 px-10">
-              · {tickerText} · {tickerText} ·
+            <span className="text-[10px] tracking-[0.3em] uppercase text-[var(--muted-foreground)] px-10">
+              · {tickerText} · {tickerText} · {tickerText} ·
             </span>
           </div>
         </div>
+      ) : (
+        <div className="h-4" />
       )}
     </section>
   );
