@@ -115,7 +115,7 @@ export default function PresentModePage() {
           <button
             onClick={exit}
             className="text-sm underline"
-            style={{ color: "var(--gold)" }}
+            style={{ color: "var(--sage)" }}
           >
             Back to Presentations
           </button>
@@ -135,6 +135,13 @@ export default function PresentModePage() {
   return (
     <div className="relative h-screen w-screen overflow-hidden" style={{ backgroundColor: "var(--background)" }}>
 
+      {/* Presentation Name */}
+      <div className="absolute top-4 left-6 z-50 pointer-events-none">
+        <span className="text-[10px] tracking-[0.25em] uppercase text-[var(--cream)]/80 font-medium font-mono">
+          {presentation.name}
+        </span>
+      </div>
+
       {/* Slide content */}
       {current.type === "intro" ? (
         <BrandIntroSlide brand={current.brand} />
@@ -144,12 +151,12 @@ export default function PresentModePage() {
 
       {/* Navigation overlay */}
       <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between px-6 py-3 z-50"
-           style={{ backgroundColor: "rgba(11,19,16,0.95)", borderTop: "1px solid var(--border)", backdropFilter: "blur(8px)" }}>
+           style={{ backgroundColor: "rgba(13,47,27,0.95)", borderTop: "1px solid var(--border)", backdropFilter: "blur(8px)" }}>
 
         {/* Exit */}
         <button
           onClick={exit}
-          className="text-xs tracking-widest uppercase hover:text-[var(--gold)] transition-colors"
+          className="text-xs tracking-widest uppercase hover:text-[var(--sage)] transition-colors"
           style={{ color: "var(--muted-foreground)" }}
         >
           ✕ Exit
@@ -167,7 +174,7 @@ export default function PresentModePage() {
                 height: "6px",
                 backgroundColor:
                   i === slideIndex
-                    ? "var(--gold)"
+                    ? "var(--sage)"
                     : "var(--border)",
               }}
             />
@@ -179,8 +186,8 @@ export default function PresentModePage() {
           <button
             onClick={goPrev}
             disabled={slideIndex === 0}
-            className="text-xs tracking-widest uppercase disabled:opacity-30 hover:text-[var(--gold)] transition-colors"
-            style={{ color: "var(--gold)" }}
+            className="text-xs tracking-widest uppercase disabled:opacity-30 hover:text-[var(--sage)] transition-colors"
+            style={{ color: "var(--sage)" }}
           >
             ← Prev
           </button>
@@ -188,9 +195,9 @@ export default function PresentModePage() {
           {/* Slideshow Play/Pause Toggle */}
           <button
             onClick={() => setIsPlaying(!isPlaying)}
-            className="w-8 h-8 rounded-full border border-[var(--border)] flex items-center justify-center hover:border-[var(--gold)] hover:text-[var(--gold)] hover:scale-105 active:scale-95 transition-all bg-[var(--card)]"
+            className="w-8 h-8 rounded-full border border-[var(--border)] flex items-center justify-center hover:border-[var(--sage)] hover:text-[var(--sage)] hover:scale-105 active:scale-95 transition-all bg-[var(--card)]"
             title={isPlaying ? "Pause Slideshow" : "Play Slideshow"}
-            style={{ color: isPlaying ? "var(--gold)" : "var(--muted-foreground)" }}
+            style={{ color: isPlaying ? "var(--sage)" : "var(--muted-foreground)" }}
           >
             {isPlaying ? (
               <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
@@ -213,8 +220,8 @@ export default function PresentModePage() {
           <button
             onClick={goNext}
             disabled={slideIndex === total - 1}
-            className="text-xs tracking-widest uppercase disabled:opacity-30 hover:text-[var(--gold)] transition-colors"
-            style={{ color: "var(--gold)" }}
+            className="text-xs tracking-widest uppercase disabled:opacity-30 hover:text-[var(--sage)] transition-colors"
+            style={{ color: "var(--sage)" }}
           >
             Next →
           </button>

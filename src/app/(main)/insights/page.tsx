@@ -92,7 +92,7 @@ export default function InsightsPage() {
                   <Link
                     key={b.slug}
                     href={`/brands/${b.slug}`}
-                    className="border border-[var(--border)] rounded-xl p-4 hover:border-[var(--gold)] transition-colors"
+                    className="border border-[var(--border)] rounded-xl p-4 hover:border-[var(--sage)] transition-colors"
                   >
                     <div className="flex items-start justify-between mb-1">
                       <p
@@ -105,8 +105,8 @@ export default function InsightsPage() {
                         <span
                           className="text-[9px] tracking-widest uppercase border rounded px-1 py-0.5"
                           style={{
-                            borderColor: "var(--gold)",
-                            color: "var(--gold)",
+                            borderColor: "var(--sage)",
+                            color: "var(--sage)",
                           }}
                         >
                           B Corp
@@ -121,7 +121,7 @@ export default function InsightsPage() {
                     </p>
                     <p
                       className="text-xs mt-2 font-semibold"
-                      style={{ color: "var(--gold)" }}
+                      style={{ color: "var(--sage)" }}
                     >
                       {b.variants.length} SKUs
                     </p>

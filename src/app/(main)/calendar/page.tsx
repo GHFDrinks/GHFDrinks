@@ -66,7 +66,7 @@ export default function CalendarPage() {
               transform: "rotate(180deg)",
               fontSize: "120px",
               color: "transparent",
-              WebkitTextStroke: "1.5px var(--gold)",
+              WebkitTextStroke: "1.5px var(--sage)",
               letterSpacing: "0.05em",
             }}
           >
@@ -89,10 +89,10 @@ export default function CalendarPage() {
               {m.ghfActivation && (
                 <div
                   className="mb-3 px-2 py-1.5 rounded text-center"
-                  style={{ backgroundColor: "rgba(201,168,76,0.18)", border: "1px solid var(--gold)" }}
+                  style={{ backgroundColor: "rgba(133,164,135,0.18)", border: "1px solid var(--sage)" }}
                 >
-                  <p className="text-[9px] tracking-[0.25em] uppercase" style={{ color: "var(--gold)" }}>GHF Activation</p>
-                  <p className="text-[11px] font-bold tracking-[0.15em] uppercase" style={{ color: "var(--gold)" }}>{m.ghfActivation}</p>
+                  <p className="text-[9px] tracking-[0.25em] uppercase" style={{ color: "var(--sage)" }}>GHF Activation</p>
+                  <p className="text-[11px] font-bold tracking-[0.15em] uppercase" style={{ color: "var(--sage)" }}>{m.ghfActivation}</p>
                 </div>
               )}
 
@@ -111,7 +111,7 @@ export default function CalendarPage() {
         </div>
       </div>
 
-      <h1 className="text-4xl font-light mt-8 tracking-tight" style={{ color: "var(--gold)" }}>
+      <h1 className="text-4xl font-light mt-8 tracking-tight" style={{ color: "var(--cream)" }}>
         Activation Calendar
       </h1>
       <p className="text-sm mt-1" style={{ color: "var(--muted-foreground)" }}>

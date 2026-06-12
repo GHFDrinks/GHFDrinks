@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { PresentationProvider } from "@/lib/presentation-store";
 import { OfflineProvider } from "@/components/offline/OfflineProvider";
 import { ErrorBoundary } from "@/components/system/ErrorBoundary";
+import { HiddenMenu } from "@/components/HiddenMenu";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -36,6 +37,7 @@ export default function RootLayout({
           <OfflineProvider>
             <PresentationProvider>
               {children}
+              <HiddenMenu />
             </PresentationProvider>
           </OfflineProvider>
         </ErrorBoundary>

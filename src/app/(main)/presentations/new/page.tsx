@@ -15,6 +15,7 @@ export default function BrandSelectionPage() {
   const { brands, loading } = useBrands();
   const { savePresentation } = usePresentationStore();
   const [selected, setSelected] = useState<string[]>([]);
+  const [name, setName] = useState("");
   const [building, setBuilding] = useState(false);
 
   function toggle(slug: string) {
@@ -55,15 +56,15 @@ export default function BrandSelectionPage() {
 
       const dateStr = new Date().toLocaleDateString("en-GB", {
         day: "2-digit",
-        month: "2-digit",
+        month: "long",
         year: "numeric"
       });
 
-      const name = `Bespoke Presentation — ${dateStr}`;
+      const finalName = name.trim() || `GHF Presentation — ${dateStr}`;
 
       await savePresentation({
         id,
-        name,
+        name: finalName,
         dateCreated: new Date().toISOString(),
         brands: selectedBrands.map((b) => b.id),
         slides
@@ -82,17 +83,34 @@ export default function BrandSelectionPage() {
     <div className="min-h-screen flex flex-col px-12 py-10" style={{ backgroundColor: "var(--background)" }}>
 
       {/* Header */}
-      <div className="mb-8">
+      <div className="mb-8 space-y-4">
         <button onClick={() => router.push("/presentations")} className="text-xs tracking-widest uppercase mb-4 block"
                 style={{ color: "var(--muted-foreground)" }}>
           ← Back
         </button>
-        <h1 className="text-4xl font-light tracking-tight mb-1" style={{ color: "var(--foreground)" }}>
-          Brand Selection
-        </h1>
-        <p className="text-sm" style={{ color: "var(--muted-foreground)" }}>
-          Select the brands most relevant to your customer, then build the presentation.
-        </p>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-4xl font-light tracking-tight mb-1" style={{ color: "var(--foreground)" }}>
+              Brand Selection
+            </h1>
+            <p className="text-sm" style={{ color: "var(--muted-foreground)" }}>
+              Select the brands most relevant to your customer, then build the presentation.
+            </p>
+          </div>
+
+          <div className="w-full md:w-80">
+            <label className="text-[10px] tracking-widest uppercase font-bold text-[var(--sage)] mb-1 block">
+              Presentation Name
+            </label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g. The Grand Hotel — June Visit"
+              className="w-full bg-[var(--card)] border border-white/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--sage)] text-[var(--cream)] transition-colors"
+            />
+          </div>
+        </div>
       </div>
 
       {/* Brand photo-card grid */}
@@ -110,7 +128,7 @@ export default function BrandSelectionPage() {
                 onClick={() => toggle(b.slug)}
                 className="relative rounded-xl overflow-hidden text-left transition-all hover:scale-[1.02] group"
                 style={{
-                  border: isSelected ? "2px solid var(--gold)" : "2px solid var(--border)",
+                  border: isSelected ? "2px solid var(--sage)" : "2px solid var(--border)",
                   height: "170px",
                 }}
               >
@@ -126,8 +144,8 @@ export default function BrandSelectionPage() {
                 {/* Selected check */}
                 {isSelected && (
                   <div className="absolute top-3 right-3 w-7 h-7 rounded-full flex items-center justify-center"
-                       style={{ backgroundColor: "var(--gold)" }}>
-                    <span className="text-sm font-bold" style={{ color: "#0b1310" }}>✓</span>
+                       style={{ backgroundColor: "var(--sage)" }}>
+                    <span className="text-sm font-bold" style={{ color: "var(--background)" }}>✓</span>
                   </div>
                 )}
 
@@ -143,7 +161,7 @@ export default function BrandSelectionPage() {
 
       {/* Sticky build CTA */}
       <div className="fixed bottom-0 left-0 right-0 px-12 py-5 flex items-center justify-between"
-           style={{ backgroundColor: "rgba(11,19,16,0.95)", borderTop: "1px solid var(--border)", backdropFilter: "blur(8px)" }}>
+           style={{ backgroundColor: "rgba(13,47,27,0.95)", borderTop: "1px solid var(--border)", backdropFilter: "blur(8px)" }}>
         <p className="text-xs tracking-widest uppercase" style={{ color: "var(--muted-foreground)" }}>
           {selected.length} brand{selected.length !== 1 ? "s" : ""} selected
         </p>
@@ -151,7 +169,7 @@ export default function BrandSelectionPage() {
           onClick={buildPresentation}
           disabled={selected.length === 0 || building}
           className="px-8 py-3 text-sm font-bold tracking-[0.25em] uppercase rounded transition-opacity disabled:opacity-30"
-          style={{ backgroundColor: "var(--gold)", color: "#0b1310" }}
+          style={{ backgroundColor: "var(--accent-orange)", color: "var(--cream)" }}
         >
           {building ? "Building..." : "Build Presentation →"}
         </button>

@@ -132,9 +132,18 @@ export function PresentationBuilder() {
       return brandSlides;
     });
 
+    const dateStr = new Date().toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric"
+    });
+    const finalName = name.trim() === "Untitled Presentation" || !name.trim() 
+      ? `GHF Presentation — ${dateStr}` 
+      : name.trim();
+
     savePresentation({
       id,
-      name,
+      name: finalName,
       dateCreated: new Date().toISOString(),
       brands: selectedBrands.map(b => b.id),
       slides

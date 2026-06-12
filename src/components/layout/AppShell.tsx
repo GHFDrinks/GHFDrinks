@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { GHFSidebar } from "./GHFSidebar";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
@@ -9,7 +8,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <main className="flex-1 overflow-y-auto overflow-x-hidden">
         {children}
       </main>
-      <GHFSidebar />
     </div>
   );
 }

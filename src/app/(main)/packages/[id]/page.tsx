@@ -57,7 +57,7 @@ export default function PackageDetailPage() {
           <Link
             key={brand.slug}
             href={`/brands/${brand.slug}`}
-            className="group block rounded-xl overflow-hidden border border-[var(--border)] hover:border-[var(--gold)] transition-colors bg-[var(--background)]"
+            className="group block rounded-xl overflow-hidden border border-[var(--border)] hover:border-[var(--sage)] transition-colors bg-[var(--background)]"
           >
             {/* Bottle shot */}
             <div
@@ -106,7 +106,7 @@ export default function PackageDetailPage() {
               {brand.variants.length > 0 && (
                 <p
                   className="text-xs mt-3 tracking-widest uppercase font-semibold"
-                  style={{ color: "var(--gold)" }}
+                  style={{ color: "var(--sage)" }}
                 >
                   {brand.variants.length} SKUs
                 </p>

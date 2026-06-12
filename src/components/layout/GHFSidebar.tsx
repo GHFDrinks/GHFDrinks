@@ -57,7 +57,7 @@ export function GHFSidebar() {
       <div className="px-4 pt-5 pb-1">
         <p
           className="text-xs font-semibold tracking-widest uppercase"
-          style={{ color: "var(--gold)" }}
+          style={{ color: "var(--sage)" }}
         >
           Category
         </p>
@@ -81,7 +81,7 @@ export function GHFSidebar() {
               className={cn("block pl-4 pr-2 py-1 text-xs rounded transition-colors")}
               style={{
                 color: isActive(`/brands/${b.slug}`)
-                  ? "var(--gold)"
+                  ? "var(--sage)"
                   : "var(--sidebar-text-muted)",
                 backgroundColor: isActive(`/brands/${b.slug}`)
                   ? "var(--sidebar-active)"
@@ -108,7 +108,7 @@ export function GHFSidebar() {
               className={cn("block pl-4 pr-2 py-1 text-xs rounded transition-colors")}
               style={{
                 color: isActive(`/brands/${b.slug}`)
-                  ? "var(--gold)"
+                  ? "var(--sage)"
                   : "var(--sidebar-text-muted)",
                 backgroundColor: isActive(`/brands/${b.slug}`)
                   ? "var(--sidebar-active)"
@@ -135,7 +135,7 @@ export function GHFSidebar() {
               className={cn("block pl-4 pr-2 py-1 text-xs rounded transition-colors")}
               style={{
                 color: isActive(`/brands/${b.slug}`)
-                  ? "var(--gold)"
+                  ? "var(--sage)"
                   : "var(--sidebar-text-muted)",
                 backgroundColor: isActive(`/brands/${b.slug}`)
                   ? "var(--sidebar-active)"
@@ -151,7 +151,7 @@ export function GHFSidebar() {
           <button
             onClick={() => toggle("Packages")}
             className="w-full text-left px-2 py-1.5 font-semibold tracking-wide hover:opacity-80 transition-opacity"
-            style={{ color: "var(--gold)" }}
+            style={{ color: "var(--sage)" }}
           >
             Packages
           </button>
@@ -162,7 +162,7 @@ export function GHFSidebar() {
                 href={p.href}
                 className={cn("block pl-4 pr-2 py-1 text-xs rounded transition-colors")}
                 style={{
-                  color: isActive(p.href) ? "var(--gold)" : "var(--sidebar-text-muted)",
+                  color: isActive(p.href) ? "var(--sage)" : "var(--sidebar-text-muted)",
                   backgroundColor: isActive(p.href)
                     ? "var(--sidebar-active)"
                     : "transparent",
@@ -181,7 +181,7 @@ export function GHFSidebar() {
               href={item.href}
               className={cn("block px-2 py-1.5 text-sm font-medium rounded transition-colors")}
               style={{
-                color: isActive(item.href) ? "var(--gold)" : "var(--sidebar-text)",
+                color: isActive(item.href) ? "var(--sage)" : "var(--sidebar-text)",
                 backgroundColor: isActive(item.href)
                   ? "var(--sidebar-active)"
                   : "transparent",
@@ -200,7 +200,7 @@ export function GHFSidebar() {
       >
         <div
           className="w-12 h-12 rounded-full border-2 flex items-center justify-center text-xs font-bold tracking-widest"
-          style={{ borderColor: "var(--gold)", color: "var(--gold)" }}
+          style={{ borderColor: "var(--sage)", color: "var(--sage)" }}
         >
           GHF
         </div>

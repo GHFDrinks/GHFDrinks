@@ -24,9 +24,9 @@ export default function GHFActivationsPage() {
               onClick={() => setActiveId(c.id)}
               className="px-4 py-2 text-xs tracking-widest uppercase border rounded transition-colors"
               style={{
-                borderColor: isActive ? "var(--gold)" : "var(--border)",
-                backgroundColor: isActive ? "var(--gold)" : "transparent",
-                color: isActive ? "#0b1310" : "var(--foreground)",
+                borderColor: isActive ? "var(--sage)" : "var(--border)",
+                backgroundColor: isActive ? "var(--sage)" : "transparent",
+                color: isActive ? "var(--background)" : "var(--foreground)",
               }}
             >
               {c.name}
@@ -48,7 +48,7 @@ export default function GHFActivationsPage() {
           <p className="text-[11px] tracking-[0.3em] uppercase mb-2" style={{ color: "var(--muted-foreground)" }}>
             GHF Activation
           </p>
-          <h1 className="text-5xl font-light mb-5 tracking-tight" style={{ color: "var(--gold)" }}>
+          <h1 className="text-5xl font-light mb-5 tracking-tight" style={{ color: "var(--cream)" }}>
             {campaign.name}
           </h1>
           <p className="text-base leading-relaxed mb-6 max-w-2xl" style={{ color: "var(--foreground)" }}>
@@ -57,7 +57,7 @@ export default function GHFActivationsPage() {
 
           <p className="text-sm mb-6">
             <span className="font-bold" style={{ color: "var(--foreground)" }}>Activation Period: </span>
-            <span style={{ color: "var(--gold)" }}>{campaign.period}</span>
+            <span style={{ color: "var(--sage)" }}>{campaign.period}</span>
           </p>
 
           {/* Relevant brands */}
@@ -70,7 +70,7 @@ export default function GHFActivationsPage() {
                 <Link
                   key={slug}
                   href={`/brands/${slug}`}
-                  className="h-14 px-4 rounded-lg border flex items-center justify-center transition-colors hover:border-[var(--gold)]"
+                  className="h-14 px-4 rounded-lg border flex items-center justify-center transition-colors hover:border-[var(--sage)]"
                   style={{ borderColor: "var(--border)", backgroundColor: "var(--card)", minWidth: "110px" }}
                 >
                   {local?.logo ? (

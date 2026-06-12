@@ -8,21 +8,24 @@
 }
 
 :root {
-  --background: #0b1310;
-  --foreground: #f2efe8;
-  --accent: #c9a84c;
-  --accent-deep: #1a3a2a;
-  --muted: #13201b;
-  --muted-foreground: #9aa49d;
+  --background: #0D2F1B;        /* Light Ivy - primary dark green, replaces #0b1310 */
+  --card: #123A23;              /* slightly lighter ivy for cards/panels */
+  --sage: #85A487;              /* Light Sage - secondary accent, borders, labels, secondary buttons */
+  --cream: #FAF7F2;             /* off-white - primary text on dark */
+  --accent-orange: #E8763A;     /* RARE highlights only - active states, one CTA max per view */
+  --gold: #85A487;              /* keep the var name but remap to sage so nothing breaks */
+  
+  --foreground: #FAF7F2;        /* off-white for primary text */
+  --accent: #85A487;
+  --accent-deep: #123A23;
+  --muted: #0D2F1B;
+  --muted-foreground: #85A487;
   --border: rgba(255, 255, 255, 0.08);
-  --card: #111b16;
-  --gold: #c9a84c;
-  --sidebar-bg: #0a100d;
-  --sidebar-text: #f2efe8;
-  --sidebar-text-muted: #8a948c;
-  --sidebar-active: rgba(201, 168, 76, 0.15);
+  --sidebar-bg: #0D2F1B;
+  --sidebar-text: #FAF7F2;
+  --sidebar-text-muted: #85A487;
+  --sidebar-active: rgba(133, 164, 135, 0.15);
 }
-
 
 @theme inline {
   --color-background: var(--background);
@@ -33,6 +36,9 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-gold: var(--gold);
   --color-border: var(--border);
+  --color-sage: var(--sage);
+  --color-cream: var(--cream);
+  --color-accent-orange: var(--accent-orange);
   --font-sans: "Cadiz", Georgia, serif;
 }
 

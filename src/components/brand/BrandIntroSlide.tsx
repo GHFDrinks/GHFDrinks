@@ -1,40 +1,53 @@
-"use client";
-
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Brand } from "@/types/brand";
 import { getBrandImages } from "@/lib/brand-images";
+import { ConstantTabs } from "@/components/present/ConstantTabs";
 
 export function BrandIntroSlide({ brand }: { brand: Brand }) {
   const local = getBrandImages(brand.slug);
-
-  const bottleShots: string[] =
-    local?.variants && local.variants.length > 0
-      ? local.variants
-      : (brand.variants
-          .map((v) => v.image?.url)
-          .filter(Boolean) as string[]);
-
-  const lifestyle: string[] =
-    local?.lifestyle && local.lifestyle.length > 0
-      ? local.lifestyle
-      : (brand.lifestyleImages?.map((l) => l.url).filter(Boolean) as string[]);
-
   const logoSrc = local?.logo || brand.logo?.url || "";
   const venueBadges = brand.venueBadges || [];
 
+  // Carousel images: hero, lifestyle-1..3, bottle-1 (skip any that don't exist)
+  const carouselImages = [
+    local?.hero,
+    local?.lifestyle?.[0],
+    local?.lifestyle?.[1],
+    local?.lifestyle?.[2],
+    local?.variants?.[0]
+  ].filter(Boolean) as string[];
+
+  const [currentIdx, setCurrentIdx] = useState(0);
+
+  useEffect(() => {
+    if (carouselImages.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrentIdx((prev) => (prev + 1) % carouselImages.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [carouselImages.length]);
+
   return (
-    <section className="w-full h-screen flex overflow-hidden bg-[var(--background)]">
+    <section className="w-full h-screen flex overflow-hidden bg-[var(--background)] relative">
       
       {/* LEFT 50% — Editorial Brand Info */}
       <div className="w-1/2 h-full flex flex-col justify-between p-16 relative z-10 border-r border-[var(--border)] bg-gradient-to-br from-[#0b1310] via-[#090f0d] to-[#060a08]">
         
-        {/* Top Header */}
+        {/* Top Header with Logo */}
         <div className="flex items-center justify-between">
-          <span className="text-[10px] tracking-[0.35em] uppercase text-[var(--gold)] font-bold">
-            {brand.category} Presentation
-          </span>
+          {logoSrc ? (
+            <img
+              src={logoSrc}
+              alt={brand.name}
+              className="max-h-[64px] object-contain"
+            />
+          ) : (
+            <span className="text-[10px] tracking-[0.35em] uppercase text-[var(--sage)] font-bold">
+              {brand.category} Presentation
+            </span>
+          )}
           {brand.bcorp && (
-            <span className="text-[9px] font-bold tracking-widest uppercase border border-[var(--gold)] text-[var(--gold)] px-3 py-1 rounded-full">
+            <span className="text-[9px] font-bold tracking-widest uppercase border border-[var(--sage)] text-[var(--sage)] px-3 py-1 rounded-full">
               B-Corp Certified
             </span>
           )}
@@ -42,17 +55,9 @@ export function BrandIntroSlide({ brand }: { brand: Brand }) {
 
         {/* Center Info */}
         <div className="my-auto max-w-lg space-y-6">
-          {logoSrc ? (
-            <img
-              src={logoSrc}
-              alt={brand.name}
-              className="max-h-20 max-w-[260px] object-contain mb-4 filter brightness-100"
-            />
-          ) : (
-            <h1 className="text-6xl font-light tracking-tight text-[var(--gold)] mb-4">
-              {brand.name}
-            </h1>
-          )}
+          <h1 className="text-6xl font-light tracking-tight text-[var(--cream)] mb-4">
+            {brand.name}
+          </h1>
           
           <h2 className="text-xl font-light tracking-wide text-[var(--foreground)]/90 italic leading-relaxed">
             "{brand.tagline || brand.story?.headline || brand.story?.title || 'Crafted for discerning tastes.'}"
@@ -71,7 +76,7 @@ export function BrandIntroSlide({ brand }: { brand: Brand }) {
                 {brand.variants.map((v) => (
                   <span
                     key={v.id}
-                    className="text-[11px] font-medium px-3.5 py-1.5 rounded-full border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)]/80 hover:border-[var(--gold)] hover:text-white transition-colors cursor-default"
+                    className="text-[11px] font-medium px-3.5 py-1.5 rounded-full border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)]/80 hover:border-[var(--sage)] hover:text-white transition-colors cursor-default"
                   >
                     {v.name}{v.volume ? ` (${v.volume})` : ""}
                   </span>
@@ -90,100 +95,53 @@ export function BrandIntroSlide({ brand }: { brand: Brand }) {
             href={`/brands/${brand.slug}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--gold)] hover:text-white transition-colors flex items-center gap-1.5 border border-[var(--gold)]/30 hover:border-[var(--gold)] px-3.5 py-1.5 rounded-full bg-[var(--card)]"
+            className="text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--sage)] hover:text-white transition-colors flex items-center gap-1.5 border border-[var(--sage)]/30 hover:border-[var(--sage)] px-3.5 py-1.5 rounded-full bg-[var(--card)]"
           >
-            Explore Brand Story ↗
+            Learn More ↗
           </a>
         </div>
       </div>
 
-      {/* RIGHT 50% — Lifestyle & Overlapping Bottle Showcase */}
-      <div className="w-1/2 h-full relative overflow-hidden flex items-center justify-center bg-[#070b09]">
-        
-        {/* Full-bleed lifestyle backdrop */}
-        {lifestyle.length > 0 ? (
-          <>
+      {/* RIGHT 50% — Auto-playing Image Carousel */}
+      <div className="w-1/2 h-full relative overflow-hidden bg-[#070b09]">
+        {carouselImages.length > 0 ? (
+          carouselImages.map((src, idx) => (
             <img
-              src={lifestyle[0]}
+              key={src}
+              src={src}
               alt=""
-              className="absolute inset-0 w-full h-full object-cover scale-105"
-              style={{ filter: "brightness(0.25) contrast(1.1) saturate(0.85)" }}
+              className="absolute inset-0 w-full h-full object-cover transition-opacity duration-600 ease-in-out"
+              style={{
+                opacity: idx === currentIdx ? 1 : 0,
+                zIndex: idx === currentIdx ? 1 : 0,
+              }}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] via-transparent to-black/40" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[var(--background)] via-transparent to-transparent" />
-          </>
+          ))
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-[#111c18] to-[#070b09]" />
         )}
 
-        {/* Floating Overlapping Bottle Shot lineup */}
-        <div className="relative z-10 flex items-end justify-center w-full h-[78%] px-12 pb-4">
-          {/* Luxury soft gold glow platform */}
-          {bottleShots.length > 0 && (
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-4/5 h-6 bg-[var(--gold)]/15 rounded-full blur-xl z-0 pointer-events-none animate-pulse" />
-          )}
+        {/* Overlays for depth */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] via-transparent to-black/40 z-10 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[var(--background)] via-transparent to-transparent z-10 pointer-events-none" />
 
-          {bottleShots.length > 0 ? (
-            bottleShots.slice(0, 3).map((src, i) => {
-              // Calculate beautiful overlapping offsets
-              let zIndex = 10;
-              let scale = 1;
-              let transX = 0;
-              let transY = 0;
-              
-              if (bottleShots.length > 1) {
-                if (i === 0) {
-                  zIndex = 5;
-                  scale = 0.9;
-                  transX = 36;
-                  transY = 16;
-                } else if (i === 1 && bottleShots.length > 2) {
-                  zIndex = 15;
-                  scale = 1.05;
-                  transX = 0;
-                  transY = -4;
-                } else if (i === 2) {
-                  zIndex = 5;
-                  scale = 0.9;
-                  transX = -36;
-                  transY = 16;
-                } else if (i === 1 && bottleShots.length === 2) {
-                  zIndex = 15;
-                  scale = 0.98;
-                  transX = -20;
-                  transY = 8;
-                }
-              }
-
-              return (
-                <div
-                  key={i}
-                  className="relative transition-all duration-500 ease-out hover:scale-[1.1] hover:z-30 hover:-translate-y-4 flex items-end justify-center"
-                  style={{
-                    zIndex,
-                    transform: `translateX(${transX}px) translateY(${transY}px) scale(${scale})`,
-                    height: "90%",
-                    width: bottleShots.length > 1 ? "36%" : "55%",
-                  }}
-                >
-                  <img
-                    src={src}
-                    alt={brand.name}
-                    className="h-full w-auto object-contain mx-auto transition-transform duration-300"
-                    style={{
-                      maxHeight: "56vh",
-                      filter: "drop-shadow(0 20px 30px rgba(0,0,0,0.65))"
-                    }}
-                  />
-                </div>
-              );
-            })
-          ) : (
-            <div className="text-sm font-bold tracking-widest text-[var(--gold)] uppercase">
-              Showcase Visual
-            </div>
-          )}
-        </div>
+        {/* Dot Indicators */}
+        {carouselImages.length > 1 && (
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20">
+            {carouselImages.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentIdx(idx)}
+                className="w-2.5 h-2.5 rounded-full transition-all duration-300"
+                style={{
+                  backgroundColor: idx === currentIdx ? "var(--cream)" : "var(--sage)",
+                  opacity: idx === currentIdx ? 1 : 0.4,
+                }}
+                aria-label={`Go to slide ${idx + 1}`}
+              />
+            ))}
+          </div>
+        )}
 
         {/* Venue badges display bottom right */}
         {venueBadges.length > 0 && (
@@ -205,6 +163,8 @@ export function BrandIntroSlide({ brand }: { brand: Brand }) {
           </div>
         )}
       </div>
+
+      <ConstantTabs brandSlug={brand.slug} />
     </section>
   );
 }

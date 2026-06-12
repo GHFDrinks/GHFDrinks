@@ -11,7 +11,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="flex items-center gap-6">
           <div
             className="w-8 h-8 rounded-full border-2 flex items-center justify-center text-[9px] font-bold tracking-widest"
-            style={{ borderColor: "var(--gold)", color: "var(--gold)" }}
+            style={{ borderColor: "var(--cream)", color: "var(--cream)" }}
           >
             GHF
           </div>

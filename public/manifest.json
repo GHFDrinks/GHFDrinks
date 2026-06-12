@@ -4,8 +4,8 @@
   "description": "Interactive brand presentation tool for GHF Drinks sales teams.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#1a3a2a",
+  "background_color": "#0D2F1B",
+  "theme_color": "#0D2F1B",
   "orientation": "landscape",
   "icons": [
     {

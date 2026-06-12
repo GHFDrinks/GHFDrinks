@@ -31,7 +31,7 @@ export default function PackagesPage() {
             <Link
               key={template.id}
               href={`/packages/${template.id}`}
-              className="group block rounded-xl overflow-hidden border border-[var(--border)] hover:border-[var(--gold)] transition-colors bg-[var(--background)]"
+              className="group block rounded-xl overflow-hidden border border-[var(--border)] hover:border-[var(--sage)] transition-colors bg-[var(--background)]"
             >
               {/* Bottle grid */}
               <div
@@ -91,7 +91,7 @@ export default function PackagesPage() {
                 <div className="mt-3 flex items-center justify-between">
                   <span
                     className="text-xs tracking-widest uppercase font-semibold"
-                    style={{ color: "var(--gold)" }}
+                    style={{ color: "var(--sage)" }}
                   >
                     {templateBrands.length} brands
                   </span>

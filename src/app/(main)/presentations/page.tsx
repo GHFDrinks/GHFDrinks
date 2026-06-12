@@ -1,16 +1,30 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usePresentation } from "@/lib/presentation-store";
 import { useBrands } from "@/hooks/useBrands";
 import { getBrandImages } from "@/lib/brand-images";
+import { Presentation } from "@/types/presentation";
 
 export default function PresentationsPage() {
   const { savedPresentations, deletePresentation } = usePresentation();
   const { brands } = useBrands();
   const router = useRouter();
+  const [generatingId, setGeneratingId] = useState<string | null>(null);
+
+  const handleDownloadPdf = async (presentation: Presentation) => {
+    setGeneratingId(presentation.id);
+    try {
+      const { generatePresentationPdf } = await import("@/lib/presentation-pdf");
+      await generatePresentationPdf(presentation, brands);
+    } catch (err) {
+      console.error("Failed to generate PDF:", err);
+    } finally {
+      setGeneratingId(null);
+    }
+  };
 
   return (
     <div className="p-10 min-h-screen bg-[var(--background)]">
@@ -64,7 +78,7 @@ export default function PresentationsPage() {
             return (
               <div
                 key={p.id}
-                className="border border-[var(--border)] rounded-xl overflow-hidden bg-[var(--background)] hover:border-[var(--gold)] transition-colors"
+                className="border border-[var(--border)] rounded-xl overflow-hidden bg-[var(--background)] hover:border-[var(--sage)] transition-colors"
               >
                 {/* Mini brand strip */}
                 <div
@@ -118,7 +132,7 @@ export default function PresentationsPage() {
                   <div className="flex items-center gap-3">
                     <Link
                       href={`/presentations/new?clone=${p.id}`}
-                      className="text-xs underline"
+                      className="text-xs underline hover:text-[var(--sage)] transition-colors"
                       style={{ color: "var(--muted-foreground)" }}
                     >
                       Edit
@@ -129,12 +143,19 @@ export default function PresentationsPage() {
                     >
                       Delete
                     </button>
+                    <button
+                      onClick={() => handleDownloadPdf(p)}
+                      disabled={generatingId !== null}
+                      className="text-xs text-[var(--sage)] hover:text-white transition-colors disabled:opacity-50"
+                    >
+                      {generatingId === p.id ? "Preparing PDF..." : "Download PDF"}
+                    </button>
                     <div className="flex-1" />
                     <button
                       onClick={() =>
                         router.push(`/present-mode/${p.id}`)
                       }
-                      className="px-3 py-1.5 text-xs font-medium rounded-lg text-white"
+                      className="px-3 py-1.5 text-xs font-medium rounded-lg text-white hover:opacity-90 transition-opacity"
                       style={{ backgroundColor: "var(--accent)" }}
                     >
                       Present

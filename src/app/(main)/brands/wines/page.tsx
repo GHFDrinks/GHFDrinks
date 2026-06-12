@@ -35,7 +35,7 @@ export default function WinesPage() {
               <Link
                 key={b.slug}
                 href={`/brands/${b.slug}`}
-                className="group block border border-[var(--border)] rounded-xl overflow-hidden hover:border-[var(--gold)] transition-colors bg-[var(--background)] shadow-sm hover:shadow-md"
+                className="group block border border-[var(--border)] rounded-xl overflow-hidden hover:border-[var(--sage)] transition-colors bg-[var(--background)] shadow-sm hover:shadow-md"
               >
                 <div
                   className="h-52 relative flex items-center justify-center p-6 border-b border-[var(--border)] overflow-hidden"
@@ -96,7 +96,7 @@ export default function WinesPage() {
                   {b.variants.length > 0 && (
                     <p
                       className="text-xs mt-3 tracking-widest uppercase font-semibold"
-                      style={{ color: "var(--gold)" }}
+                      style={{ color: "var(--sage)" }}
                     >
                       {b.variants.length} SKUs
                     </p>

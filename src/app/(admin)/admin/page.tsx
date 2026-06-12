@@ -124,7 +124,7 @@ export default function AdminDashboardPage() {
               {b.promotionActive && (
                 <span
                   className="text-[10px] font-bold tracking-widest uppercase border rounded px-2 py-0.5"
-                  style={{ borderColor: "var(--gold)", color: "var(--gold)" }}
+                  style={{ borderColor: "var(--sage)", color: "var(--sage)" }}
                 >
                   Promo Live
                 </span>

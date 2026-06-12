@@ -32,7 +32,7 @@ export default function TastingNotesPage() {
               <button
                 key={slug}
                 onClick={() => { setActiveSlug(slug); setVariantIdx(0); }}
-                className="border rounded-lg px-6 py-6 flex flex-col items-center justify-center gap-3 transition-colors hover:border-[var(--gold)]"
+                className="border rounded-lg px-6 py-6 flex flex-col items-center justify-center gap-3 transition-colors hover:border-[var(--sage)]"
                 style={{ borderColor: "var(--border)", backgroundColor: "var(--card)", minHeight: "135px" }}
               >
                 {local?.logo && (
@@ -47,7 +47,7 @@ export default function TastingNotesPage() {
             );
           })}
         </div>
-        <h1 className="text-5xl font-light mt-10 tracking-tight" style={{ color: "var(--gold)" }}>
+        <h1 className="text-5xl font-light mt-10 tracking-tight" style={{ color: "var(--cream)" }}>
           Tasting Notes
         </h1>
         <p className="text-sm mt-1" style={{ color: "var(--muted-foreground)" }}>
@@ -88,9 +88,9 @@ export default function TastingNotesPage() {
             onClick={() => setVariantIdx(i)}
             className="px-3 py-1.5 text-[11px] tracking-widest uppercase border rounded transition-colors"
             style={{
-              borderColor: i === variantIdx ? "var(--gold)" : "var(--border)",
-              backgroundColor: i === variantIdx ? "var(--gold)" : "transparent",
-              color: i === variantIdx ? "#0b1310" : "var(--foreground)",
+              borderColor: i === variantIdx ? "var(--sage)" : "var(--border)",
+              backgroundColor: i === variantIdx ? "var(--sage)" : "transparent",
+              color: i === variantIdx ? "var(--background)" : "var(--foreground)",
             }}
           >
             {n.variant.split("|")[0].trim()}
@@ -115,7 +115,7 @@ export default function TastingNotesPage() {
           {local?.logo && (
             <img src={local.logo} alt={brand?.name || ""} className="max-h-16 max-w-[180px] object-contain mb-5" />
           )}
-          <h1 className="text-3xl font-light mb-3 tracking-tight" style={{ color: "var(--gold)" }}>
+          <h1 className="text-3xl font-light mb-3 tracking-tight" style={{ color: "var(--cream)" }}>
             {note.variant}
           </h1>
           <p className="text-sm leading-relaxed mb-7 max-w-xl" style={{ color: "var(--foreground)" }}>
@@ -128,7 +128,7 @@ export default function TastingNotesPage() {
               <div
                 key={f}
                 className="w-24 h-24 rounded-full border-2 flex items-center justify-center text-center p-2"
-                style={{ borderColor: "var(--gold)", backgroundColor: "var(--card)" }}
+                style={{ borderColor: "var(--sage)", backgroundColor: "var(--card)" }}
               >
                 <span className="text-[10px] font-semibold leading-tight" style={{ color: "var(--foreground)" }}>{f}</span>
               </div>
@@ -142,7 +142,7 @@ export default function TastingNotesPage() {
             ))}
           </ul>
 
-          <p className="text-2xl font-bold mt-auto" style={{ color: "var(--gold)" }}>{note.abv}</p>
+          <p className="text-2xl font-bold mt-auto" style={{ color: "var(--sage)" }}>{note.abv}</p>
         </div>
 
         {/* RIGHT — serves / pairings / listings */}
@@ -153,7 +153,7 @@ export default function TastingNotesPage() {
 
           {note.serves?.map((s) => (
             <div key={s.name} className="border rounded-lg p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--card)" }}>
-              <p className="text-sm font-bold mb-2" style={{ color: "var(--gold)" }}>{s.name}</p>
+              <p className="text-sm font-bold mb-2" style={{ color: "var(--sage)" }}>{s.name}</p>
               {s.ingredients.map((ing, i) => (
                 <p key={i} className="text-xs leading-relaxed" style={{ color: "var(--foreground)" }}>{ing}</p>
               ))}
@@ -162,7 +162,7 @@ export default function TastingNotesPage() {
 
           {note.pairings?.map((p) => (
             <div key={p.category} className="border rounded-lg p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--card)" }}>
-              <p className="text-sm font-bold mb-1" style={{ color: "var(--gold)" }}>{p.category}</p>
+              <p className="text-sm font-bold mb-1" style={{ color: "var(--sage)" }}>{p.category}</p>
               <p className="text-xs leading-relaxed" style={{ color: "var(--foreground)" }}>{p.detail}</p>
             </div>
           ))}
@@ -179,7 +179,7 @@ export default function TastingNotesPage() {
       <div className="flex items-center justify-between px-8 pb-6">
         <button onClick={goPrev} disabled={variantIdx === 0}
                 className="text-xs tracking-widest uppercase disabled:opacity-30"
-                style={{ color: "var(--gold)" }}>
+                style={{ color: "var(--sage)" }}>
           ← Back
         </button>
         <span className="text-xs" style={{ color: "var(--muted-foreground)" }}>
@@ -187,7 +187,7 @@ export default function TastingNotesPage() {
         </span>
         <button onClick={goNext} disabled={variantIdx === notes.length - 1}
                 className="text-xs tracking-widest uppercase disabled:opacity-30"
-                style={{ color: "var(--gold)" }}>
+                style={{ color: "var(--sage)" }}>
           Next →
         </button>
       </div>
