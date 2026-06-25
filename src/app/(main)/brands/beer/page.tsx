@@ -7,7 +7,7 @@ import { getCuratedBrandAssets } from "@/lib/brand-images";
 
 export default function BeerPage() {
   const { brands, loading } = useBrands();
-  const beer = brands.filter((b) => b.category === "Beer, Cider & Mixer");
+  const beer = brands.filter((b) => b.category === "Packaged");
 
   return (
     <div className="p-10 min-h-screen bg-[var(--background)]">
@@ -15,7 +15,7 @@ export default function BeerPage() {
         className="text-4xl font-light mb-1 tracking-tight"
         style={{ color: "var(--accent)" }}
       >
-        Beer. Cider. Mixer.
+        Packaged
       </h1>
       <p className="text-sm mb-10" style={{ color: "var(--muted-foreground)" }}>
         {beer.length} brands
@@ -35,7 +35,7 @@ export default function BeerPage() {
               <Link
                 key={b.slug}
                 href={`/brands/${b.slug}`}
-                className="group block border border-[var(--border)] rounded-xl overflow-hidden hover:border-[var(--sage)] transition-colors bg-[var(--background)] shadow-sm hover:shadow-md"
+                className="group block border border-[var(--border)] rounded-lg overflow-hidden hover:border-[var(--sage)] transition-colors bg-[var(--background)] shadow-sm hover:shadow-md"
               >
                 <div
                   className="h-52 relative flex items-center justify-center p-6 border-b border-[var(--border)] overflow-hidden"

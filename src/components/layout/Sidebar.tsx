@@ -22,7 +22,7 @@ import { createClient } from "@/lib/supabase/client";
 const NAV_ITEMS = [
   { name: "Spirits", href: "/brands/spirits", icon: GlassWater },
   { name: "Wines", href: "/brands/wines", icon: Wine },
-  { name: "Beer, Cider & Mixer", href: "/brands/beer", icon: Beer },
+  { name: "Packaged", href: "/brands/beer", icon: Beer },
   { name: "GHF Activations", href: "/activations", icon: Zap },
   { name: "Activation Calendars", href: "/calendar", icon: Calendar },
   { name: "Tasting Notes", href: "/tasting-notes", icon: BookOpen },

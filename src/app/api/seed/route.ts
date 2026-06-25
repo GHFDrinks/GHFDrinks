@@ -273,7 +273,7 @@ const brands = [
   {
     slug: "wignac",
     name: "Wignac",
-    category: "Beer, Cider & Mixer",
+    category: "Packaged",
     tagline: "Organic Cider from the Ardennes.",
     description:
       "Wignac produces premium organic ciders in the French Ardennes. Combining traditional heritage with contemporary design, 100% pure organic apple juice with no added sugar.",
@@ -287,7 +287,7 @@ const brands = [
   {
     slug: "cote-citron",
     name: "Côte Citron",
-    category: "Beer, Cider & Mixer",
+    category: "Packaged",
     tagline: "Super-Premium Radler.",
     description:
       "A super-premium Radler, made with Menton lemons from the Cote d'Azur. Crisp and refreshing, Côte Citron is on a mission to keep the good life of the French Riviera alive.",
@@ -301,7 +301,7 @@ const brands = [
   {
     slug: "big-drop",
     name: "Big Drop",
-    category: "Beer, Cider & Mixer",
+    category: "Packaged",
     tagline: "Alcohol-Free Craft Beer.",
     description:
       "From Britain's most awarded brewery, a range of naturally brewed alcohol-free craft beer. Full of high-quality flavour with no-added ingredients, for an uncompromising moderation experience.",
@@ -319,7 +319,7 @@ const brands = [
   {
     slug: "fever-tree",
     name: "Fever-Tree",
-    category: "Beer, Cider & Mixer",
+    category: "Packaged",
     tagline: "If 3/4 of your drink is the mixer, mix with the best.",
     description:
       "Fever-Tree is the world's leading producer of premium carbonated mixers. By using the finest natural ingredients from around the world, Fever-Tree has created a range of mixers that complement and enhance premium spirits.",

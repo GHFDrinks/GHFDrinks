@@ -10,7 +10,7 @@ export default function InsightsPage() {
   const totalSKUs = brands.reduce((acc, b) => acc + b.variants.length, 0);
   const spirits = brands.filter((b) => b.category === "Spirits");
   const wines = brands.filter((b) => b.category === "Wines");
-  const beer = brands.filter((b) => b.category === "Beer, Cider & Mixer");
+  const beer = brands.filter((b) => b.category === "Packaged");
   const bcorpBrands = brands.filter((b) => b.bcorp);
   const noAlcBrands = brands.filter((b) =>
     b.variants.some((v) => v.abv === "0%" || v.abv === "0.5%")
@@ -21,7 +21,7 @@ export default function InsightsPage() {
     { label: "Total SKUs", value: totalSKUs },
     { label: "Spirits", value: spirits.length },
     { label: "Wines", value: wines.length },
-    { label: "Beer, Cider & Mixer", value: beer.length },
+    { label: "Packaged", value: beer.length },
     { label: "B Corp Certified", value: bcorpBrands.length },
     { label: "Low / No Alcohol", value: noAlcBrands.length },
   ];
@@ -47,7 +47,7 @@ export default function InsightsPage() {
             {stats.map((s) => (
               <div
                 key={s.label}
-                className="border border-[var(--border)] rounded-xl p-5"
+                className="border border-[var(--border)] rounded-lg p-5"
               >
                 <p
                   className="text-4xl font-light mb-1"
@@ -69,7 +69,7 @@ export default function InsightsPage() {
           {[
             { label: "Spirits", list: spirits },
             { label: "Wines", list: wines },
-            { label: "Beer, Cider & Mixer", list: beer },
+            { label: "Packaged", list: beer },
           ].map(({ label, list }) => (
             <div key={label} className="mb-10">
               <div className="flex items-center justify-between mb-4">
@@ -92,7 +92,7 @@ export default function InsightsPage() {
                   <Link
                     key={b.slug}
                     href={`/brands/${b.slug}`}
-                    className="border border-[var(--border)] rounded-xl p-4 hover:border-[var(--sage)] transition-colors"
+                    className="border border-[var(--border)] rounded-lg p-4 hover:border-[var(--sage)] transition-colors"
                   >
                     <div className="flex items-start justify-between mb-1">
                       <p

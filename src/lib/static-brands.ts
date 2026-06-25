@@ -303,7 +303,7 @@ const RAW_BRANDS: any[] = [
   {
     slug: "noam",
     name: "NOAM",
-    category: "Beer, Cider & Mixer",
+    category: "Packaged",
     tagline: "Austrian Organic Lager.",
     description:
       "NOAM is a premium Austrian organic lager brewed with the finest natural ingredients.",
@@ -317,7 +317,7 @@ const RAW_BRANDS: any[] = [
   {
     slug: "wignac",
     name: "Wignac",
-    category: "Beer, Cider & Mixer",
+    category: "Packaged",
     tagline: "French Cider.",
     description:
       "Wignac is a premium French cider from Normandy. Crafted from heritage apple varieties for a refined, elegant serve.",
@@ -331,7 +331,7 @@ const RAW_BRANDS: any[] = [
   {
     slug: "cote-citron",
     name: "Côte Citron",
-    category: "Beer, Cider & Mixer",
+    category: "Packaged",
     tagline: "Super-Premium Radler.",
     description:
       "A super-premium Radler, made with Menton lemons from the Cote d'Azur. Crisp and refreshing, Côte Citron is on a mission to keep the good life of the French Riviera alive.",
@@ -345,7 +345,7 @@ const RAW_BRANDS: any[] = [
   {
     slug: "big-drop",
     name: "Big Drop",
-    category: "Beer, Cider & Mixer",
+    category: "Packaged",
     tagline: "Alcohol-Free Craft Beer.",
     description:
       "From Britain's most awarded brewery, a range of naturally brewed alcohol-free craft beer. Full of high-quality flavour with no-added ingredients, for an uncompromising moderation experience.",
@@ -363,7 +363,7 @@ const RAW_BRANDS: any[] = [
   {
     slug: "fever-tree",
     name: "Fever-Tree",
-    category: "Beer, Cider & Mixer",
+    category: "Packaged",
     tagline: "If 3/4 of your drink is the mixer, mix with the best.",
     description:
       "Fever-Tree is the world's leading producer of premium carbonated mixers. By using the finest natural ingredients from around the world, Fever-Tree has created a range of mixers that complement and enhance premium spirits.",

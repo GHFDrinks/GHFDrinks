@@ -23,7 +23,7 @@ export function HiddenMenu() {
 
   const spirits = brands.filter((b) => b.category === "Spirits");
   const wines = brands.filter((b) => b.category === "Wines");
-  const packaged = brands.filter((b) => b.category === "Beer, Cider & Mixer");
+  const packaged = brands.filter((b) => b.category === "Packaged");
 
   function toggleExpand(key: string) {
     setExpanded((prev) => ({ ...prev, [key]: !prev[key] }));

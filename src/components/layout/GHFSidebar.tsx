@@ -31,7 +31,7 @@ export function GHFSidebar() {
 
   const spirits = brands.filter((b) => b.category === "Spirits");
   const wines = brands.filter((b) => b.category === "Wines");
-  const beer = brands.filter((b) => b.category === "Beer, Cider & Mixer");
+  const beer = brands.filter((b) => b.category === "Packaged");
 
   const [open, setOpen] = useState<Record<string, boolean>>({
     Spirits: true,
@@ -119,13 +119,13 @@ export function GHFSidebar() {
             </Link>
           ))}
 
-        {/* BEER CIDER MIXER */}
+        {/* PACKAGED */}
         <button
           onClick={() => toggle("Beer")}
           className="w-full text-left px-2 py-1.5 font-medium hover:opacity-80 transition-opacity mt-1"
           style={{ color: "var(--sidebar-text)" }}
         >
-          Beer. Cider. Mixer.
+          Packaged
         </button>
         {open.Beer &&
           beer.map((b) => (

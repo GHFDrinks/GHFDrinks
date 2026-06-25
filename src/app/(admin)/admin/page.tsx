@@ -9,7 +9,7 @@ export default function AdminDashboardPage() {
 
   const spirits = brands.filter((b) => b.category === "Spirits").length;
   const wines = brands.filter((b) => b.category === "Wines").length;
-  const beer = brands.filter((b) => b.category === "Beer, Cider & Mixer").length;
+  const beer = brands.filter((b) => b.category === "Packaged").length;
   const totalSKUs = brands.reduce((a, b) => a + b.variants.length, 0);
 
   return (

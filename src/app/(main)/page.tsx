@@ -1,14 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useBrands } from "@/hooks/useBrands";
-import { usePresentationStore } from "@/lib/presentation-store";
-import { v4 as uuidv4 } from "uuid";
-import { Brand } from "@/types/brand";
-import { SlideType } from "@/types/presentation";
-import { mockBrands } from "@/data/brands";
-import { PACKAGE_PRESENTATIONS } from "@/data/package-presentations";
+import React from "react";
+import Link from "next/link";
 
 const ROWS = [
   {
@@ -16,7 +9,7 @@ const ROWS = [
     cards: [
       { title: "Spirits", href: "/brands/spirits" },
       { title: "Wines", href: "/brands/wines" },
-      { title: "Beer. Cider. Mixer.", href: "/brands/beer" },
+      { title: "Packaged", href: "/brands/beer" },
     ],
   },
   {
@@ -35,100 +28,46 @@ const ROWS = [
       { title: "Sustainability Focus", href: "/packages/sustainable" },
     ],
   },
+  {
+    label: "PRODUCTS",
+    cards: [
+      { title: "No/Low", href: "/products/no-low" },
+      { title: "Whisky", href: "/products/whisky" },
+      { title: "Exclusives", href: "/products/exclusives" },
+    ],
+  },
 ];
 
 export default function HomePage() {
-  const router = useRouter();
-  const { brands } = useBrands();
-  const { savePresentation } = usePresentationStore();
-  const [building, setBuilding] = useState(false);
-
-  async function launchPackage(href: string, title: string) {
-    if (building) return;
-    setBuilding(true);
-
-    try {
-      const parts = href.split("/");
-      const slug = parts[parts.length - 1];
-      const brandSlugs = PACKAGE_PRESENTATIONS[slug];
-
-      if (!brandSlugs) {
-        console.error("No brand slugs mapped for package:", slug);
-        setBuilding(false);
-        return;
-      }
-
-      const id = uuidv4();
-      const availableBrands = brands.length > 0 ? brands : mockBrands;
-
-      // Map selection order to full brand objects
-      const selectedBrands = brandSlugs
-        .map((s) => availableBrands.find((b) => b.slug === s))
-        .filter(Boolean) as Brand[];
-
-      // Auto-generate slides based on brand capabilities
-      const slides = selectedBrands.flatMap((brand) => {
-        const brandSlides = [
-          { id: `s_${brand.id}_intro`, brandId: brand.id, type: "intro" as SlideType }
-        ];
-        if (brand.variants && brand.variants.length > 0) {
-          brandSlides.push({ id: `s_${brand.id}_tasting`, brandId: brand.id, type: "tasting" as SlideType });
-        }
-        if (brand.activations && brand.activations.length > 0) {
-          brandSlides.push({ id: `s_${brand.id}_act`, brandId: brand.id, type: "activation" as SlideType });
-        }
-        if (brand.supportPackages && brand.supportPackages.length > 0) {
-          brandSlides.push({ id: `s_${brand.id}_sup`, brandId: brand.id, type: "support" as SlideType });
-        }
-        return brandSlides;
-      });
-
-      const name = `${title} Presentation`;
-
-      await savePresentation({
-        id,
-        name,
-        dateCreated: new Date().toISOString(),
-        brands: selectedBrands.map((b) => b.id),
-        slides
-      });
-
-      router.push(`/present-mode/${id}`);
-    } catch (err) {
-      console.error("Failed to build presentation:", err);
-      setBuilding(false);
-    }
-  }
-
   return (
-    <div className="min-h-screen flex flex-col px-12 py-10" style={{ backgroundColor: "var(--background)" }}>
+    <div className="relative min-h-screen flex flex-col px-12 py-10" style={{ backgroundColor: "var(--background)" }}>
+      {/* GHF Logo Top Right */}
+      <img
+        src="/ghf-logo-dark.png"
+        alt="GHF Drinks"
+        className="absolute top-6 right-6 w-12 h-12 md:w-14 md:h-14 object-contain"
+      />
 
       {/* Header */}
       <div className="mb-10">
-        <div
-          className="w-14 h-14 rounded-full border-2 flex items-center justify-center mb-5"
-          style={{ borderColor: "var(--sage)", color: "var(--sage)" }}
-        >
-          <span className="text-[11px] font-bold tracking-widest">GHF</span>
-        </div>
         <h1 className="text-5xl font-light tracking-tight mb-2" style={{ color: "var(--foreground)" }}>
           GHF Drinks Packages
         </h1>
         <p className="text-sm" style={{ color: "var(--muted-foreground)" }}>
-          Tailored packages of drinks brands, perfect for your customers.
+          Tailored packages of pioneering premium drinks brands
         </p>
       </div>
 
-      {/* 3x3 grid with row labels */}
-      <div className="flex-1 flex flex-col gap-5 max-w-5xl">
+      {/* 4x3 grid with row labels */}
+      <div className="flex-1 flex flex-col gap-4 max-w-5xl">
         {ROWS.map((row) => (
-          <div key={row.label} className="flex items-stretch gap-5">
+          <div key={row.label} className="flex items-stretch gap-4">
             {/* Rotated row label */}
             <div className="flex-shrink-0 flex items-center justify-center" style={{ width: "34px" }}>
               <span
                 className="text-[10px] font-bold tracking-[0.35em] uppercase select-none"
                 style={{
-                  color: "var(--muted-foreground)",
+                  color: "var(--sage)",
                   writingMode: "vertical-rl",
                   transform: "rotate(180deg)",
                 }}
@@ -138,17 +77,16 @@ export default function HomePage() {
             </div>
 
             {/* Cards */}
-            <div className="flex-1 grid grid-cols-3 gap-5">
+            <div className="flex-1 grid grid-cols-3 gap-4">
               {row.cards.map((card) => (
-                <button
+                <Link
                   key={card.title}
-                  onClick={() => launchPackage(card.href, card.title)}
-                  disabled={building}
-                  className="group rounded-xl border flex items-center justify-center text-center px-6 transition-all hover:border-[var(--sage)] hover:scale-[1.02] disabled:opacity-50"
+                  href={card.href}
+                  className="group rounded-lg border flex items-center justify-center text-center px-6 transition-all hover:border-[var(--sage)] hover:scale-[1.02]"
                   style={{
                     borderColor: "var(--border)",
                     backgroundColor: "var(--card)",
-                    minHeight: "150px",
+                    minHeight: "140px",
                   }}
                 >
                   <span
@@ -157,43 +95,29 @@ export default function HomePage() {
                   >
                     {card.title}
                   </span>
-                </button>
+                </Link>
               ))}
             </div>
           </div>
         ))}
 
-        {/* Build your own CTA — arrow banner & Resources Hub */}
-        <div className="flex items-stretch gap-5 mt-1">
+        {/* Build your own CTA — Action buttons */}
+        <div className="flex items-stretch gap-4 mt-2">
           <div className="flex-shrink-0" style={{ width: "34px" }} />
           <div className="flex-1 flex flex-col md:flex-row gap-4 items-stretch">
-            <button
-              onClick={() => router.push("/presentations/new")}
-              disabled={building}
-              className="flex-1 relative flex items-center justify-center py-5 transition-all hover:opacity-90 disabled:opacity-50"
-              style={{
-                backgroundColor: "var(--accent-orange)",
-                clipPath: "polygon(0 0, calc(100% - 36px) 0, 100% 50%, calc(100% - 36px) 100%, 0 100%)",
-              }}
+            <Link
+              href="/presentations/new"
+              className="flex-1 py-5 px-8 rounded-lg flex items-center justify-center text-center transition-all hover:opacity-90 bg-[var(--accent)] text-[var(--accent-foreground)] font-bold tracking-[0.2em] text-xs uppercase"
             >
-              <span className="text-sm font-bold tracking-[0.25em] uppercase" style={{ color: "var(--cream)" }}>
-                Build your own drinks package&nbsp;&nbsp;→&nbsp;&nbsp;Brand Selection
-              </span>
-            </button>
+              Build your own drinks package
+            </Link>
 
-            <button
-              onClick={() => router.push("/resources")}
-              disabled={building}
-              className="px-8 py-5 md:py-0 rounded-xl border flex items-center justify-center text-center transition-all hover:border-[var(--sage)] hover:bg-[var(--card)] hover:scale-[1.01] disabled:opacity-50"
-              style={{
-                borderColor: "var(--border)",
-                backgroundColor: "var(--card)",
-              }}
+            <Link
+              href="/resources"
+              className="flex-1 py-5 px-8 rounded-lg flex items-center justify-center text-center transition-all hover:opacity-90 bg-[var(--accent)] text-[var(--accent-foreground)] font-bold tracking-[0.2em] text-xs uppercase"
             >
-              <span className="text-xs font-bold tracking-[0.2em] uppercase text-[var(--cream)] hover:text-[var(--sage)] transition-colors">
-                Brand Resources Hub →
-              </span>
-            </button>
+              Brand Resources Hub
+            </Link>
           </div>
         </div>
       </div>
