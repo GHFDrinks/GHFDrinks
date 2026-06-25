@@ -35,7 +35,7 @@ export default function SupportOptionDetailPage() {
       <div className="flex items-center justify-between border-b border-[var(--border)] pb-6 mb-8">
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[var(--sage)] hover:text-white transition-colors border border-[var(--sage)]/30 hover:border-[var(--sage)] px-4 py-2 rounded-full bg-[var(--card)]"
+          className="flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[var(--sage)] hover:text-[var(--foreground)] transition-colors border border-[var(--sage)]/30 hover:border-[var(--sage)] px-4 py-2 rounded-full bg-[var(--card)]"
         >
           ← Back to presentation
         </button>
@@ -72,7 +72,7 @@ export default function SupportOptionDetailPage() {
 
         {/* Right column: Image */}
         {option.image ? (
-          <div className="w-full md:w-80 aspect-[4/3] rounded-xl overflow-hidden border border-[var(--border)] shadow-xl relative bg-[#070b09]">
+          <div className="w-full md:w-80 aspect-[4/3] rounded-xl overflow-hidden border border-[var(--border)] shadow-xl relative bg-[var(--muted)]">
             <img
               src={option.image}
               alt={option.label}

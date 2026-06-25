@@ -15,7 +15,7 @@ export default function BrandVideosPage() {
         <div className="space-y-4">
           <Link
             href="/resources"
-            className="text-xs tracking-widest uppercase text-[var(--sage)] hover:text-white transition-colors"
+            className="text-xs tracking-widest uppercase text-[var(--sage)] hover:text-[var(--foreground)] transition-colors"
           >
             ← Back to resources
           </Link>
@@ -38,10 +38,10 @@ export default function BrandVideosPage() {
             return (
               <div 
                 key={brand.id}
-                className="border border-white/5 rounded-2xl overflow-hidden bg-[var(--card)] shadow-xl flex flex-col"
+                className="border border-[var(--border)]/20 rounded-2xl overflow-hidden bg-[var(--card)] shadow-xl flex flex-col"
               >
                 {/* 16:9 Video or Placeholder */}
-                <div className="relative aspect-[16/9] bg-[#070b09] overflow-hidden border-b border-white/5">
+                <div className="relative aspect-[16/9] bg-[var(--muted)] overflow-hidden border-b border-[var(--border)]/20">
                   {videoUrl ? (
                     <video 
                       controls 
@@ -82,7 +82,7 @@ export default function BrandVideosPage() {
                   </div>
                   <Link
                     href={`/brands/${brand.slug}`}
-                    className="text-xs font-bold tracking-widest uppercase text-[var(--sage)] hover:text-white transition-colors"
+                    className="text-xs font-bold tracking-widest uppercase text-[var(--sage)] hover:text-[var(--foreground)] transition-colors"
                   >
                     View Story →
                   </Link>

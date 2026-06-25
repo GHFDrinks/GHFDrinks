@@ -62,7 +62,7 @@ export function BrandActivationSlide({ brand, isWebPage = false }: { brand: Bran
                   return copy;
                 });
               }}
-              className="text-xs text-[var(--sage)] hover:text-white transition-colors"
+              className="text-xs text-[var(--sage)] hover:text-[var(--foreground)] transition-colors"
             >
               ← back
             </button>
@@ -144,7 +144,7 @@ export function BrandActivationSlide({ brand, isWebPage = false }: { brand: Bran
                     });
                   }
                 }}
-                className="text-[9px] px-2.5 py-1 rounded bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]/80 hover:border-[var(--sage)] hover:text-white transition-colors"
+                className="text-[9px] px-2.5 py-1 rounded bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]/80 hover:border-[var(--sage)] hover:text-[var(--foreground)] transition-colors"
               >
                 {date}
               </button>
@@ -205,7 +205,7 @@ export function BrandActivationSlide({ brand, isWebPage = false }: { brand: Bran
                   return copy;
                 });
               }}
-              className="text-xs text-[var(--sage)] hover:text-white transition-colors"
+              className="text-xs text-[var(--sage)] hover:text-[var(--foreground)] transition-colors"
             >
               ← back
             </button>
@@ -263,7 +263,7 @@ export function BrandActivationSlide({ brand, isWebPage = false }: { brand: Bran
     return (
       <>
         {/* Photo container with fixed ratio & border bottom */}
-        <div className="relative aspect-[16/9] w-full overflow-hidden border-b border-[var(--border)] flex-shrink-0 bg-[#070b09]">
+        <div className="relative aspect-[16/9] w-full overflow-hidden border-b border-[var(--border)] flex-shrink-0 bg-[var(--muted)]">
           {photo ? (
             <img
               src={photo}
@@ -271,7 +271,7 @@ export function BrandActivationSlide({ brand, isWebPage = false }: { brand: Bran
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-[#13201b] to-[#0b1310]" />
+            <div className="w-full h-full bg-gradient-to-br from-[var(--muted)] to-[var(--background)]" />
           )}
           
           {/* Category overlay badge */}
@@ -337,7 +337,7 @@ export function BrandActivationSlide({ brand, isWebPage = false }: { brand: Bran
                         });
                       }
                     }}
-                    className="text-[9px] px-2.5 py-1 rounded bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]/80 font-medium hover:border-[var(--sage)] hover:text-white transition-colors"
+                    className="text-[9px] px-2.5 py-1 rounded bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]/80 hover:border-[var(--sage)] hover:text-[var(--foreground)] transition-colors"
                   >
                     {date}
                   </button>
@@ -415,7 +415,7 @@ export function BrandActivationSlide({ brand, isWebPage = false }: { brand: Bran
             href={`/brands/${brand.slug}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[9px] font-bold tracking-widest uppercase text-[var(--sage)] hover:text-white transition-colors border border-[var(--sage)]/30 hover:border-[var(--sage)] px-2.5 py-1 rounded bg-[var(--card)]"
+            className="text-[9px] font-bold tracking-widest uppercase text-[var(--sage)] hover:text-[var(--foreground)] transition-colors border border-[var(--sage)]/30 hover:border-[var(--sage)] px-2.5 py-1 rounded bg-[var(--card)]"
           >
             Story ↗
           </a>

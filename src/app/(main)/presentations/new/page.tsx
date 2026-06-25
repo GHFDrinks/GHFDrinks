@@ -161,7 +161,7 @@ export default function BrandSelectionPage() {
 
       {/* Sticky build CTA */}
       <div className="fixed bottom-0 left-0 right-0 px-12 py-5 flex items-center justify-between"
-           style={{ backgroundColor: "rgba(13,47,27,0.95)", borderTop: "1px solid var(--border)", backdropFilter: "blur(8px)" }}>
+           style={{ backgroundColor: "rgba(250,248,243,0.95)", borderTop: "1px solid var(--border)", backdropFilter: "blur(8px)" }}>
         <p className="text-xs tracking-widest uppercase" style={{ color: "var(--muted-foreground)" }}>
           {selected.length} brand{selected.length !== 1 ? "s" : ""} selected
         </p>

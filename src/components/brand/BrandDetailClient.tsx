@@ -77,12 +77,12 @@ export function BrandDetailClient({ initialBrand }: { initialBrand: Brand }) {
     <div style={{ backgroundColor: "var(--background)" }} className="min-h-screen pb-20">
 
       {/* 1. BRAND VIDEO */}
-      <section className="relative w-full aspect-[16/9] bg-[#070b09] overflow-hidden border-b border-white/5">
+      <section className="relative w-full aspect-[16/9] bg-[var(--muted)] overflow-hidden border-b border-[var(--border)]/20">
         {/* Back Button overlay */}
         <div className="absolute top-6 left-6 z-20">
           <button 
             onClick={() => router.back()} 
-            className="flex items-center gap-2 px-4 py-2 rounded-full bg-black/40 hover:bg-black/60 border border-white/10 text-xs tracking-widest uppercase text-[var(--cream)] hover:text-[var(--sage)] hover:border-[var(--sage)] transition-all cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2 rounded-full bg-black/40 hover:bg-black/60 border border-[var(--border)]/20 text-xs tracking-widest uppercase text-[var(--cream)] hover:text-[var(--sage)] hover:border-[var(--sage)] transition-all cursor-pointer"
           >
             ← Back
           </button>
@@ -119,7 +119,7 @@ export function BrandDetailClient({ initialBrand }: { initialBrand: Brand }) {
       {/* 2. STORY */}
       <section className="py-24 px-6 md:px-14 max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
         {/* Left: Carousel */}
-        <div className="w-full aspect-[4/3] relative rounded-2xl overflow-hidden border border-white/5 bg-[#070b09] shadow-2xl">
+        <div className="w-full aspect-[4/3] relative rounded-2xl overflow-hidden border border-[var(--border)]/20 bg-[var(--muted)] shadow-2xl">
           {carouselImages.length > 0 ? (
             carouselImages.map((src, idx) => (
               <img
@@ -172,7 +172,7 @@ export function BrandDetailClient({ initialBrand }: { initialBrand: Brand }) {
 
       {/* 3. SERVES (Spirits only) */}
       {isSpirits && (
-        <section className="py-20 bg-[var(--card)]/30 border-y border-white/5">
+        <section className="py-20 bg-[var(--card)]/30 border-y border-[var(--border)]/20">
           <div className="max-w-6xl mx-auto px-6 md:px-14">
             <div className="mb-12">
               <span className="text-[10px] tracking-[0.35em] uppercase text-[var(--sage)] font-bold block mb-1">
@@ -187,11 +187,11 @@ export function BrandDetailClient({ initialBrand }: { initialBrand: Brand }) {
               {displayServes.slice(0, 3).map((serve, idx) => (
                 <div 
                   key={idx} 
-                  className="border border-white/5 rounded-2xl p-6 bg-[var(--card)] flex flex-col justify-between h-full shadow-lg hover:border-[var(--sage)]/20 transition-all duration-300"
+                  className="border border-[var(--border)]/20 rounded-2xl p-6 bg-[var(--card)] flex flex-col justify-between h-full shadow-lg hover:border-[var(--sage)]/20 transition-all duration-300"
                 >
                   <div className="space-y-4">
                     {/* Image Area Placeholder */}
-                    <div className="w-full aspect-[16/9] rounded-lg bg-[var(--background)] border border-white/5 flex flex-col items-center justify-center text-[var(--sage)]/40 text-[9px] tracking-[0.2em] uppercase p-4">
+                    <div className="w-full aspect-[16/9] rounded-lg bg-[var(--background)] border border-[var(--border)]/20 flex flex-col items-center justify-center text-[var(--sage)]/40 text-[9px] tracking-[0.2em] uppercase p-4">
                       <svg className="w-6 h-6 mb-2 text-[var(--sage)]/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 2v20m0-20H6a6 6 0 000 12h6M12 2h6a6 6 0 010 12h-6" />
                       </svg>
@@ -207,7 +207,7 @@ export function BrandDetailClient({ initialBrand }: { initialBrand: Brand }) {
                       ))}
                     </ul>
                   </div>
-                  <div className="pt-6 mt-6 border-t border-white/5">
+                  <div className="pt-6 mt-6 border-t border-[var(--border)]/20">
                     <p className="text-xs text-[var(--sage)] italic leading-relaxed">
                       {(serve as any).description || "A pristine serve crafted to accentuate the premium distillates."}
                     </p>
@@ -221,7 +221,7 @@ export function BrandDetailClient({ initialBrand }: { initialBrand: Brand }) {
 
       {/* 4. ACTIVATIONS */}
       {brand.activations?.length ? (
-        <section className="border-b border-white/5">
+        <section className="border-b border-[var(--border)]/20">
           <BrandActivationSlide brand={brand} isWebPage={true} />
         </section>
       ) : null}

@@ -31,7 +31,7 @@ export function BrandIntroSlide({ brand }: { brand: Brand }) {
     <section className="w-full h-screen flex overflow-hidden bg-[var(--background)] relative">
       
       {/* LEFT 50% — Editorial Brand Info */}
-      <div className="w-1/2 h-full flex flex-col justify-between p-16 relative z-10 border-r border-[var(--border)] bg-gradient-to-br from-[#0b1310] via-[#090f0d] to-[#060a08]">
+      <div className="w-1/2 h-full flex flex-col justify-between p-16 relative z-10 border-r border-[var(--border)] bg-[var(--background)]">
         
         {/* Top Header with Logo */}
         <div className="flex items-center justify-between">
@@ -76,7 +76,7 @@ export function BrandIntroSlide({ brand }: { brand: Brand }) {
                 {brand.variants.map((v) => (
                   <span
                     key={v.id}
-                    className="text-[11px] font-medium px-3.5 py-1.5 rounded-full border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)]/80 hover:border-[var(--sage)] hover:text-white transition-colors cursor-default"
+                    className="text-[11px] font-medium px-3.5 py-1.5 rounded-full border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)]/80 hover:border-[var(--sage)] hover:text-[var(--foreground)] transition-colors cursor-default"
                   >
                     {v.name}{v.volume ? ` (${v.volume})` : ""}
                   </span>
@@ -95,7 +95,7 @@ export function BrandIntroSlide({ brand }: { brand: Brand }) {
             href={`/brands/${brand.slug}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--sage)] hover:text-white transition-colors flex items-center gap-1.5 border border-[var(--sage)]/30 hover:border-[var(--sage)] px-3.5 py-1.5 rounded-full bg-[var(--card)]"
+            className="text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--sage)] hover:text-[var(--foreground)] transition-colors flex items-center gap-1.5 border border-[var(--sage)]/30 hover:border-[var(--sage)] px-3.5 py-1.5 rounded-full bg-[var(--card)]"
           >
             Learn More ↗
           </a>
@@ -103,7 +103,7 @@ export function BrandIntroSlide({ brand }: { brand: Brand }) {
       </div>
 
       {/* RIGHT 50% — Auto-playing Image Carousel */}
-      <div className="w-1/2 h-full relative overflow-hidden bg-[#070b09]">
+      <div className="w-1/2 h-full relative overflow-hidden bg-[var(--muted)]">
         {carouselImages.length > 0 ? (
           carouselImages.map((src, idx) => (
             <img

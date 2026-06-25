@@ -113,11 +113,11 @@ export function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (op
   return (
     <aside
       className={cn(
-        "fixed inset-y-0 left-0 z-50 w-72 transform flex flex-col border-r border-white/5 bg-[#0a0a0a]/90 backdrop-blur-xl transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] lg:static lg:translate-x-0",
+        "fixed inset-y-0 left-0 z-50 w-72 transform flex flex-col bg-[var(--sidebar)] border-r border-[var(--border)] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] lg:static lg:translate-x-0",
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}
     >
-      <div className="flex h-24 items-center px-8 border-b border-white/5">
+      <div className="flex h-24 items-center px-8 border-b border-[var(--border)]/20">
         <Link href="/" className="flex items-center space-x-3">
           <div className="w-8 h-8 rounded-full bg-accent text-accent-foreground flex items-center justify-center font-bold text-sm">
             G
@@ -138,7 +138,7 @@ export function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (op
               {isActive && (
                 <motion.div
                   layoutId="active-nav"
-                  className="absolute inset-0 bg-[var(--background)]/10 rounded-xl"
+                  className="absolute inset-0 bg-[var(--accent)]/10 rounded-xl"
                   initial={false}
                   transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 />
@@ -169,13 +169,13 @@ export function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (op
       {/* Footer Area */}
       <Link 
         href="/profile" 
-        className="p-6 border-t border-white/5 flex items-center space-x-4 hover:bg-[var(--background)]/5 transition-colors cursor-pointer block"
+        className="p-6 border-t border-[var(--border)]/20 flex items-center space-x-4 hover:bg-[var(--background)]/5 transition-colors cursor-pointer block"
       >
-        <div className="w-10 h-10 rounded-full bg-[var(--background)]/5 border border-white/10 flex items-center justify-center text-xs font-semibold text-accent">
+        <div className="w-10 h-10 rounded-full bg-[var(--background)]/5 border border-[var(--border)]/20 flex items-center justify-center text-xs font-semibold text-accent">
           {user ? user.initials : "JD"}
         </div>
         <div className="flex flex-col">
-          <span className="text-sm font-medium text-white">{user ? user.name : "John Doe"}</span>
+          <span className="text-sm font-medium text-[var(--foreground)]">{user ? user.name : "John Doe"}</span>
           <span className="text-xs text-muted-foreground">{user ? user.role : "Sales Executive"}</span>
         </div>
       </Link>

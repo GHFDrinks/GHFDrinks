@@ -197,11 +197,11 @@ export default function ProfilePage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
         {/* Form 1: Save Profile Locally (Instant Offline Mode) */}
         <RevealAnimation direction="up" delay={0.4}>
-          <div className="glass p-10 rounded-[2.5rem] border border-white/10 space-y-8 h-full flex flex-col justify-between">
+          <div className="glass p-10 rounded-[2.5rem] border border-[var(--border)]/20 space-y-8 h-full flex flex-col justify-between">
             <div className="space-y-6">
               <div>
                 <span className="text-xs uppercase tracking-widest text-accent font-semibold block mb-2">Offline Setup</span>
-                <h2 className="text-2xl font-light text-white">Identity Configuration</h2>
+                <h2 className="text-2xl font-light text-[var(--foreground)]">Identity Configuration</h2>
                 <p className="text-sm text-muted-foreground mt-2">
                   Update your active profile details. Saves instantly to LocalStorage. Works 100% offline.
                 </p>
@@ -209,41 +209,41 @@ export default function ProfilePage() {
 
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-xs uppercase tracking-wider text-white/60 font-medium">Full Name</label>
+                  <label className="text-xs uppercase tracking-wider text-[var(--foreground)]/60 font-medium">Full Name</label>
                   <div className="relative">
-                    <Users className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                    <Users className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted-foreground)]" />
                     <input
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Jane Doe"
-                      className="w-full bg-[var(--background)]/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:border-accent transition-colors"
+                      className="w-full bg-[var(--background)]/5 border border-[var(--border)]/20 rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:border-accent transition-colors"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs uppercase tracking-wider text-white/60 font-medium">Email Address</label>
+                  <label className="text-xs uppercase tracking-wider text-[var(--foreground)]/60 font-medium">Email Address</label>
                   <div className="relative">
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted-foreground)]" />
                     <input
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="jane.doe@ghfdrinks.com"
-                      className="w-full bg-[var(--background)]/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:border-accent transition-colors"
+                      className="w-full bg-[var(--background)]/5 border border-[var(--border)]/20 rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:border-accent transition-colors"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs uppercase tracking-wider text-white/60 font-medium">System Role</label>
+                  <label className="text-xs uppercase tracking-wider text-[var(--foreground)]/60 font-medium">System Role</label>
                   <div className="relative">
-                    <Shield className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                    <Shield className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted-foreground)]" />
                     <select
                       value={role}
                       onChange={(e) => setRole(e.target.value)}
-                      className="w-full bg-[#141414] border border-white/10 rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:border-accent transition-colors text-white appearance-none"
+                      className="w-full bg-[var(--muted)] border border-[var(--border)]/20 rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:border-accent transition-colors text-[var(--foreground)] appearance-none"
                     >
                       <option value="Sales Executive">Sales Executive</option>
                       <option value="Brand Ambassador">Brand Ambassador</option>
@@ -257,7 +257,7 @@ export default function ProfilePage() {
 
             <button
               onClick={handleSaveLocal}
-              className="w-full py-4 mt-8 rounded-full bg-[var(--background)]/15 text-white hover:bg-[var(--background)]/20 transition-all font-medium flex items-center justify-center space-x-2 border border-white/10 active:scale-95 transform"
+              className="w-full py-4 mt-8 rounded-full bg-[var(--background)]/15 text-[var(--foreground)] hover:bg-[var(--background)]/20 transition-all font-medium flex items-center justify-center space-x-2 border border-[var(--border)]/20 active:scale-95 transform"
             >
               <Save className="w-4 h-4" />
               <span>Apply Offline Profile</span>
@@ -267,11 +267,11 @@ export default function ProfilePage() {
 
         {/* Form 2: Register Online (Supabase Database Synced) */}
         <RevealAnimation direction="up" delay={0.5}>
-          <div className="glass p-10 rounded-[2.5rem] border border-white/10 bg-accent/5 space-y-8 h-full flex flex-col justify-between">
+          <div className="glass p-10 rounded-[2.5rem] border border-[var(--border)]/20 bg-accent/5 space-y-8 h-full flex flex-col justify-between">
             <div className="space-y-6">
               <div>
                 <span className="text-xs uppercase tracking-widest text-accent font-semibold block mb-2">Cloud Database</span>
-                <h2 className="text-2xl font-light text-white">Create Cloud Account</h2>
+                <h2 className="text-2xl font-light text-[var(--foreground)]">Create Cloud Account</h2>
                 <p className="text-sm text-muted-foreground mt-2">
                   Register your account in the Supabase backend. Syncs presentation history and custom decks automatically.
                 </p>
@@ -279,13 +279,13 @@ export default function ProfilePage() {
 
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-xs uppercase tracking-wider text-white/60 font-medium">Password</label>
+                  <label className="text-xs uppercase tracking-wider text-[var(--foreground)]/60 font-medium">Password</label>
                   <input
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full bg-[var(--background)]/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-accent transition-colors"
+                    className="w-full bg-[var(--background)]/5 border border-[var(--border)]/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-accent transition-colors"
                   />
                   <p className="text-[10px] text-muted-foreground">Min. 6 characters. Stores profile metadata in cloud.</p>
                 </div>

@@ -54,7 +54,7 @@ export async function generatePresentationPdf(presentation: Presentation, availa
   container.style.zIndex = "-99999";
   container.style.pointerEvents = "none";
   container.style.overflow = "hidden";
-  container.style.backgroundColor = "#0D2F1B"; // matches var(--background)
+  container.style.backgroundColor = "#faf8f3"; // Pearl background — kept as literal hex because html2canvas does not reliably resolve CSS vars on cloned DOM
   container.className = "ghf-pdf-render-container";
   document.body.appendChild(container);
 
@@ -95,7 +95,7 @@ export async function generatePresentationPdf(presentation: Presentation, availa
         scale: 2,
         useCORS: true,
         allowTaint: true,
-        backgroundColor: "#0D2F1B",
+        backgroundColor: "#faf8f3", // Pearl background — kept as literal hex because html2canvas does not reliably resolve CSS vars on cloned DOM
         width: 1024,
         height: 768
       });
