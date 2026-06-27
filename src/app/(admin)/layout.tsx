@@ -23,6 +23,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Link href="/admin/brands" className="text-xs text-white tracking-widest uppercase hover:opacity-70">
             Brands
           </Link>
+          <Link href="/admin/activations" className="text-xs text-white tracking-widest uppercase hover:opacity-70">
+            Activations
+          </Link>
+          <Link href="/admin/calendar" className="text-xs text-white tracking-widest uppercase hover:opacity-70">
+            Calendar
+          </Link>
+          <Link href="/admin/events" className="text-xs text-white tracking-widest uppercase hover:opacity-70">
+            Events
+          </Link>
           <Link href="/admin/media" className="text-xs text-white tracking-widest uppercase hover:opacity-70">
             Media
           </Link>

@@ -41,7 +41,7 @@ export function HiddenMenu() {
       {/* Circular Menu Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed top-6 right-6 z-[90] rounded-full flex items-center justify-center bg-[var(--card)] border border-[var(--sage)] shadow-lg hover:scale-105 active:scale-95 transition-all"
+        className="fixed top-6 left-6 lg:left-auto lg:right-6 z-[90] rounded-full flex items-center justify-center bg-[var(--card)] border border-[var(--sage)] shadow-lg hover:scale-105 active:scale-95 transition-all"
         style={{ width: "44px", height: "44px" }}
         aria-label="Open Menu"
       >

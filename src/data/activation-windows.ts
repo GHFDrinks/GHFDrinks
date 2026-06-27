@@ -1,5 +1,5 @@
 export interface ActivationDate {
-  month: number; // 1-12
+  month: number | number[]; // 1-12 or array of months
   day?: number;  // 1-31
   range?: [number, number]; // [startDay, endDay]
 }
@@ -12,11 +12,11 @@ export const ACTIVATION_WINDOWS: Record<string, ActivationDate> = {
   "G&T Day": { month: 10, day: 19 },
   "Spritz Day": { month: 8, day: 1 },
   "Buy British Day": { month: 10, day: 1 },
-  "Spring/Summer": { month: 6, range: [1, 30] },
+  "Spring/Summer": { month: [6, 7, 8], range: [1, 31] }, // June through August
   "Cocktail Day": { month: 5, day: 13 },
   "Vodka Day": { month: 10, day: 4 },
   "Whisky Day": { month: 5, day: 16 },
-  "Autumn/Winter": { month: 11, range: [1, 30] },
+  "Autumn/Winter": { month: [10, 11, 12, 1, 2], range: [1, 28] }, // October through February
   "Harvest Moon": { month: 9, day: 25 },
   "Harvest Festival": { month: 9, day: 27 },
   "Lammas Day": { month: 8, day: 1 },

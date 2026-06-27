@@ -1,83 +1,66 @@
-export interface CaseStudy {
+export type CaseStudy = {
   id: string;
+  brandSlug: string;
+  tier: "prestige" | "independent" | "national-group";
+  title: string;
+  image: string;
   outletName: string;
-  description: string;
-  imagePlaceholderColor: string;
-  details: string;
-}
-
-export const CASE_STUDIES: Record<string, CaseStudy[]> = {
-  prestige: [
-    {
-      id: "prestige-1",
-      outletName: "The Ritz London [PLACEHOLDER]",
-      description: "Luxury hotel activation featuring premium serves and bespoke staff pairing masterclasses.",
-      imagePlaceholderColor: "var(--card)",
-      details: "This is a detailed placeholder description for The Ritz London case study. It showcases how GHF Drinks implemented premium serves in high-end hospitality venues, driving cocktail margins and guest satisfaction."
-    },
-    {
-      id: "prestige-2",
-      outletName: "Annabel's [PLACEHOLDER]",
-      description: "Exquisite private member club rotating cocktail partnership with customized brand activations.",
-      imagePlaceholderColor: "var(--card)",
-      details: "This Annabel's private club case study detail illustrates our capability in delivering highly tailored and exclusive activations that appeal to discerning members."
-    },
-    {
-      id: "prestige-3",
-      outletName: "Savoy Grill [PLACEHOLDER]",
-      description: "Fine dining menu integration of artisanal English sparkling wines and climate positive spirits.",
-      imagePlaceholderColor: "var(--card)",
-      details: "Savoy Grill details go here. Displays the long-term sales lift resulting from listing Coates & Seely alongside curated gin & vodka serves."
-    }
-  ],
-  independent: [
-    {
-      id: "indie-1",
-      outletName: "The Pelican Notting Hill [PLACEHOLDER]",
-      description: "Regenerative agriculture menu focus and sustainable beer partnership with local storytelling.",
-      imagePlaceholderColor: "var(--card)",
-      details: "Detailed indie-1 case study for Notting Hill's popular pub showcasing natural wine growth and community engagement."
-    },
-    {
-      id: "indie-2",
-      outletName: "Noble Rot [PLACEHOLDER]",
-      description: "Bespoke wine flight program highlighting organic, boutique vineyards and staff education.",
-      imagePlaceholderColor: "var(--card)",
-      details: "Noble Rot case study detail focusing on wine lists curation, sommelier training, and menu pairing achievements."
-    },
-    {
-      id: "indie-3",
-      outletName: "Callooh Callay [PLACEHOLDER]",
-      description: "Innovative craft rum menu activation utilizing high-ester expressions in creative serves.",
-      imagePlaceholderColor: "var(--card)",
-      details: "Callooh Callay case study showing how DropWorks rum serves boosted midweek traffic with unique mixology events."
-    }
-  ],
-  national: [
-    {
-      id: "national-1",
-      outletName: "Soho House Group [PLACEHOLDER]",
-      description: "Global listing of climate positive gin and house-pour radlers across UK locations.",
-      imagePlaceholderColor: "var(--card)",
-      details: "Soho House group case study details showing the national distribution, logistics support, and volume success of Sapling."
-    },
-    {
-      id: "national-2",
-      outletName: "The Pig Hotels [PLACEHOLDER]",
-      description: "Hyper-local garden-to-glass botanical non-alcoholic menu alignment across all sites.",
-      imagePlaceholderColor: "var(--card)",
-      details: "Detailed case study for The Pig Hotels group illustrating sustainable listing and local gin pairings."
-    },
-    {
-      id: "national-3",
-      outletName: "Dishoom [PLACEHOLDER]",
-      description: "Exclusive craft soda and non-alcoholic aperitif pairings matching spicy culinary profiles.",
-      imagePlaceholderColor: "var(--card)",
-      details: "Dishoom detail showing how Everleaf pairings drove non-alcoholic spend by 18% over a six-month window."
-    }
-  ]
+  summary: string;
+  fullText?: string;
 };
 
-export function getCaseStudies(tier: string): CaseStudy[] {
-  return CASE_STUDIES[tier.toLowerCase()] || [];
+export const CASE_STUDIES: CaseStudy[] = [
+  // Sapling
+  {
+    id: "sapling-savoy-activation",
+    brandSlug: "sapling",
+    tier: "prestige",
+    title: "Eco-Cocktail Integration at The Savoy",
+    image: "/brands/sapling/lifestyle-1.jpg",
+    outletName: "The Savoy Hotel",
+    summary: "Integrated a custom climate-positive cocktail menu, planting over 400 trees in 30 days.",
+    fullText: "By collaborating with The Savoy's head mixologist, Sapling developed a four-drink seasonal cocktail menu where each drink ordered funded a tree planting in the UK. The activation was supported by physical table talkers made of seed-paper. Results showed a 25% uplift in house spirit margins and high guest engagement with the QR code tree-tracking map."
+  },
+  {
+    brandSlug: "sapling",
+    id: "sapling-ned-volume",
+    tier: "independent",
+    title: "House Spirits Listing at The Ned",
+    image: "/brands/sapling/lifestyle-2.jpg",
+    outletName: "The Ned London",
+    summary: "Volume listing across 4 restaurant bars yielding 15,000+ serves annually.",
+    fullText: "Sapling replaced the standard entry-level vodka as the house pour across four major bars in The Ned. Staff training sessions focused on sustainability and cocktail speed-pouring. This listing has planted over 15,000 trees to date, providing a powerful marketing narrative for the venue's corporate events team."
+  },
+  {
+    brandSlug: "fielden-scarfes-rye",
+    id: "fielden-scarfes-rye",
+    tier: "independent",
+    title: "Signature Rye Menu at Scarfes Bar",
+    image: "/brands/fielden/lifestyle-2.jpg",
+    outletName: "Scarfes Bar",
+    summary: "Pioneering English Rye cocktails featuring heritage grain stories.",
+    fullText: "Scarfes Bar featured Fielden Signature Rye Whisky in their winter cocktail collection. The menu featured custom artwork detailing the heritage grains grown in English fields. The activation resulted in over 1,200 cocktails sold and established Fielden as a key player in the premium English whisky category."
+  },
+  {
+    brandSlug: "mirabeau-beach-clubs",
+    id: "mirabeau-beach-clubs",
+    tier: "national-group",
+    title: "Terrace takeover at Coq d'Argent driving high summer rosé volumes.",
+    image: "/brands/mirabeau/lifestyle-1.jpg",
+    outletName: "D&D London Group",
+    summary: "Terrace takeover at Coq d'Argent driving high summer rosé volumes.",
+    fullText: "A complete terrace takeover featuring custom pastel pink floral displays, branded parasols, and a dedicated Mirabeau Provence Rosé bar. The activation ran from June through August, driving a 45% increase in total wine sales for the venue compared to the previous summer season."
+  }
+];
+
+export function getCaseStudies(tier: string) {
+  // Map "national" to "national-group"
+  const targetTier = tier.toLowerCase() === "national" ? "national-group" : tier.toLowerCase();
+  
+  return CASE_STUDIES.filter((c) => c.tier === targetTier).map((c) => ({
+    id: c.id,
+    outletName: c.outletName,
+    description: c.summary,
+    details: c.fullText || "",
+  }));
 }

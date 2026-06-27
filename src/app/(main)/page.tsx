@@ -2,6 +2,8 @@
 
 import React from "react";
 import Link from "next/link";
+import { PACKAGE_BRANDS } from "@/data/package-brands";
+import { TileImageCarousel } from "@/components/shared/TileImageCarousel";
 
 const ROWS = [
   {
@@ -37,6 +39,11 @@ const ROWS = [
     ],
   },
 ];
+
+function slugFromHref(href: string): string {
+  const parts = href.split("/");
+  return parts[parts.length - 1] || "";
+}
 
 export default function HomePage() {
   return (
@@ -78,25 +85,29 @@ export default function HomePage() {
 
             {/* Cards */}
             <div className="flex-1 grid grid-cols-3 gap-4">
-              {row.cards.map((card) => (
-                <Link
-                  key={card.title}
-                  href={card.href}
-                  className="group rounded-lg border flex items-center justify-center text-center px-6 transition-all hover:border-[var(--sage)] hover:scale-[1.02]"
-                  style={{
-                    borderColor: "var(--border)",
-                    backgroundColor: "var(--card)",
-                    minHeight: "140px",
-                  }}
-                >
-                  <span
-                    className="text-xl font-light tracking-wide group-hover:text-[var(--sage)] transition-colors"
-                    style={{ color: "var(--foreground)" }}
+              {row.cards.map((card) => {
+                const slug = slugFromHref(card.href);
+                const brandSlugs = PACKAGE_BRANDS[slug] || [];
+
+                return (
+                  <Link
+                    key={card.title}
+                    href={card.href}
+                    className="group relative rounded-lg border overflow-hidden flex items-center justify-center text-center px-6 transition-all hover:border-[var(--sage)] hover:scale-[1.02]"
+                    style={{
+                      borderColor: "var(--border)",
+                      minHeight: "140px",
+                    }}
                   >
-                    {card.title}
-                  </span>
-                </Link>
-              ))}
+                    <TileImageCarousel brandSlugs={brandSlugs} intervalMs={1000} />
+                    <span
+                      className="relative z-10 text-xl font-light tracking-wide text-[var(--foreground)] drop-shadow-md group-hover:text-[var(--sage)] transition-colors text-center"
+                    >
+                      {card.title}
+                    </span>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         ))}

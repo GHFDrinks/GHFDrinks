@@ -1,113 +1,169 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useBrands } from "@/hooks/useBrands";
 import { getBrandImages } from "@/lib/brand-images";
-import { GHF_CAMPAIGNS } from "@/data/ghf-campaigns";
+import { GHF_CAMPAIGNS, GHFCampaign } from "@/data/ghf-campaigns";
 
-export default function GHFActivationsPage() {
-  const [activeId, setActiveId] = useState(GHF_CAMPAIGNS[0].id);
-  const { brands } = useBrands();
-  const campaign = GHF_CAMPAIGNS.find((c) => c.id === activeId)!;
+function CampaignCard({ campaign, brands }: { campaign: GHFCampaign; brands: any[] }) {
+  const router = useRouter();
+  
+  // Collect images from all relevant brands for the auto-carousel
+  const carouselImages = React.useMemo(() => {
+    const imgs: string[] = [];
+    campaign.relevantBrandSlugs.forEach((slug) => {
+      const local = getBrandImages(slug);
+      if (local) {
+        if (local.hero) imgs.push(local.hero);
+        if (local.lifestyle) imgs.push(...local.lifestyle);
+      }
+    });
+    // Fallback to campaign hero image if no brand images exist
+    if (imgs.length === 0) {
+      imgs.push(campaign.heroImage);
+    }
+    return imgs;
+  }, [campaign]);
+
+  const [activeImgIdx, setActiveImgIdx] = useState(0);
+
+  useEffect(() => {
+    if (carouselImages.length <= 1) return;
+    const interval = setInterval(() => {
+      setActiveImgIdx((prev) => (prev + 1) % carouselImages.length);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [carouselImages]);
+
+  const handleFindOutMore = () => {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("ghf_return_to", "/activations");
+      sessionStorage.setItem("ghf_return_label", "Back to Activations");
+    }
+    router.push(`/activations/${campaign.id}`);
+  };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "var(--background)" }}>
+    <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl overflow-hidden flex flex-col md:flex-row shadow-xl hover:border-[var(--sage)]/50 transition-all duration-300 items-stretch">
+      {/* Left side: Details */}
+      <div className="flex-1 p-8 flex flex-col justify-between space-y-6">
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] tracking-[0.35em] uppercase text-[var(--sage)] font-bold">
+              Portfolio Activation
+            </span>
+            <span className="text-xs font-semibold text-[var(--muted-foreground)] bg-[var(--background)] border border-[var(--border)] px-3 py-1 rounded-full">
+              {campaign.period} 2026
+            </span>
+          </div>
 
-      {/* Campaign tabs */}
-      <div className="flex gap-3 px-10 pt-8 flex-wrap">
-        {GHF_CAMPAIGNS.map((c) => {
-          const isActive = c.id === activeId;
-          return (
-            <button
-              key={c.id}
-              onClick={() => setActiveId(c.id)}
-              className="px-4 py-2 text-xs tracking-widest uppercase border rounded transition-colors"
-              style={{
-                borderColor: isActive ? "var(--sage)" : "var(--border)",
-                backgroundColor: isActive ? "var(--sage)" : "transparent",
-                color: isActive ? "var(--background)" : "var(--foreground)",
-              }}
-            >
-              {c.name}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Campaign slide */}
-      <div className="flex px-10 py-8 gap-10 items-stretch">
-
-        {/* Hero image */}
-        <div className="flex-shrink-0 rounded-xl overflow-hidden" style={{ width: "38%" }}>
-          <img src={campaign.heroImage} alt={campaign.name} className="w-full h-full object-cover" style={{ minHeight: "560px" }} />
-        </div>
-
-        {/* Content */}
-        <div className="flex-1 flex flex-col">
-          <p className="text-[11px] tracking-[0.3em] uppercase mb-2" style={{ color: "var(--muted-foreground)" }}>
-            GHF Activation
-          </p>
-          <h1 className="text-5xl font-light mb-5 tracking-tight" style={{ color: "var(--cream)" }}>
+          <h2 className="text-3xl font-light text-[var(--foreground)] tracking-tight">
             {campaign.name}
-          </h1>
-          <p className="text-base leading-relaxed mb-6 max-w-2xl" style={{ color: "var(--foreground)" }}>
+          </h2>
+
+          <p className="text-sm text-[var(--muted-foreground)] leading-relaxed max-w-2xl">
             {campaign.description}
           </p>
+        </div>
 
-          <p className="text-sm mb-6">
-            <span className="font-bold" style={{ color: "var(--foreground)" }}>Activation Period: </span>
-            <span style={{ color: "var(--sage)" }}>{campaign.period}</span>
+        {/* Relevant Brands section */}
+        <div className="space-y-3">
+          <p className="text-[10px] tracking-widest uppercase text-[var(--muted-foreground)] font-bold">
+            Relevant Brands
           </p>
-
-          {/* Relevant brands */}
-          <p className="text-sm font-bold mb-3" style={{ color: "var(--foreground)" }}>Relevant Brands:</p>
-          <div className="flex flex-wrap gap-3 mb-8">
+          <div className="flex flex-wrap gap-2.5">
             {campaign.relevantBrandSlugs.map((slug) => {
-              const brand = brands.find((b) => b.slug === slug);
+              const brandObj = brands.find((b) => b.slug === slug);
               const local = getBrandImages(slug);
+
               return (
                 <Link
                   key={slug}
                   href={`/brands/${slug}`}
-                  className="h-14 px-4 rounded-lg border flex items-center justify-center transition-colors hover:border-[var(--sage)]"
-                  style={{ borderColor: "var(--border)", backgroundColor: "var(--card)", minWidth: "110px" }}
+                  className="h-10 px-4 rounded-lg bg-[var(--foreground)] border border-[var(--foreground)] flex items-center justify-center transition-all hover:opacity-85 shadow-sm group"
                 >
                   {local?.logo ? (
-                    <img src={local.logo} alt={brand?.name || slug} className="max-h-9 max-w-[90px] object-contain" />
+                    <img
+                      src={local.logo}
+                      alt={brandObj?.name || slug}
+                      className="max-h-6 max-w-[80px] object-contain"
+                      style={{ filter: "brightness(0) invert(1)" }}
+                    />
                   ) : (
-                    <span className="text-xs font-semibold tracking-wide text-center" style={{ color: "var(--foreground)" }}>
-                      {brand?.name || slug}
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--background)]">
+                      {brandObj?.name || slug}
                     </span>
                   )}
                 </Link>
               );
             })}
           </div>
-
-          {/* Support tiers */}
-          <p className="text-sm font-bold mb-3" style={{ color: "var(--foreground)" }}>Support Available:</p>
-          <div className="grid grid-cols-3 gap-5">
-            {campaign.tiers.map((tier) => (
-              <div key={tier.label} className="rounded-lg overflow-hidden border" style={{ borderColor: "var(--border)" }}>
-                <div className="py-2 text-center text-xs font-bold tracking-[0.3em] uppercase text-white" style={{ backgroundColor: tier.color }}>
-                  {tier.label}
-                </div>
-                <div className="p-4" style={{ backgroundColor: "var(--card)" }}>
-                  {tier.lines.map((line, i) => (
-                    <p key={i} className="text-xs leading-relaxed" style={{ color: "var(--foreground)" }}>{line}</p>
-                  ))}
-                  <div className="border-t my-3" style={{ borderColor: "var(--border)" }} />
-                  {tier.benefits.map((b, i) => (
-                    <p key={i} className="text-xs leading-relaxed" style={{ color: "var(--muted-foreground)" }}>
-                      {b.endsWith("+") ? <em>{b}</em> : <>✓ {b}</>}
-                    </p>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
+
+        {/* Action Button */}
+        <div className="pt-2">
+          <button
+            onClick={handleFindOutMore}
+            className="px-6 py-3 rounded-lg text-xs font-bold tracking-widest uppercase bg-[var(--foreground)] text-[var(--background)] hover:opacity-90 transition-all cursor-pointer"
+          >
+            Find Out More
+          </button>
+        </div>
+      </div>
+
+      {/* Right side: Auto Carousel of Hero Images */}
+      <div className="w-full md:w-[350px] aspect-[4/3] md:aspect-auto overflow-hidden relative bg-[var(--muted)] flex-shrink-0">
+        {carouselImages.map((src, idx) => (
+          <img
+            key={src}
+            src={src}
+            alt=""
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+              idx === activeImgIdx ? "opacity-100 z-10" : "opacity-0 z-0"
+            }`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default function GHFActivationsPage() {
+  const router = useRouter();
+  const { brands } = useBrands();
+
+  return (
+    <div className="min-h-screen flex flex-col px-12 py-10" style={{ backgroundColor: "var(--background)" }}>
+      {/* Top Header */}
+      <div className="flex items-center justify-between mb-10 border-b border-[var(--border)] pb-6">
+        <div>
+          <span className="text-[10px] tracking-[0.35em] uppercase text-[var(--sage)] font-bold block mb-1">
+            Campaign Hub
+          </span>
+          <h1 className="text-4xl font-light tracking-tight text-[var(--foreground)]">
+            GHF Portfolio Activations
+          </h1>
+        </div>
+        <button
+          onClick={() => router.push("/")}
+          className="text-xs tracking-widest uppercase text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors cursor-pointer font-bold"
+        >
+          ← Home
+        </button>
+      </div>
+
+      {/* Activations List Grid */}
+      <div className="space-y-8 flex-1">
+        {GHF_CAMPAIGNS.map((campaign) => (
+          <CampaignCard key={campaign.id} campaign={campaign} brands={brands} />
+        ))}
+      </div>
+
+      {/* Footer disclaimer */}
+      <div className="text-[9px] tracking-wider text-[var(--muted-foreground)]/65 mt-12 text-center uppercase border-t border-[var(--border)]/50 pt-4">
+        * Brand logos are inverted to white dynamically. Custom white asset pathways will be supported in future releases.
       </div>
     </div>
   );

@@ -1,43 +1,207 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { getBrandSupportOptions } from "@/data/brand-support";
 import { useBrands } from "@/hooks/useBrands";
+import { getSupportTiles, SupportResult, SupportInputs, SupportCategory } from "@/lib/support-rules";
+import { SupportTile } from "@/components/support/SupportTile";
+
+const TABS = [
+  { label: "Spirits Launch", slug: "launch-support" },
+  { label: "Rotating Cocktail", slug: "rotating-cocktail" },
+  { label: "Wine Bundle", slug: "wine-bundle" },
+  { label: "Packaged Launch", slug: "packaged-launch" },
+];
 
 export default function SupportOptionDetailPage() {
   const router = useRouter();
   const { brandSlug, optionSlug } = useParams<{ brandSlug: string; optionSlug: string }>();
   const { brands } = useBrands();
-
   const brand = brands.find((b) => b.slug === brandSlug);
-  const options = getBrandSupportOptions(brandSlug);
-  const option = options.find((o) => o.slug === optionSlug);
 
-  if (!option) {
-    return (
-      <div className="min-h-screen bg-[var(--background)] p-12 flex flex-col items-center justify-center">
-        <p className="text-[var(--cream)] mb-4">Support package option not found.</p>
-        <button
-          onClick={() => router.back()}
-          className="px-5 py-2.5 rounded-full border border-[var(--sage)] bg-[var(--card)] text-[var(--cream)] hover:bg-[var(--sage)] hover:text-[var(--background)] transition-colors"
-        >
-          ← Back to presentation
-        </button>
-      </div>
-    );
-  }
+  const [returnTo, setReturnTo] = useState<{ url: string; label: string } | null>(null);
+
+  // Form states
+  const [spiritsSkus, setSpiritsSkus] = useState("");
+  const [spiritsPositioning, setSpiritsPositioning] = useState("");
+
+  const [rotatingSkus, setRotatingSkus] = useState("");
+
+  const [wineBottleSkus, setWineBottleSkus] = useState("");
+  const [wineGlassSkus, setWineGlassSkus] = useState("");
+
+  const [packagedSkus, setPackagedSkus] = useState("");
+  const [packagedPositioning, setPackagedPositioning] = useState("");
+
+  const [showTiles, setShowTiles] = useState(false);
+  const [supportResult, setSupportResult] = useState<SupportResult>({ tiles: [] });
+  const [highlightedTiles, setHighlightedTiles] = useState<string[]>([]);
+
+  // Sync session storage return path
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const url = sessionStorage.getItem("ghf_return_to");
+      const label = sessionStorage.getItem("ghf_return_label") || "Back";
+      if (url) {
+        setReturnTo({ url, label });
+      }
+    }
+  }, []);
+
+  // Reset tiles shown when tab (optionSlug) changes
+  useEffect(() => {
+    setShowTiles(false);
+    setHighlightedTiles([]);
+  }, [optionSlug]);
+
+  const handleBack = () => {
+    if (returnTo) {
+      if (typeof window !== "undefined") {
+        sessionStorage.removeItem("ghf_return_to");
+        sessionStorage.removeItem("ghf_return_label");
+      }
+      router.push(returnTo.url);
+    } else {
+      router.back();
+    }
+  };
+
+  // Input change interceptors to hide stale results
+  const handleSpiritsSkusChange = (val: string) => {
+    setSpiritsSkus(val);
+    setShowTiles(false);
+    setHighlightedTiles([]);
+  };
+
+  const handleSpiritsPositioningChange = (val: string) => {
+    setSpiritsPositioning(val);
+    setShowTiles(false);
+    setHighlightedTiles([]);
+  };
+
+  const handleRotatingSkusChange = (val: string) => {
+    setRotatingSkus(val);
+    setShowTiles(false);
+    setHighlightedTiles([]);
+  };
+
+  const handleWineBottleChange = (val: string) => {
+    setWineBottleSkus(val);
+    setWineGlassSkus(val);
+    setShowTiles(false);
+    setHighlightedTiles([]);
+  };
+
+  const handleWineGlassChange = (val: string) => {
+    setWineBottleSkus(val);
+    setWineGlassSkus(val);
+    setShowTiles(false);
+    setHighlightedTiles([]);
+  };
+
+  const handlePackagedSkusChange = (val: string) => {
+    setPackagedSkus(val);
+    setShowTiles(false);
+    setHighlightedTiles([]);
+  };
+
+  const handlePackagedPositioningChange = (val: string) => {
+    setPackagedPositioning(val);
+    setShowTiles(false);
+    setHighlightedTiles([]);
+  };
+
+  const isFormValid = () => {
+    if (optionSlug === "launch-support") {
+      return spiritsSkus !== "" && spiritsPositioning !== "";
+    }
+    if (optionSlug === "rotating-cocktail") {
+      return rotatingSkus !== "";
+    }
+    if (optionSlug === "wine-bundle") {
+      return wineBottleSkus !== "" && wineGlassSkus !== "";
+    }
+    if (optionSlug === "packaged-launch") {
+      return packagedSkus !== "" && packagedPositioning !== "";
+    }
+    return false;
+  };
+
+  const handleCalculateSupport = () => {
+    const inputs: SupportInputs = {
+      category: optionSlug as SupportCategory,
+    };
+
+    if (optionSlug === "launch-support") {
+      inputs.category = "spirits-launch";
+      inputs.numberOfSkus = parseInt(spiritsSkus, 10);
+      inputs.positioning = spiritsPositioning as any;
+    } else if (optionSlug === "rotating-cocktail") {
+      inputs.category = "rotating-cocktail";
+      inputs.numberOfSkus = parseInt(rotatingSkus, 10);
+    } else if (optionSlug === "wine-bundle") {
+      inputs.category = "wine-bundle";
+      inputs.skusByBottle = parseInt(wineBottleSkus, 10);
+      inputs.skusByGlass = parseInt(wineGlassSkus, 10);
+    } else if (optionSlug === "packaged-launch") {
+      inputs.category = "packaged-launch";
+      inputs.numberOfSkus = parseInt(packagedSkus, 10);
+      inputs.positioning = packagedPositioning as any;
+    }
+
+    const result = getSupportTiles(inputs);
+    setSupportResult(result);
+    setHighlightedTiles([]);
+    setShowTiles(true);
+  };
+
+  const handleTileClick = (title: string) => {
+    const mode = supportResult.choiceMode || "all";
+    if (mode === "pick-one") {
+      if (highlightedTiles.includes(title)) {
+        setHighlightedTiles([]);
+      } else {
+        setHighlightedTiles([title]);
+      }
+    } else {
+      // Toggle highlight
+      if (highlightedTiles.includes(title)) {
+        setHighlightedTiles(highlightedTiles.filter((t) => t !== title));
+      } else {
+        setHighlightedTiles([...highlightedTiles, title]);
+      }
+    }
+  };
+
+  // Helper to color/group exclusivity clusters
+  const getExclusivityGroupColor = (group?: string) => {
+    if (!group) return "";
+    switch (group) {
+      case "A":
+        return "border-amber-500/60 bg-amber-500/5";
+      case "trio":
+        return "border-emerald-500/60 bg-emerald-500/5";
+      case "alt":
+        return "border-purple-500/60 bg-purple-500/5";
+      case "experiences":
+        return "border-blue-500/60 bg-blue-500/5";
+      default:
+        return "border-[var(--sage)] bg-[var(--sage)]/5";
+    }
+  };
+
+  const skuOptions = Array.from({ length: 10 }, (_, i) => String(i + 1));
+  const wineSkuOptions = ["2", "3", "4"];
 
   return (
-    <div className="min-h-screen bg-[var(--background)] p-12 text-[var(--cream)] flex flex-col justify-between max-w-4xl mx-auto">
-      
-      {/* Header back button */}
-      <div className="flex items-center justify-between border-b border-[var(--border)] pb-6 mb-8">
+    <div className="min-h-screen bg-[var(--background)] p-12 text-[var(--cream)] flex flex-col max-w-4xl mx-auto space-y-8">
+      {/* Header Navigation */}
+      <div className="flex items-center justify-between border-b border-[var(--border)] pb-6">
         <button
-          onClick={() => router.back()}
-          className="flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[var(--sage)] hover:text-[var(--foreground)] transition-colors border border-[var(--sage)]/30 hover:border-[var(--sage)] px-4 py-2 rounded-full bg-[var(--card)]"
+          onClick={handleBack}
+          className="flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[var(--sage)] hover:text-[var(--foreground)] transition-colors border border-[var(--sage)]/30 hover:border-[var(--sage)] px-4 py-2 rounded-full bg-[var(--card)] cursor-pointer"
         >
-          ← Back to presentation
+          ← {returnTo ? returnTo.label : "Back to presentation"}
         </button>
         {brand && (
           <span className="text-xs tracking-widest uppercase text-[var(--muted-foreground)]">
@@ -46,48 +210,243 @@ export default function SupportOptionDetailPage() {
         )}
       </div>
 
-      {/* Main Content Card */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-8 shadow-2xl flex flex-col md:flex-row gap-8 items-center flex-1">
-        
-        {/* Left column: Text */}
-        <div className="flex-1 space-y-6">
-          <span className="text-[10px] tracking-[0.35em] uppercase text-[var(--sage)] font-bold">
-            PROMOTION & SUPPORT PACKAGE
-          </span>
-          <h1 className="text-4xl font-light tracking-tight text-[var(--cream)]">
-            {option.label}
-          </h1>
-          <p className="text-sm leading-relaxed text-[var(--muted-foreground)]">
-            {option.description}
-          </p>
-          <div className="pt-4 border-t border-[var(--border)] space-y-2">
-            <p className="text-xs font-bold uppercase tracking-wider text-[var(--sage)]">
-              Availability
-            </p>
-            <p className="text-xs text-[var(--muted-foreground)]">
-              Available immediately upon placement. Menu design, print coordination, and staff masterclasses included.
-            </p>
-          </div>
-        </div>
+      {/* Navigation Tabs */}
+      <div className="flex gap-2 border-b border-[var(--border)] pb-4 overflow-x-auto scrollbar-hide">
+        {TABS.map((tab) => {
+          const isActive = tab.slug === optionSlug;
+          return (
+            <button
+              key={tab.slug}
+              onClick={() => router.push(`/support/${brandSlug}/${tab.slug}`)}
+              className={`px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-all border cursor-pointer ${
+                isActive
+                  ? "bg-[var(--foreground)] text-[var(--background)] border-[var(--foreground)]"
+                  : "border-[var(--border)] bg-[var(--card)] text-[var(--foreground)]/80 hover:border-[var(--sage)]"
+              }`}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
 
-        {/* Right column: Image */}
-        {option.image ? (
-          <div className="w-full md:w-80 aspect-[4/3] rounded-xl overflow-hidden border border-[var(--border)] shadow-xl relative bg-[var(--muted)]">
-            <img
-              src={option.image}
-              alt={option.label}
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-          </div>
-        ) : (
-          <div className="w-full md:w-80 aspect-[4/3] rounded-xl border border-[var(--border)] bg-[var(--background)] flex flex-col items-center justify-center p-6 text-center text-[var(--muted-foreground)]">
-            <svg className="w-12 h-12 text-[var(--sage)]/30 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            <span className="text-xs">Visual assets supplied upon campaign booking.</span>
+      {/* Form Controls Section */}
+      <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-8 shadow-xl space-y-6">
+        <h2 className="text-xl font-light tracking-wide text-[var(--foreground)] border-b border-[var(--border)] pb-3">
+          Configure Support Criteria
+        </h2>
+
+        {/* Spirits Launch form */}
+        {optionSlug === "launch-support" && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-[var(--sage)]">
+                Number of SKUs
+              </label>
+              <select
+                value={spiritsSkus}
+                onChange={(e) => handleSpiritsSkusChange(e.target.value)}
+                className="w-full bg-[var(--background)] border border-[var(--border)] rounded-lg p-3 text-sm focus:border-[var(--sage)] outline-none text-[var(--foreground)]"
+              >
+                <option value="">Select SKUs...</option>
+                {skuOptions.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt} {opt === "1" ? "SKU" : "SKUs"}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-[var(--sage)]">
+                Positioning
+              </label>
+              <select
+                value={spiritsPositioning}
+                onChange={(e) => handleSpiritsPositioningChange(e.target.value)}
+                className="w-full bg-[var(--background)] border border-[var(--border)] rounded-lg p-3 text-sm focus:border-[var(--sage)] outline-none text-[var(--foreground)]"
+              >
+                <option value="">Select positioning...</option>
+                <option value="back-bar">Back Bar</option>
+                <option value="cocktail-1-month">Cocktail 1 Month</option>
+                <option value="cocktail-3-month">Cocktail 3 Month</option>
+                <option value="cocktail-12-month">Cocktail 12 Month</option>
+              </select>
+            </div>
           </div>
         )}
+
+        {/* Rotating Cocktail form */}
+        {optionSlug === "rotating-cocktail" && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-[var(--sage)]">
+                Number of SKUs
+              </label>
+              <select
+                value={rotatingSkus}
+                onChange={(e) => handleRotatingSkusChange(e.target.value)}
+                className="w-full bg-[var(--background)] border border-[var(--border)] rounded-lg p-3 text-sm focus:border-[var(--sage)] outline-none text-[var(--foreground)]"
+              >
+                <option value="">Select SKUs...</option>
+                {skuOptions.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt} {opt === "1" ? "SKU" : "SKUs"}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        )}
+
+        {/* Wine Bundle form */}
+        {optionSlug === "wine-bundle" && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-[var(--sage)]">
+                Number of SKUs By the Bottle
+              </label>
+              <select
+                value={wineBottleSkus}
+                onChange={(e) => handleWineBottleChange(e.target.value)}
+                className="w-full bg-[var(--background)] border border-[var(--border)] rounded-lg p-3 text-sm focus:border-[var(--sage)] outline-none text-[var(--foreground)]"
+              >
+                <option value="">Select SKUs...</option>
+                {wineSkuOptions.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt} SKUs
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-[var(--sage)]">
+                Number of SKUs By the Glass
+              </label>
+              <select
+                value={wineGlassSkus}
+                onChange={(e) => handleWineGlassChange(e.target.value)}
+                className="w-full bg-[var(--background)] border border-[var(--border)] rounded-lg p-3 text-sm focus:border-[var(--sage)] outline-none text-[var(--foreground)]"
+              >
+                <option value="">Select SKUs...</option>
+                {wineSkuOptions.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt} SKUs
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        )}
+
+        {/* Packaged Launch form */}
+        {optionSlug === "packaged-launch" && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-[var(--sage)]">
+                Number of SKUs
+              </label>
+              <select
+                value={packagedSkus}
+                onChange={(e) => handlePackagedSkusChange(e.target.value)}
+                className="w-full bg-[var(--background)] border border-[var(--border)] rounded-lg p-3 text-sm focus:border-[var(--sage)] outline-none text-[var(--foreground)]"
+              >
+                <option value="">Select SKUs...</option>
+                {skuOptions.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt} {opt === "1" ? "SKU" : "SKUs"}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-[var(--sage)]">
+                Positioning
+              </label>
+              <select
+                value={packagedPositioning}
+                onChange={(e) => handlePackagedPositioningChange(e.target.value)}
+                className="w-full bg-[var(--background)] border border-[var(--border)] rounded-lg p-3 text-sm focus:border-[var(--sage)] outline-none text-[var(--foreground)]"
+              >
+                <option value="">Select positioning...</option>
+                <option value="special-1-month">Special 1 Month</option>
+              </select>
+            </div>
+          </div>
+        )}
+
+        {/* Submit Button */}
+        <div className="pt-4 flex justify-end">
+          <button
+            onClick={handleCalculateSupport}
+            disabled={!isFormValid()}
+            className="px-6 py-3 rounded-lg font-bold tracking-widest uppercase text-xs transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            style={{
+              backgroundColor: isFormValid() ? "var(--foreground)" : "var(--muted)",
+              color: isFormValid() ? "var(--background)" : "var(--muted-foreground)",
+            }}
+          >
+            Show Support Available
+          </button>
+        </div>
       </div>
+
+      {/* Dynamic Results Display */}
+      {showTiles && (
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-8 shadow-xl space-y-6 animate-fade-in">
+          
+          {/* Main Message (e.g. No Support Available) */}
+          {supportResult.message && (
+            <p className="text-center text-lg font-light text-[var(--foreground)]">
+              {supportResult.message}
+            </p>
+          )}
+
+          {/* Tiles Grid */}
+          {supportResult.tiles.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {supportResult.tiles.map((tile) => {
+                const isSelected = highlightedTiles.includes(tile.title);
+                const groupStyle = getExclusivityGroupColor(tile.exclusivityGroup);
+
+                return (
+                  <div
+                    key={tile.title}
+                    onClick={() => handleTileClick(tile.title)}
+                    className={`cursor-pointer border transition-all rounded-lg p-1 ${
+                      isSelected
+                        ? "ring-2 ring-[var(--sage)] border-transparent scale-[1.02]"
+                        : groupStyle
+                        ? groupStyle
+                        : "border-[var(--border)] hover:border-[var(--sage)]/50"
+                    }`}
+                  >
+                    <SupportTile title={tile.title} badge={tile.badge || (tile.exclusivityGroup ? `Exclusivity Group: ${tile.exclusivityGroup}` : undefined)} />
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Constraints and Selection Instructions */}
+          {supportResult.constraints && supportResult.constraints.length > 0 && (
+            <div className="pt-4 border-t border-[var(--border)]/40 space-y-2">
+              <span className="text-[10px] tracking-wider uppercase text-[var(--sage)] font-bold block">
+                Required Terms & Selection Guidelines
+              </span>
+              <ul className="list-disc pl-5 space-y-1">
+                {supportResult.constraints.map((c, idx) => (
+                  <li key={idx} className="text-xs italic text-[var(--sage)] leading-relaxed">
+                    {c}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Footer copyright */}
       <div className="text-center text-[9px] tracking-widest text-[var(--muted-foreground)] uppercase mt-12 border-t border-[var(--border)] pt-4">

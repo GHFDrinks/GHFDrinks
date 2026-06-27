@@ -6,6 +6,7 @@ import { usePresentation } from "@/lib/presentation-store";
 import { useBrands } from "@/hooks/useBrands";
 import { BrandIntroSlide } from "@/components/brand/BrandIntroSlide";
 import { BrandActivationSlide } from "@/components/brand/BrandActivationSlide";
+import { ClosingSlide } from "@/components/presentation/ClosingSlide";
 import { Brand } from "@/types/brand";
 import { mockBrands } from "@/data/brands";
 
@@ -21,11 +22,11 @@ export default function PresentModePage() {
   const presentation = savedPresentations.find((p) => p.id === id);
 
   // Build ordered slide list:
-  // For each brand, include intro, and include activation ONLY if the brand has activations
+  // For each brand, include intro and activation, then append closing slide
   const slides = presentation
     ? (() => {
         const availableBrands = brands.length > 0 ? brands : mockBrands;
-        const list: { brand: Brand; type: "intro" | "activation" }[] = [];
+        const list: { brand?: Brand; type: "intro" | "activation" | "closing" }[] = [];
 
         // If saved presentation has a slides array, map it
         if (presentation.slides && presentation.slides.length > 0) {
@@ -35,9 +36,7 @@ export default function PresentModePage() {
               if (slide.type === "intro") {
                 list.push({ brand, type: "intro" });
               } else if (slide.type === "activation") {
-                if (brand.activations && brand.activations.length > 0) {
-                  list.push({ brand, type: "activation" });
-                }
+                list.push({ brand, type: "activation" });
               }
             }
           });
@@ -49,12 +48,13 @@ export default function PresentModePage() {
             const brand = availableBrands.find((b) => b.id === brandId);
             if (brand) {
               list.push({ brand, type: "intro" });
-              if (brand.activations && brand.activations.length > 0) {
-                list.push({ brand, type: "activation" });
-              }
+              list.push({ brand, type: "activation" });
             }
           });
         }
+
+        // Append the final closing slide
+        list.push({ type: "closing" });
 
         return list;
       })()
@@ -72,7 +72,7 @@ export default function PresentModePage() {
   }, []);
 
   const exit = useCallback(() => {
-    router.push("/presentations");
+    router.push("/");
   }, [router]);
 
   // Slideshow auto-play effect
@@ -117,7 +117,7 @@ export default function PresentModePage() {
             className="text-sm underline"
             style={{ color: "var(--sage)" }}
           >
-            Back to Presentations
+            Back to Home
           </button>
         </div>
       </div>
@@ -143,24 +143,33 @@ export default function PresentModePage() {
       </div>
 
       {/* Slide content */}
-      {current.type === "intro" ? (
+      {current.type === "intro" && current.brand ? (
         <BrandIntroSlide brand={current.brand} />
-      ) : (
+      ) : current.type === "activation" && current.brand ? (
         <BrandActivationSlide brand={current.brand} />
+      ) : (
+        <ClosingSlide />
       )}
 
       {/* Navigation overlay */}
       <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between px-6 py-3 z-50"
-           style={{ backgroundColor: "rgba(13,47,27,0.95)", borderTop: "1px solid var(--border)", backdropFilter: "blur(8px)" }}>
+           style={{ backgroundColor: "rgba(13,47,27,0.95)", borderTop: "1px solid var(--sage)", backdropFilter: "blur(8px)" }}>
 
-        {/* Exit */}
-        <button
-          onClick={exit}
-          className="text-xs tracking-widest uppercase hover:text-[var(--sage)] transition-colors"
-          style={{ color: "var(--muted-foreground)" }}
-        >
-          ✕ Exit
-        </button>
+        {/* Exit & Logo */}
+        <div className="flex items-center gap-4">
+          <img
+            src="/ghf-logo-light.png"
+            alt="GHF"
+            className="w-8 h-8 object-contain"
+          />
+          <button
+            onClick={exit}
+            className="text-xs tracking-widest uppercase hover:text-[var(--sage)] transition-colors"
+            style={{ color: "var(--sage)" }}
+          >
+            ✕ Exit
+          </button>
+        </div>
 
         {/* Progress */}
         <div className="flex items-center gap-2">
@@ -175,7 +184,7 @@ export default function PresentModePage() {
                 backgroundColor:
                   i === slideIndex
                     ? "var(--sage)"
-                    : "var(--border)",
+                    : "rgba(134,166,143,0.3)",
               }}
             />
           ))}
@@ -186,7 +195,7 @@ export default function PresentModePage() {
           <button
             onClick={goPrev}
             disabled={slideIndex === 0}
-            className="text-xs tracking-widest uppercase disabled:opacity-30 hover:text-[var(--sage)] transition-colors"
+            className="text-xs tracking-widest uppercase disabled:opacity-30 hover:opacity-80 transition-colors"
             style={{ color: "var(--sage)" }}
           >
             ← Prev
@@ -195,9 +204,9 @@ export default function PresentModePage() {
           {/* Slideshow Play/Pause Toggle */}
           <button
             onClick={() => setIsPlaying(!isPlaying)}
-            className="w-8 h-8 rounded-full border border-[var(--border)] flex items-center justify-center hover:border-[var(--sage)] hover:text-[var(--sage)] hover:scale-105 active:scale-95 transition-all bg-[var(--card)]"
+            className="w-8 h-8 rounded-full border flex items-center justify-center hover:scale-105 active:scale-95 transition-all bg-transparent"
             title={isPlaying ? "Pause Slideshow" : "Play Slideshow"}
-            style={{ color: isPlaying ? "var(--sage)" : "var(--muted-foreground)" }}
+            style={{ color: "var(--sage)", borderColor: "var(--sage)" }}
           >
             {isPlaying ? (
               <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
@@ -212,7 +221,7 @@ export default function PresentModePage() {
 
           <span
             className="text-xs"
-            style={{ color: "var(--muted-foreground)" }}
+            style={{ color: "var(--sage)" }}
           >
             {slideIndex + 1} / {total}
           </span>
@@ -220,7 +229,7 @@ export default function PresentModePage() {
           <button
             onClick={goNext}
             disabled={slideIndex === total - 1}
-            className="text-xs tracking-widest uppercase disabled:opacity-30 hover:text-[var(--sage)] transition-colors"
+            className="text-xs tracking-widest uppercase disabled:opacity-30 hover:opacity-80 transition-colors"
             style={{ color: "var(--sage)" }}
           >
             Next →

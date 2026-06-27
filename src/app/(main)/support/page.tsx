@@ -27,7 +27,7 @@ const SUPPORT_BUNDLES = [
         {
           title: "Founder Masterclasses",
           description:
-            "Offer your guests a unique chance to learn more about the brand directly from the Founder or Head Distiller.",
+            "Offer your guests a unique chance to discover more about the brand directly from the Founder or Head Distiller.",
           price: "£200",
         },
         {
@@ -77,7 +77,7 @@ const SUPPORT_BUNDLES = [
         {
           title: "Founder Masterclasses",
           description:
-            "Offer your guests a unique chance to learn more about the brand directly from the Founder or Head Distiller.",
+            "Offer your guests a unique chance to discover more about the brand directly from the Founder or Head Distiller.",
           price: "£200",
         },
         {

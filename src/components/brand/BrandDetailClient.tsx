@@ -45,7 +45,7 @@ export function BrandDetailClient({ initialBrand }: { initialBrand: Brand }) {
     if (carouselImages.length <= 1) return;
     const interval = setInterval(() => {
       setCurrentIdx((prev) => (prev + 1) % carouselImages.length);
-    }, 4500);
+    }, 2000);
     return () => clearInterval(interval);
   }, [carouselImages]);
 
@@ -162,9 +162,11 @@ export function BrandDetailClient({ initialBrand }: { initialBrand: Brand }) {
           </p>
           {brand.bcorp && (
             <div className="pt-2">
-              <span className="inline-block text-[9px] font-bold tracking-widest uppercase border border-[var(--sage)] text-[var(--sage)] px-3.5 py-1.5 rounded-full bg-[var(--sage)]/5">
-                Certified B Corporation
-              </span>
+              <img
+                src="/b-corp-logo.png"
+                alt="Certified B Corporation"
+                className="w-10 h-[60px] object-contain"
+              />
             </div>
           )}
         </div>
@@ -230,7 +232,7 @@ export function BrandDetailClient({ initialBrand }: { initialBrand: Brand }) {
       <section className="py-24 max-w-6xl mx-auto px-6 md:px-14">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Link 
-            href="/case-studies/prestige"
+            href={`/resources/case-studies/${brand.slug}`}
             className="group flex flex-col justify-center items-center h-32 rounded-2xl border border-[var(--sage)] bg-[var(--card)] shadow-xl transition-all duration-300 hover:bg-[var(--sage)] cursor-pointer"
           >
             <span className="text-xs tracking-[0.25em] uppercase font-bold text-[var(--cream)] group-hover:text-[var(--background)] transition-colors">

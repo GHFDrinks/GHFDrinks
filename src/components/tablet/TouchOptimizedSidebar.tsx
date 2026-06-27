@@ -24,15 +24,15 @@ export function TouchOptimizedSidebar() {
     <>
       {/* Mobile/Tablet Header & Menu Toggle */}
       <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-[var(--sidebar)] border-b border-[var(--border)]/20 z-50 flex items-center justify-between px-6">
-        <Link href="/admin" className="text-xl font-light tracking-widest uppercase text-[var(--foreground)]">
-          GHF<span className="text-accent ml-2">Admin</span>
-        </Link>
         <button 
           onClick={() => setIsOpen(true)}
-          className="w-12 h-12 -mr-3 rounded-full flex items-center justify-center text-[var(--foreground)] active:bg-[var(--background)]/10 transition-colors"
+          className="w-12 h-12 -ml-3 rounded-full flex items-center justify-center text-[var(--foreground)] active:bg-[var(--background)]/10 transition-colors"
         >
           <Menu className="w-6 h-6" />
         </button>
+        <Link href="/admin" className="text-xl font-light tracking-widest uppercase text-[var(--foreground)]">
+          GHF<span className="text-accent ml-2">Admin</span>
+        </Link>
       </div>
 
       {/* Touch Sidebar Drawer */}

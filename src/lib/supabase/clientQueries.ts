@@ -42,6 +42,13 @@ export async function syncBrandsClient(
         venueBadges: b.venue_badges || [],
         promotionActive: b.promotion_active || false,
         bcorp: b.bcorp || false,
+        videoUrl: b.video_url || '',
+        brandInsights: b.brand_insights || [],
+        promotions: b.promotions || [],
+        haloOutlets: b.halo_outlets || [],
+        caseStudies: b.case_studies || [],
+        posLibrary: b.pos_library || [],
+        servesData: b.serves_data || [],
         story: {
           title: b.story_title || '',
           description: b.story_description || b.tagline || '',
@@ -59,6 +66,8 @@ export async function syncBrandsClient(
             tastingNotes: [],
             mixerPairings: [],
             serveInspiration: '',
+            taste_profile_radar: v.taste_profile_radar || null,
+            product_features: v.product_features || [],
           })),
         activations: (b.activations || []).map((a: any, index: number) => ({
           id: a.id,

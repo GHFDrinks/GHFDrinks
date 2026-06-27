@@ -1,9 +1,28 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { Brand } from "@/types/brand";
 import { getBrandImages } from "@/lib/brand-images";
 import { ConstantTabs } from "@/components/present/ConstantTabs";
 
+function slugify(text: string) {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/[^\w\-]+/g, "")
+    .replace(/\-\-+/g, "-")
+    .replace(/^-+/, "")
+    .replace(/-+$/, "");
+}
+
 export function BrandIntroSlide({ brand }: { brand: Brand }) {
+  const params = useParams();
+  const router = useRouter();
+  const presentationId = params?.id as string;
+
   const local = getBrandImages(brand.slug);
   const logoSrc = local?.logo || brand.logo?.url || "";
   const venueBadges = brand.venueBadges || [];
@@ -23,9 +42,18 @@ export function BrandIntroSlide({ brand }: { brand: Brand }) {
     if (carouselImages.length <= 1) return;
     const interval = setInterval(() => {
       setCurrentIdx((prev) => (prev + 1) % carouselImages.length);
-    }, 4000);
+    }, 2000);
     return () => clearInterval(interval);
   }, [carouselImages.length]);
+
+  const handleRangeClick = (vName: string) => {
+    const variantSlug = slugify(vName);
+    if (presentationId) {
+      sessionStorage.setItem("ghf_return_to", `/present-mode/${presentationId}`);
+      sessionStorage.setItem("ghf_return_label", "Back to Presentation");
+    }
+    router.push(`/tasting-notes/${brand.slug}/${variantSlug}`);
+  };
 
   return (
     <section className="w-full h-screen flex overflow-hidden bg-[var(--background)] relative">
@@ -47,9 +75,11 @@ export function BrandIntroSlide({ brand }: { brand: Brand }) {
             </span>
           )}
           {brand.bcorp && (
-            <span className="text-[9px] font-bold tracking-widest uppercase border border-[var(--sage)] text-[var(--sage)] px-3 py-1 rounded-full">
-              B-Corp Certified
-            </span>
+            <img
+              src="/b-corp-logo.png"
+              alt="Certified B Corporation"
+              className="w-10 h-[60px] object-contain flex-shrink-0"
+            />
           )}
         </div>
 
@@ -74,12 +104,13 @@ export function BrandIntroSlide({ brand }: { brand: Brand }) {
               </p>
               <div className="flex flex-wrap gap-2">
                 {brand.variants.map((v) => (
-                  <span
+                  <button
                     key={v.id}
-                    className="text-[11px] font-medium px-3.5 py-1.5 rounded-full border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)]/80 hover:border-[var(--sage)] hover:text-[var(--foreground)] transition-colors cursor-default"
+                    onClick={() => handleRangeClick(v.name)}
+                    className="text-[11px] font-medium px-3.5 py-1.5 rounded-full border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)]/80 hover:border-[var(--sage)] hover:text-[var(--foreground)] active:scale-95 active:bg-[var(--sage)]/15 transition-all cursor-pointer"
                   >
                     {v.name}{v.volume ? ` (${v.volume})` : ""}
-                  </span>
+                  </button>
                 ))}
               </div>
             </div>
@@ -97,7 +128,7 @@ export function BrandIntroSlide({ brand }: { brand: Brand }) {
             rel="noopener noreferrer"
             className="text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--sage)] hover:text-[var(--foreground)] transition-colors flex items-center gap-1.5 border border-[var(--sage)]/30 hover:border-[var(--sage)] px-3.5 py-1.5 rounded-full bg-[var(--card)]"
           >
-            Learn More ↗
+            Discover More
           </a>
         </div>
       </div>

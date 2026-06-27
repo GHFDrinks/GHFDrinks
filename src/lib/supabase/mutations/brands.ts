@@ -13,11 +13,20 @@ export async function saveBrand(brandData: any) {
     name: data.name,
     category: data.category,
     tagline: data.tagline,
-    story_title: data.story?.title,
-    story_description: data.story?.description,
+    story_title: data.story?.title || (data.name + ' Story'),
+    story_description: data.story?.description || data.tagline || '',
     promotion_active: data.promotionActive,
+    bcorp: data.bcorp || false,
+    video_url: data.videoUrl || '',
+    brand_insights: data.brandInsights || [],
+    promotions: data.promotions || [],
+    halo_outlets: data.haloOutlets || [],
+    case_studies: data.caseStudies || [],
+    pos_library: data.posLibrary || [],
+    serves_data: data.servesData || [],
   };
 
+  let brandId = id;
   let response;
 
   if (id && id !== 'new') {
@@ -28,7 +37,31 @@ export async function saveBrand(brandData: any) {
 
   if (response.error) {
     console.error('Save brand error:', response.error);
-    throw new Error('Failed to save brand');
+    throw new Error('Failed to save brand: ' + response.error.message);
+  }
+
+  brandId = response.data.id;
+
+  // Save variants if they are passed in
+  if (data.variants && Array.isArray(data.variants)) {
+    for (const v of data.variants) {
+      const variantPayload = {
+        brand_id: brandId,
+        name: v.name,
+        description: v.description || '',
+        abv: v.abv || '',
+        volume: v.volume || '',
+        image_url: v.image?.url || '',
+        taste_profile_radar: v.taste_profile_radar || null,
+        product_features: v.product_features || null,
+      };
+
+      if (v.id && !v.id.includes('-v-') && v.id.length > 5) { // Check if it's a real uuid from DB
+        await supabase.from('brand_variants').update(variantPayload).eq('id', v.id);
+      } else {
+        await supabase.from('brand_variants').insert(variantPayload);
+      }
+    }
   }
 
   revalidatePath('/admin/brands');

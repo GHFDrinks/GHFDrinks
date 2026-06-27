@@ -1,34 +1,37 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
-import { Package } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { BrandTileGrid } from "@/components/shared/BrandTileGrid";
 
 export default function PosLibraryPage() {
+  const router = useRouter();
+
   return (
-    <div className="min-h-screen py-16 px-6 md:px-14 bg-[var(--background)] flex flex-col justify-center items-center">
-      <div className="max-w-md w-full text-center space-y-6">
-        <Link
-          href="/resources"
-          className="text-xs tracking-widest uppercase text-[var(--sage)] hover:text-white transition-colors inline-block mb-4"
-        >
-          ← Back to resources
-        </Link>
-        <div className="mx-auto w-16 h-16 rounded-full bg-[var(--card)] flex items-center justify-center text-[var(--sage)] border border-[var(--sage)]/30">
-          <Package className="w-8 h-8" />
-        </div>
-        <div className="space-y-2">
-          <h1 className="text-3xl font-light tracking-tight text-[var(--cream)]">
+    <div className="min-h-screen px-12 py-10" style={{ backgroundColor: "var(--background)" }}>
+      {/* Header */}
+      <div className="flex items-center justify-between mb-10 border-b border-[var(--border)] pb-6">
+        <div>
+          <span className="text-[10px] tracking-[0.35em] uppercase text-[var(--sage)] font-bold block mb-1">
+            Resources Hub
+          </span>
+          <h1 className="text-4xl font-light tracking-tight text-[var(--foreground)]">
             POS Library
           </h1>
-          <p className="text-sm text-[var(--sage)] font-mono uppercase tracking-widest">
-            Coming Soon
+          <p className="text-xs text-[var(--muted-foreground)] mt-1">
+            Select a brand to view and download point-of-sale materials, printed menu cards, and venue kits
           </p>
         </div>
-        <p className="text-sm text-[var(--foreground)]/60 leading-relaxed">
-          We are currently cataloging our physical point of sale materials, menus, backbar displays, and promotional kits. Check back soon for ordering details.
-        </p>
+        <button
+          onClick={() => router.push("/resources")}
+          className="text-xs tracking-widest uppercase text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors cursor-pointer font-bold"
+        >
+          ← Resources
+        </button>
       </div>
+
+      {/* Brand Grid */}
+      <BrandTileGrid basePath="/resources/pos" />
     </div>
   );
 }

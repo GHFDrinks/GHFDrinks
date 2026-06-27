@@ -2,116 +2,112 @@
 
 import React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { 
-  Calendar, 
   CheckCircle2, 
-  MapPin, 
-  Users, 
+  Calendar, 
   Play, 
   Wine, 
   FolderTree, 
-  Activity, 
   Package 
 } from "lucide-react";
 
 export default function ResourcesPage() {
-  const resources = [
+  const router = useRouter();
+
+  const sections = [
     {
-      label: "Activation Calendar",
-      sub: "Key dates & promotional windows",
-      href: "/calendar",
-      icon: Calendar,
-    },
-    {
-      label: "Halo Outlets",
-      sub: "Prestige customer showcases",
-      href: "/case-studies/prestige",
+      title: "Halo Outlets",
+      subtitle: "Prestige customer showcases and premium venue listings",
+      href: "/resources/halo-outlets",
       icon: CheckCircle2,
     },
     {
-      label: "Upcoming Events",
-      sub: "Trade shows & brand activations",
-      href: "/calendar",
-      icon: MapPin,
+      title: "Upcoming Events",
+      subtitle: "Consumer tastings, trade dinners, and activation tickets",
+      href: "/resources/upcoming-events",
+      icon: Calendar,
     },
     {
-      label: "Support Packages",
-      sub: "On-trade brand support offerings",
-      href: "/support",
-      icon: Users,
-    },
-    {
-      label: "Brand Videos",
-      sub: "Brand films and digital assets",
+      title: "Brand Videos",
+      subtitle: "High-definition brand films and digital storytelling assets",
       href: "/resources/videos",
       icon: Play,
     },
     {
-      label: "Serve Inspiration",
-      sub: "Signature serves & recipes",
+      title: "Serve Inspiration",
+      subtitle: "Bespoke seasonal serves, cocktail recipes, and mixology logs",
       href: "/resources/serves",
       icon: Wine,
     },
     {
-      label: "Case Studies",
-      sub: "Independent & group showcases",
-      href: "/case-studies/prestige",
+      title: "Case Studies",
+      subtitle: "On-trade performance success metrics across hospitality tiers",
+      href: "/resources/case-studies",
       icon: FolderTree,
     },
     {
-      label: "Category Insights",
-      sub: "Market intelligence & reports",
-      href: "/insights",
-      icon: Activity,
-    },
-    {
-      label: "POS Library",
-      sub: "Point of sale kits & collateral",
+      title: "POS Library",
+      subtitle: "Print collateral, branded table-talkers, and venue assets",
       href: "/resources/pos",
       icon: Package,
     },
   ];
 
   return (
-    <div className="min-h-screen py-16 px-6 md:px-14 bg-[var(--background)]">
-      <div className="max-w-6xl mx-auto space-y-12">
-        
-        {/* Header */}
-        <div className="space-y-2">
-          <h1 className="text-4xl font-light tracking-tight text-[var(--cream)]">
-            Brand Resources
-          </h1>
-          <p className="text-sm text-[var(--sage)] font-medium">
-            Access resources to support brand development in outlet
-          </p>
+    <div className="min-h-screen py-16 px-12 bg-[var(--background)] flex flex-col justify-between max-w-6xl mx-auto">
+      <div className="space-y-12">
+        {/* Top Header */}
+        <div className="flex items-center justify-between border-b border-[var(--border)] pb-6">
+          <div>
+            <span className="text-[10px] tracking-[0.35em] uppercase text-[var(--sage)] font-bold block mb-1">
+              Sales Enablement
+            </span>
+            <h1 className="text-4xl font-light tracking-tight text-[var(--foreground)]">
+              Brand Resources
+            </h1>
+            <p className="text-xs text-[var(--muted-foreground)] mt-1">
+              Asset kits and on-trade collateral supporting portfolio integration
+            </p>
+          </div>
+          <button
+            onClick={() => router.push("/")}
+            className="text-xs tracking-widest uppercase text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors cursor-pointer font-bold"
+          >
+            ← Home
+          </button>
         </div>
 
-        {/* 3x3 Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {resources.map((res) => {
-            const Icon = res.icon;
+        {/* 6 Grid layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {sections.map((sec) => {
+            const IconComponent = sec.icon;
             return (
               <Link
-                key={res.label}
-                href={res.href}
-                className="group flex flex-col justify-between p-6 h-48 rounded-2xl border border-[var(--sage)]/30 bg-[var(--card)] shadow-lg transition-all duration-300 hover:border-[var(--sage)] hover:-translate-y-1 hover:shadow-2xl cursor-pointer"
+                key={sec.title}
+                href={sec.href}
+                className="group p-8 rounded-xl border border-[var(--sage)]/20 bg-[var(--card)] shadow-lg hover:border-[var(--sage)] hover:shadow-2xl transition-all duration-300 flex flex-col justify-between min-h-[220px] cursor-pointer"
               >
-                <div className="w-10 h-10 rounded-xl bg-[var(--background)] flex items-center justify-center text-[var(--sage)] group-hover:bg-[var(--sage)] group-hover:text-[var(--background)] transition-colors">
-                  <Icon className="w-5 h-5" />
+                <div className="w-12 h-12 rounded-xl bg-[var(--background)] border border-[var(--border)] flex items-center justify-center text-[var(--sage)] group-hover:bg-[var(--sage)] group-hover:text-[var(--background)] transition-colors">
+                  <IconComponent className="w-6 h-6" />
                 </div>
-                <div className="space-y-1">
-                  <h3 className="text-base font-semibold text-[var(--cream)] tracking-wide">
-                    {res.label}
+                <div className="space-y-2 mt-6">
+                  <h3 className="text-lg font-light text-[var(--foreground)] tracking-wide group-hover:text-[var(--sage)] transition-colors">
+                    {sec.title}
                   </h3>
-                  <p className="text-xs text-[var(--foreground)]/60">
-                    {res.sub}
+                  <p className="text-xs text-[var(--muted-foreground)] leading-relaxed">
+                    {sec.subtitle}
                   </p>
                 </div>
               </Link>
             );
           })}
         </div>
+      </div>
 
+      {/* Footer copyright */}
+      <div className="text-[9px] tracking-wider text-[var(--muted-foreground)]/65 mt-16 text-center uppercase border-t border-[var(--border)]/50 pt-4 w-full">
+        GHF Drinks Portfolio © 2026
       </div>
     </div>
   );
