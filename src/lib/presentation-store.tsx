@@ -94,8 +94,6 @@ export function PresentationProvider({ children }: { children: React.ReactNode }
     return savedPresentations.find(p => p.id === id);
   }, [savedPresentations]);
 
-  if (!isLoaded) return null;
-
   return (
     <PresentationContext.Provider value={{ savedPresentations, savePresentation, deletePresentation, getPresentation, isSyncing }}>
       {children}
