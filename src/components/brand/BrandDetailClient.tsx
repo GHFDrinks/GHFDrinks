@@ -7,21 +7,54 @@ import { Brand } from "@/types/brand";
 import { useBrands } from "@/hooks/useBrands";
 import { getBrandImages } from "@/lib/brand-images";
 import { getTastingNotesForBrand } from "@/data/tasting-notes";
+import { SERVES_DATA } from "@/data/serves";
 import { BrandActivationSlide } from "./BrandActivationSlide";
 import { getBrandVideo } from "@/data/brand-videos";
 import { getBrandStory } from "@/data/brand-stories";
 import { getBrandSupportOptions } from "@/data/brand-support";
+
+// Holding awards content — to be populated per brand by the client (up to 10).
+const AWARDS_HOLDING = [
+  { title: "Winner: Gold Medal, San Francisco World Spirits Awards 2024", variant: "Signature Release" },
+  { title: "Double Gold, The Global Spirits Masters 2023", variant: "Harvest 2019" },
+  { title: "Best in Class, International Wine & Spirit Competition 2023", variant: "Core Range" },
+  { title: "Winner: Design & Packaging Award 2024", variant: "Full Range" },
+];
 
 export function BrandDetailClient({ initialBrand }: { initialBrand: Brand }) {
   const router = useRouter();
   const [brand, setBrand] = useState<Brand>(initialBrand);
   const { brands } = useBrands();
   const [currentIdx, setCurrentIdx] = useState(0);
+  const [returnTo, setReturnTo] = useState<{ url: string; label: string } | null>(null);
+  const [serveSeason, setServeSeason] = useState<"spring-summer" | "autumn-winter">("spring-summer");
 
   useEffect(() => {
     const live = brands.find((b) => b.slug === initialBrand.slug);
     if (live) setBrand(live);
   }, [brands, initialBrand.slug]);
+
+  // Honour a return context (e.g. set by "Discover More" in a presentation) so Back
+  // returns to the exact slide the user came from, instead of relying on tab history.
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const url = sessionStorage.getItem("ghf_return_to");
+      const label = sessionStorage.getItem("ghf_return_label") || "Back";
+      if (url) setReturnTo({ url, label });
+    }
+  }, []);
+
+  const handleBack = () => {
+    if (returnTo) {
+      if (typeof window !== "undefined") {
+        sessionStorage.removeItem("ghf_return_to");
+        sessionStorage.removeItem("ghf_return_label");
+      }
+      router.push(returnTo.url);
+    } else {
+      router.back();
+    }
+  };
 
   const local = getBrandImages(brand.slug);
   const videoUrl = getBrandVideo(brand.slug);
@@ -73,6 +106,24 @@ export function BrandDetailClient({ initialBrand }: { initialBrand: Brand }) {
     } as any);
   }
 
+  // Season-split serves (Serve Inspiration data). When present, the serves section
+  // gets a Spring/Summer ↔ Autumn/Winter toggle; otherwise it falls back to the
+  // tasting-note serves above. Normalised to a common {name, lines, note} shape.
+  const brandServeVariants = SERVES_DATA.filter((v) => v.brandSlug === brand.slug);
+  const hasSeasonServes = brandServeVariants.length > 0;
+  const servesToShow: { name: string; lines: string[]; note: string }[] = hasSeasonServes
+    ? (serveSeason === "spring-summer"
+        ? brandServeVariants.flatMap((v) => v.springSummer)
+        : brandServeVariants.flatMap((v) => v.autumnWinter)
+      )
+        .slice(0, 3)
+        .map((s) => ({ name: s.name, lines: s.flavourDescriptors, note: s.recipe }))
+    : displayServes.slice(0, 3).map((s) => ({
+        name: s.name,
+        lines: s.ingredients,
+        note: (s as any).description || "A pristine serve crafted to accentuate the premium distillates.",
+      }));
+
   return (
     <div style={{ backgroundColor: "var(--background)" }} className="min-h-screen pb-20">
 
@@ -80,11 +131,11 @@ export function BrandDetailClient({ initialBrand }: { initialBrand: Brand }) {
       <section className="relative w-full aspect-[16/9] bg-[var(--muted)] overflow-hidden border-b border-[var(--border)]/20">
         {/* Back Button overlay */}
         <div className="absolute top-6 left-6 z-20">
-          <button 
-            onClick={() => router.back()} 
-            className="flex items-center gap-2 px-4 py-2 rounded-full bg-black/40 hover:bg-black/60 border border-[var(--border)]/20 text-xs tracking-widest uppercase text-[var(--cream)] hover:text-[var(--sage)] hover:border-[var(--sage)] transition-all cursor-pointer"
+          <button
+            onClick={handleBack}
+            className="flex items-center gap-2 px-4 py-2 rounded-full bg-black/40 hover:bg-black/60 border border-[var(--border)]/20 text-xs tracking-widest uppercase text-[var(--pearl)] hover:text-[var(--sage)] hover:border-[var(--sage)] transition-all cursor-pointer"
           >
-            ← Back
+            ← {returnTo ? returnTo.label : "Back"}
           </button>
         </div>
 
@@ -163,7 +214,7 @@ export function BrandDetailClient({ initialBrand }: { initialBrand: Brand }) {
           {brand.bcorp && (
             <div className="pt-2">
               <img
-                src="/b-corp-logo.png"
+                src="/b-corp-logo.svg"
                 alt="Certified B Corporation"
                 className="w-10 h-[60px] object-contain"
               />
@@ -176,19 +227,46 @@ export function BrandDetailClient({ initialBrand }: { initialBrand: Brand }) {
       {isSpirits && (
         <section className="py-20 bg-[var(--card)]/30 border-y border-[var(--border)]/20">
           <div className="max-w-6xl mx-auto px-6 md:px-14">
-            <div className="mb-12">
-              <span className="text-[10px] tracking-[0.35em] uppercase text-[var(--sage)] font-bold block mb-1">
-                Signature Serves
-              </span>
-              <h2 className="text-4xl font-light tracking-tight text-[var(--cream)]">
-                How to Serve
-              </h2>
+            <div className="mb-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+              <div>
+                <span className="text-[10px] tracking-[0.35em] uppercase text-[var(--sage)] font-bold block mb-1">
+                  Signature Serves
+                </span>
+                <h2 className="text-4xl font-light tracking-tight text-[var(--cream)]">
+                  How to Serve
+                </h2>
+              </div>
+              {/* Season toggle — like the Serve Inspiration section (spirits with season data) */}
+              {hasSeasonServes && (
+                <div className="inline-flex self-start md:self-auto rounded-lg border border-[var(--border)] bg-[var(--card)] p-1">
+                  <button
+                    onClick={() => setServeSeason("spring-summer")}
+                    className={`px-5 py-2 text-xs font-bold uppercase tracking-wider rounded-md transition-all ${
+                      serveSeason === "spring-summer"
+                        ? "bg-[var(--sage)] text-[var(--background)] font-black"
+                        : "text-[var(--foreground)]/70 hover:text-[var(--foreground)]"
+                    }`}
+                  >
+                    Spring / Summer
+                  </button>
+                  <button
+                    onClick={() => setServeSeason("autumn-winter")}
+                    className={`px-5 py-2 text-xs font-bold uppercase tracking-wider rounded-md transition-all ${
+                      serveSeason === "autumn-winter"
+                        ? "bg-[var(--sage)] text-[var(--background)] font-black"
+                        : "text-[var(--foreground)]/70 hover:text-[var(--foreground)]"
+                    }`}
+                  >
+                    Autumn / Winter
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {displayServes.slice(0, 3).map((serve, idx) => (
-                <div 
-                  key={idx} 
+              {servesToShow.map((serve, idx) => (
+                <div
+                  key={idx}
                   className="border border-[var(--border)]/20 rounded-2xl p-6 bg-[var(--card)] flex flex-col justify-between h-full shadow-lg hover:border-[var(--sage)]/20 transition-all duration-300"
                 >
                   <div className="space-y-4">
@@ -201,17 +279,17 @@ export function BrandDetailClient({ initialBrand }: { initialBrand: Brand }) {
                     </div>
                     <h3 className="text-base font-semibold text-[var(--cream)] tracking-wide">{serve.name}</h3>
                     <ul className="text-xs text-[var(--foreground)]/80 space-y-1.5 pt-2">
-                      {serve.ingredients.map((ing, i) => (
+                      {serve.lines.map((line, i) => (
                         <li key={i} className="flex items-start gap-2">
                           <span className="text-[var(--sage)]">•</span>
-                          <span>{ing}</span>
+                          <span>{line}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
                   <div className="pt-6 mt-6 border-t border-[var(--border)]/20">
                     <p className="text-xs text-[var(--sage)] italic leading-relaxed">
-                      {(serve as any).description || "A pristine serve crafted to accentuate the premium distillates."}
+                      {serve.note}
                     </p>
                   </div>
                 </div>
@@ -227,6 +305,38 @@ export function BrandDetailClient({ initialBrand }: { initialBrand: Brand }) {
           <BrandActivationSlide brand={brand} isWebPage={true} />
         </section>
       ) : null}
+
+      {/* 4b. AWARDS & RECOGNITION — horizontally scrolling square tiles (holding content) */}
+      <section className="py-20 border-b border-[var(--border)]/20">
+        <div className="max-w-6xl mx-auto px-6 md:px-14">
+          <div className="mb-8">
+            <span className="text-[10px] tracking-[0.35em] uppercase text-[var(--sage)] font-bold block mb-1">
+              Recognition
+            </span>
+            <h2 className="text-4xl font-light tracking-tight text-[var(--cream)]">
+              Awards &amp; Recognition
+            </h2>
+          </div>
+          <div className="flex gap-5 overflow-x-auto pb-4 scrollbar-hide">
+            {AWARDS_HOLDING.map((award, idx) => (
+              <div
+                key={idx}
+                className="flex-shrink-0 w-56 aspect-square rounded-2xl border border-[var(--border)]/30 bg-[var(--card)] p-6 flex flex-col justify-between shadow-md hover:border-[var(--sage)]/40 transition-all"
+              >
+                <svg className="w-8 h-8 text-[var(--sage)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 002.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 012.916.52 6.003 6.003 0 01-5.395 4.972m0 0a6.726 6.726 0 01-2.749 1.35m0 0a6.772 6.772 0 01-3.044 0" />
+                </svg>
+                <div>
+                  <p className="text-sm font-semibold text-[var(--cream)] leading-snug">{award.title}</p>
+                  {award.variant && (
+                    <p className="text-xs text-[var(--muted-foreground)] mt-1.5">{award.variant}</p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* 5. BOTTOM TABS */}
       <section className="py-24 max-w-6xl mx-auto px-6 md:px-14">

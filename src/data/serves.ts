@@ -13,7 +13,15 @@ export type VariantServes = {
   variantDisplayName: string;
   springSummer: Serve[]; // exactly 3
   autumnWinter: Serve[]; // exactly 3
+  feverTree?: Serve[]; // optional Fever-Tree mixer serves (3) — spirits only
 };
+
+// Default Fever-Tree mixer serves shown for spirit brands (holding content).
+export const FEVER_TREE_SERVES: Serve[] = [
+  { name: "with Premium Indian Tonic", recipe: "50ml spirit over ice, top with Fever-Tree Premium Indian Tonic, garnish to suit.", flavourDescriptors: ["Crisp", "Balanced", "Classic"] },
+  { name: "with Ginger Beer", recipe: "50ml spirit over ice, top with Fever-Tree Ginger Beer, lime wedge.", flavourDescriptors: ["Spiced", "Zesty", "Warming"] },
+  { name: "with Mediterranean Tonic", recipe: "50ml spirit over ice, top with Fever-Tree Mediterranean Tonic, rosemary sprig.", flavourDescriptors: ["Floral", "Herbal", "Light"] },
+];
 
 export const SERVES_DATA: VariantServes[] = [
   // --- SAPLING ---

@@ -113,7 +113,7 @@ export default function BrandCaseStudiesPage() {
                       <span className="text-[9px] font-bold tracking-widest uppercase text-[var(--sage)]">
                         {study.outletName}
                       </span>
-                      <h3 className="text-base font-light text-[var(--cream)] mt-0.5 tracking-wide leading-snug">
+                      <h3 className="text-base font-light text-[var(--pearl)] mt-0.5 tracking-wide leading-snug">
                         {study.title}
                       </h3>
                     </div>
@@ -172,7 +172,7 @@ export default function BrandCaseStudiesPage() {
                   <span className="text-[10px] font-bold tracking-widest uppercase text-[var(--sage)]">
                     {selectedStudy.outletName} • {selectedStudy.tier.replace("-", " ")}
                   </span>
-                  <h2 className="text-2xl font-light text-[var(--cream)] tracking-wide mt-1">
+                  <h2 className="text-2xl font-light text-[var(--pearl)] tracking-wide mt-1">
                     {selectedStudy.title}
                   </h2>
                 </div>

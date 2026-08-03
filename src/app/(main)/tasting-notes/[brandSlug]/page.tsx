@@ -50,8 +50,15 @@ export default function BrandVariantsPage() {
         ← All Brands
       </Link>
 
-      {/* Header */}
-      <div className="mb-10 flex items-center justify-between">
+      {/* Header — logo centred at the top, heading below */}
+      <div className="mb-10">
+        {images?.logo && (
+          <img
+            src={images.logo}
+            alt={brand.name}
+            className="max-h-16 max-w-[180px] object-contain mx-auto mb-6"
+          />
+        )}
         <div>
           <h1 className="text-5xl font-light tracking-tight mb-2" style={{ color: "var(--foreground)" }}>
             {brand.name}
@@ -60,13 +67,6 @@ export default function BrandVariantsPage() {
             Select a variant to view detailed tasting profiles and product features
           </p>
         </div>
-        {images?.logo && (
-          <img
-            src={images.logo}
-            alt={brand.name}
-            className="max-h-16 max-w-[180px] object-contain"
-          />
-        )}
       </div>
 
       {/* Grid of variant tiles */}

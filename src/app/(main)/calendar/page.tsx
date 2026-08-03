@@ -14,6 +14,7 @@ interface CalEvent {
 interface CalMonth {
   month: string;
   ghfActivation?: string;
+  ghfActivations?: string[]; // multiple GHF activations in one month (e.g. December)
   events: CalEvent[];
 }
 
@@ -93,7 +94,7 @@ const CALENDAR_2026: CalMonth[] = [
     ],
   },
   { month: "November", events: [{ name: "Day of the Dead", date: "Monday 2nd" }] },
-  { month: "December", ghfActivation: "Festive", events: [] },
+  { month: "December", ghfActivations: ["Festive Spirit", "Festive Dining"], events: [] },
 ];
 
 const BRAND_KEY_DATES: Record<string, string[]> = {
@@ -151,17 +152,22 @@ export default function CalendarPage() {
     return GHF_CAMPAIGNS.find((c) => c.name.toLowerCase() === lookup.toLowerCase());
   };
 
+  // Normalise a month's GHF activation(s) to a list (supports one or many).
+  const getGhfList = (mData: CalMonth): string[] =>
+    mData.ghfActivations ?? (mData.ghfActivation ? [mData.ghfActivation] : []);
+
   // Determine if a month highlights for the active filter
   const isMonthHighlighted = (monthName: string, idx: number) => {
     const mData = CALENDAR_2026[idx];
+    const ghfList = getGhfList(mData);
     if (!selectedBrandSlug) {
       // Default: Highlight GHF activations
-      return !!mData.ghfActivation;
+      return ghfList.length > 0;
     }
 
     // Check relevant GHF activations
-    if (mData.ghfActivation) {
-      const campaign = getCampaignByName(mData.ghfActivation);
+    for (const name of ghfList) {
+      const campaign = getCampaignByName(name);
       if (campaign && campaign.relevantBrandSlugs.includes(selectedBrandSlug)) {
         return true;
       }
@@ -404,10 +410,15 @@ export default function CalendarPage() {
           {CALENDAR_2026.map((m, idx) => {
             const isLit = isMonthHighlighted(m.month, idx);
             const filteredEvents = getFilteredEvents(m);
-            const hasGhf = !!m.ghfActivation;
-            const campaign = m.ghfActivation ? getCampaignByName(m.ghfActivation) : null;
+            const ghfList = getGhfList(m);
+            const hasGhf = ghfList.length > 0;
+            const ghfCampaigns = ghfList
+              .map((name) => ({ name, campaign: getCampaignByName(name) }))
+              .filter((x) => !!x.campaign);
             const isGhfActive =
-              hasGhf && (!selectedBrandSlug || (campaign && campaign.relevantBrandSlugs.includes(selectedBrandSlug)));
+              hasGhf &&
+              (!selectedBrandSlug ||
+                ghfCampaigns.some((x) => x.campaign!.relevantBrandSlugs.includes(selectedBrandSlug)));
 
             return (
               <div
@@ -423,23 +434,28 @@ export default function CalendarPage() {
                   {m.month}
                 </h2>
 
-                {/* GHF Activation Label */}
-                {isGhfActive && m.ghfActivation && (
-                  <div
-                    onClick={(e) => {
-                      if (campaign) {
-                        e.stopPropagation();
-                        handleCampaignClick(campaign);
-                      }
-                    }}
-                    className="mb-3 px-3 py-2 rounded border border-[var(--sage)]/30 bg-[var(--sage)]/5 text-center transition-all hover:bg-[var(--sage)]/15"
-                  >
-                    <p className="text-[8px] tracking-[0.25em] uppercase text-[var(--sage)] font-bold">
-                      GHF Activation
-                    </p>
-                    <p className="text-xs font-bold tracking-wider uppercase text-[var(--sage)] mt-0.5">
-                      {m.ghfActivation}
-                    </p>
+                {/* GHF Activation Label(s) — a month can have more than one (e.g. December) */}
+                {isGhfActive && ghfCampaigns.length > 0 && (
+                  <div className="mb-3 space-y-2">
+                    {ghfCampaigns.map(({ name, campaign }) => (
+                      <div
+                        key={name}
+                        onClick={(e) => {
+                          if (campaign) {
+                            e.stopPropagation();
+                            handleCampaignClick(campaign);
+                          }
+                        }}
+                        className="px-3 py-2 rounded border border-[var(--sage)]/30 bg-[var(--sage)]/5 text-center transition-all hover:bg-[var(--sage)]/15"
+                      >
+                        <p className="text-[8px] tracking-[0.25em] uppercase text-[var(--sage)] font-bold">
+                          GHF Activation
+                        </p>
+                        <p className="text-xs font-bold tracking-wider uppercase text-[var(--sage)] mt-0.5">
+                          {name}
+                        </p>
+                      </div>
+                    ))}
                   </div>
                 )}
 

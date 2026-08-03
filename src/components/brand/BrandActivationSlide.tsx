@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Brand } from "@/types/brand";
 import { getBrandImages } from "@/lib/brand-images";
 import { ACTIVATION_WINDOWS } from "@/data/activation-windows";
@@ -24,8 +24,22 @@ function getGhfCampaign(dateName: string, brandCategory?: string) {
   return GHF_CAMPAIGNS.find((c) => c.name.toLowerCase() === name.toLowerCase());
 }
 
-export function BrandActivationSlide({ brand, isWebPage = false }: { brand: Brand; isWebPage?: boolean }) {
+export function BrandActivationSlide({ brand, isWebPage = false, slideIndex }: { brand: Brand; isWebPage?: boolean; slideIndex?: number }) {
+  const params = useParams();
   const router = useRouter();
+  const presentationId = params?.id as string | undefined;
+
+  // Where "Back" should return to — the exact presentation slide the user is on.
+  const returnUrl = presentationId
+    ? `/present-mode/${presentationId}${typeof slideIndex === "number" ? `?slide=${slideIndex}` : ""}`
+    : null;
+
+  const setReturnContext = () => {
+    if (returnUrl && typeof window !== "undefined") {
+      sessionStorage.setItem("ghf_return_to", returnUrl);
+      sessionStorage.setItem("ghf_return_label", "Back to Presentation");
+    }
+  };
   const [viewModes, setViewModes] = useState<Array<"normal" | "year" | "month">>(["normal", "normal"]);
   const [selectedEvent, setSelectedEvent] = useState<Array<string | null>>([null, null]);
   const [selectedMonth, setSelectedMonth] = useState<Array<number>>([1, 1]);
@@ -333,8 +347,9 @@ export function BrandActivationSlide({ brand, isWebPage = false }: { brand: Bran
 
     return (
       <>
-        {/* Photo container with fixed ratio & border bottom */}
-        <div className="relative aspect-[16/9] w-full overflow-hidden border-b border-[var(--border)] flex-shrink-0 bg-[var(--muted)]">
+        {/* Photo container with fixed ratio & border bottom — shorter ratio keeps the
+            tile compact so it clears the constant tabs at the bottom of the slide. */}
+        <div className="relative aspect-[16/7] w-full overflow-hidden border-b border-[var(--border)] flex-shrink-0 bg-[var(--muted)]">
           {photo ? (
             <img
               src={photo}
@@ -386,8 +401,18 @@ export function BrandActivationSlide({ brand, isWebPage = false }: { brand: Bran
                       key={i}
                       onClick={(e) => {
                         e.stopPropagation(); // prevent card flip
-                        if (isGhf) {
-                          setSelectedGhfCampaign(campaign);
+                        if (campaign) {
+                          // On brand homepages the modal isn't mounted — link straight
+                          // through to the relevant GHF Activation instead.
+                          if (isWebPage) {
+                            if (typeof window !== "undefined") {
+                              sessionStorage.setItem("ghf_return_to", `/brands/${brand.slug}`);
+                              sessionStorage.setItem("ghf_return_label", "Back to Brand");
+                            }
+                            router.push(`/activations/${campaign.id}`);
+                          } else {
+                            setSelectedGhfCampaign(campaign);
+                          }
                         } else {
                           const win = ACTIVATION_WINDOWS[date];
                           if (win) {
@@ -499,20 +524,18 @@ export function BrandActivationSlide({ brand, isWebPage = false }: { brand: Bran
           <span className="text-xs tracking-[0.2em] uppercase text-[var(--muted-foreground)]">
             {brand.name}
           </span>
-          <a
-            href={`/brands/${brand.slug}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[9px] font-bold tracking-widest uppercase text-[var(--sage)] hover:text-[var(--foreground)] transition-colors border border-[var(--sage)]/30 hover:border-[var(--sage)] px-2.5 py-1 rounded bg-[var(--card)]"
+          <button
+            onClick={() => { setReturnContext(); router.push(`/brands/${brand.slug}`); }}
+            className="text-[9px] font-bold tracking-widest uppercase text-[var(--sage)] hover:text-[var(--foreground)] transition-colors border border-[var(--sage)]/30 hover:border-[var(--sage)] px-2.5 py-1 rounded bg-[var(--card)] cursor-pointer"
           >
             Discover More
-          </a>
+          </button>
         </div>
       </div>
 
       {/* Main Activation Area */}
       <div className="flex-1 my-auto flex items-center justify-center py-6">
-        <div className={`grid ${hasTwo ? "grid-cols-2 gap-8" : "grid-cols-1 max-w-2xl"} w-full h-full max-h-[70vh]`}>
+        <div className={`grid ${hasTwo ? "grid-cols-2 gap-8" : "grid-cols-1 max-w-2xl"} w-full h-full max-h-[72vh]`}>
           {tiles.map((tile, idx) => {
             if (tile.type === "placeholder") {
               return (
@@ -553,7 +576,9 @@ export function BrandActivationSlide({ brand, isWebPage = false }: { brand: Bran
         </div>
       </div>
 
-      <div className="h-4" />
+      {/* Static bottom band reserved for the constant tabs (Promotions & Support,
+          Serve Inspiration, Case Studies) so the activation tile never overlaps them. */}
+      <div className="h-20 flex-shrink-0" />
 
       {/* GHF Activation Detail Modal */}
       {selectedGhfCampaign && (

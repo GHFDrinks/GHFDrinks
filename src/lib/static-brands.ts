@@ -375,6 +375,53 @@ const RAW_BRANDS: any[] = [
     ],
     activations: [],
   },
+
+  // ─── HOLDING BRANDS (placeholders — content to be populated by client) ───
+  {
+    slug: "whisky-a",
+    name: "Whisky A",
+    category: "Spirits",
+    tagline: "Holding brand — content to follow.",
+    description: "Placeholder brand added for structural purposes. Content to be populated.",
+    bcorp: false,
+    promotion_active: false,
+    variants: [
+      { name: "Whisky A — SKU 1", volume: "70cl", abv: "40%", sort_order: 1 },
+      { name: "Whisky A — SKU 2", volume: "70cl", abv: "40%", sort_order: 2 },
+      { name: "Whisky A — SKU 3", volume: "70cl", abv: "40%", sort_order: 3 },
+      { name: "Whisky A — SKU 4", volume: "70cl", abv: "40%", sort_order: 4 },
+    ],
+    activations: [],
+  },
+  {
+    slug: "whisky-b",
+    name: "Whisky B",
+    category: "Spirits",
+    tagline: "Holding brand — content to follow.",
+    description: "Placeholder brand added for structural purposes. Content to be populated.",
+    bcorp: false,
+    promotion_active: false,
+    variants: [
+      { name: "Whisky B — SKU 1", volume: "70cl", abv: "40%", sort_order: 1 },
+      { name: "Whisky B — SKU 2", volume: "70cl", abv: "40%", sort_order: 2 },
+      { name: "Whisky B — SKU 3", volume: "70cl", abv: "40%", sort_order: 3 },
+      { name: "Whisky B — SKU 4", volume: "70cl", abv: "40%", sort_order: 4 },
+    ],
+    activations: [],
+  },
+  {
+    slug: "non-alc-a",
+    name: "Non-Alc A",
+    category: "Spirits",
+    tagline: "Holding brand — content to follow.",
+    description: "Placeholder brand added for structural purposes. Content to be populated.",
+    bcorp: false,
+    promotion_active: false,
+    variants: [
+      { name: "Non-Alc A — SKU 1", volume: "70cl", abv: "0%", sort_order: 1 },
+    ],
+    activations: [],
+  },
 ];
 
 export const STATIC_BRANDS: Brand[] = RAW_BRANDS.map((b, bIndex) => {

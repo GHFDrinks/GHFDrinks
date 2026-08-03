@@ -124,11 +124,11 @@ export default function VariantDetailPage() {
 
   return (
     <div className="min-h-screen flex flex-col px-12 py-10" style={{ backgroundColor: "var(--background)" }}>
-      {/* Top Navigation Row */}
-      <div className="flex items-center justify-between mb-8">
+      {/* Top Navigation Row: Back (left) + centred Brand Logo */}
+      <div className="relative flex items-center mb-8 min-h-12">
         <button
           onClick={handleBack}
-          className="text-xs tracking-widest uppercase text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors cursor-pointer font-bold text-left"
+          className="relative z-10 text-xs tracking-widest uppercase text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors cursor-pointer font-bold text-left"
         >
           ← {returnTo ? returnTo.label : `${brand.name} Collection`}
         </button>
@@ -136,7 +136,7 @@ export default function VariantDetailPage() {
           <img
             src={local.logo}
             alt={brand.name}
-            className="max-h-12 max-w-[140px] object-contain"
+            className="absolute left-1/2 -translate-x-1/2 max-h-12 max-w-[140px] object-contain"
           />
         )}
       </div>
@@ -190,8 +190,19 @@ export default function VariantDetailPage() {
           </div>
         </div>
 
-        {/* RIGHT COLUMN: Product Features + Details */}
+        {/* RIGHT COLUMN: Description + Features + Details */}
         <div className="space-y-8">
+          {/* Product Description (holding text — to be populated per variant) */}
+          <div className="space-y-4">
+            <h2 className="text-lg font-light tracking-wider uppercase text-[var(--foreground)]">
+              Product Description
+            </h2>
+            <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
+              A considered expression, crafted with intent. Full product description to follow.
+            </p>
+          </div>
+
+          {/* Product Features — moved down to sit alongside the Taste Profile */}
           <div className="space-y-4">
             <h2 className="text-lg font-light tracking-wider uppercase text-[var(--foreground)]">
               Product Features
@@ -203,11 +214,8 @@ export default function VariantDetailPage() {
             )}
           </div>
 
-          {/* ABV Display */}
+          {/* ABV Display — value only (label removed per feedback) */}
           <div className="pt-4 border-t border-[var(--border)]">
-            <p className="text-xs tracking-widest uppercase text-[var(--muted-foreground)] mb-1">
-              Alcohol By Volume
-            </p>
             <p className="text-2xl font-bold" style={{ color: "var(--foreground)" }}>
               {note.abv}
             </p>

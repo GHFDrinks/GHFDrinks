@@ -42,7 +42,7 @@ export default function PresentationsPage() {
         </div>
         <Link
           href="/presentations/new"
-          className="px-5 py-2.5 text-sm font-medium rounded-lg text-white transition-opacity"
+          className="px-5 py-2.5 text-sm font-medium rounded-lg text-white transition-opacity whitespace-nowrap"
           style={{ backgroundColor: "var(--accent)" }}
         >
           + New Presentation
@@ -146,7 +146,7 @@ export default function PresentationsPage() {
                     <button
                       onClick={() => handleDownloadPdf(p)}
                       disabled={generatingId !== null}
-                      className="text-xs text-[var(--sage)] hover:text-white transition-colors disabled:opacity-50"
+                      className="text-xs text-[var(--sage)] hover:text-[var(--foreground)] transition-colors disabled:opacity-50"
                     >
                       {generatingId === p.id ? "Preparing PDF..." : "Download PDF"}
                     </button>

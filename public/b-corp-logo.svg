@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 120" role="img" aria-label="Certified B Corporation" fill="none">
+  <!-- Emblem: dark disc with the B mark knocked out in pearl -->
+  <circle cx="40" cy="34" r="30" fill="#0a1410"/>
+  <!-- The stylised "B" of the B Corp mark: a vertical stem with the notch circle above -->
+  <circle cx="40" cy="20" r="5.5" fill="#faf8f3"/>
+  <rect x="37.4" y="20" width="5.2" height="7" fill="#faf8f3"/>
+  <text x="40" y="49" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="33" font-weight="700" fill="#faf8f3">B</text>
+  <!-- Wordmark -->
+  <text x="40" y="85" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="700" letter-spacing="1.6" fill="#0a1410">CERTIFIED</text>
+  <line x1="13" y1="91" x2="67" y2="91" stroke="#0a1410" stroke-width="1.4"/>
+  <text x="40" y="105" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="9" font-weight="700" letter-spacing="0.4" fill="#0a1410">B CORPORATION</text>
+</svg>

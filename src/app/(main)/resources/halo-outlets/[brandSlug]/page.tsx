@@ -104,7 +104,7 @@ export default function BrandHaloOutletsPage() {
                       className="max-h-12 object-contain"
                     />
                   ) : (
-                    <span className="text-lg font-light text-[var(--cream)] tracking-wider">
+                    <span className="text-lg font-light text-[var(--pearl)] tracking-wider">
                       {outlet.outletName}
                     </span>
                   )}

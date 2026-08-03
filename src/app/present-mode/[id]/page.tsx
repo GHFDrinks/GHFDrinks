@@ -115,6 +115,21 @@ export default function PresentModePage() {
     return () => clearInterval(timer);
   }, [isPlaying, total]);
 
+  // Returning from a deep-linked page (e.g. tasting notes) with ?slide=N —
+  // jump straight back to that slide and pause so the user lands where they left.
+  useEffect(() => {
+    const slideParam = new URLSearchParams(window.location.search).get("slide");
+    if (slideParam !== null) {
+      const n = parseInt(slideParam, 10);
+      if (Number.isFinite(n) && n >= 0) {
+        setSlideIndex(n);
+        setIsPlaying(false);
+      }
+    }
+    // Run once on mount; the deep-link slide is only meaningful on entry.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Keyboard navigation
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -168,9 +183,9 @@ export default function PresentModePage() {
 
       {/* Slide content */}
       {current.type === "intro" && current.brand ? (
-        <BrandIntroSlide brand={current.brand} />
+        <BrandIntroSlide brand={current.brand} slideIndex={slideIndex} />
       ) : current.type === "activation" && current.brand ? (
-        <BrandActivationSlide brand={current.brand} />
+        <BrandActivationSlide brand={current.brand} slideIndex={slideIndex} />
       ) : (
         <ClosingSlide />
       )}

@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { Brand } from "@/types/brand";
 import { getBrandImages } from "@/lib/brand-images";
 import { ConstantTabs } from "@/components/present/ConstantTabs";
+import { TASTING_NOTES } from "@/data/tasting-notes";
 
 function slugify(text: string) {
   return text
@@ -18,10 +19,28 @@ function slugify(text: string) {
     .replace(/-+$/, "");
 }
 
-export function BrandIntroSlide({ brand }: { brand: Brand }) {
+export function BrandIntroSlide({ brand, slideIndex }: { brand: Brand; slideIndex?: number }) {
   const params = useParams();
   const router = useRouter();
   const presentationId = params?.id as string;
+
+  // The variants that actually have a tasting-notes page (source of truth for the links).
+  const brandNotes = React.useMemo(
+    () => TASTING_NOTES.filter((t) => t.brandSlug === brand.slug),
+    [brand.slug]
+  );
+
+  // Where "Back" should return to — the exact presentation slide the user is on.
+  const returnUrl = presentationId
+    ? `/present-mode/${presentationId}${typeof slideIndex === "number" ? `?slide=${slideIndex}` : ""}`
+    : null;
+
+  const setReturnContext = () => {
+    if (returnUrl && typeof window !== "undefined") {
+      sessionStorage.setItem("ghf_return_to", returnUrl);
+      sessionStorage.setItem("ghf_return_label", "Back to Presentation");
+    }
+  };
 
   const local = getBrandImages(brand.slug);
   const logoSrc = local?.logo || brand.logo?.url || "";
@@ -46,13 +65,9 @@ export function BrandIntroSlide({ brand }: { brand: Brand }) {
     return () => clearInterval(interval);
   }, [carouselImages.length]);
 
-  const handleRangeClick = (vName: string) => {
-    const variantSlug = slugify(vName);
-    if (presentationId) {
-      sessionStorage.setItem("ghf_return_to", `/present-mode/${presentationId}`);
-      sessionStorage.setItem("ghf_return_label", "Back to Presentation");
-    }
-    router.push(`/tasting-notes/${brand.slug}/${variantSlug}`);
+  const handleRangeClick = (variantName: string) => {
+    setReturnContext();
+    router.push(`/tasting-notes/${brand.slug}/${slugify(variantName)}`);
   };
 
   return (
@@ -76,7 +91,7 @@ export function BrandIntroSlide({ brand }: { brand: Brand }) {
           )}
           {brand.bcorp && (
             <img
-              src="/b-corp-logo.png"
+              src="/b-corp-logo.svg"
               alt="Certified B Corporation"
               className="w-10 h-[60px] object-contain flex-shrink-0"
             />
@@ -97,19 +112,19 @@ export function BrandIntroSlide({ brand }: { brand: Brand }) {
             {brand.story?.description || brand.tagline}
           </p>
           
-          {brand.variants.length > 0 && (
+          {brandNotes.length > 0 && (
             <div className="pt-4">
               <p className="text-xs font-bold tracking-[0.2em] uppercase text-[var(--foreground)] mb-3">
                 Range Available
               </p>
               <div className="flex flex-wrap gap-2">
-                {brand.variants.map((v) => (
+                {brandNotes.map((note) => (
                   <button
-                    key={v.id}
-                    onClick={() => handleRangeClick(v.name)}
+                    key={note.variant}
+                    onClick={() => handleRangeClick(note.variant)}
                     className="text-[11px] font-medium px-3.5 py-1.5 rounded-full border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)]/80 hover:border-[var(--sage)] hover:text-[var(--foreground)] active:scale-95 active:bg-[var(--sage)]/15 transition-all cursor-pointer"
                   >
-                    {v.name}{v.volume ? ` (${v.volume})` : ""}
+                    {note.variant}
                   </button>
                 ))}
               </div>
@@ -122,14 +137,12 @@ export function BrandIntroSlide({ brand }: { brand: Brand }) {
           <div className="text-[10px] tracking-widest text-[var(--muted-foreground)] uppercase">
             GHF Portfolio © 2026
           </div>
-          <a
-            href={`/brands/${brand.slug}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--sage)] hover:text-[var(--foreground)] transition-colors flex items-center gap-1.5 border border-[var(--sage)]/30 hover:border-[var(--sage)] px-3.5 py-1.5 rounded-full bg-[var(--card)]"
+          <button
+            onClick={() => { setReturnContext(); router.push(`/brands/${brand.slug}`); }}
+            className="text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--sage)] hover:text-[var(--foreground)] transition-colors flex items-center gap-1.5 border border-[var(--sage)]/30 hover:border-[var(--sage)] px-3.5 py-1.5 rounded-full bg-[var(--card)] cursor-pointer"
           >
             Discover More
-          </a>
+          </button>
         </div>
       </div>
 

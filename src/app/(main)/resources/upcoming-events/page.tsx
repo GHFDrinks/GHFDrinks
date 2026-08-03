@@ -80,7 +80,7 @@ export default function UpcomingEventsPage() {
                     <span className="text-[9px] font-bold tracking-widest uppercase text-[var(--sage)] block">
                       {event.date}
                     </span>
-                    <h3 className="text-lg font-light text-[var(--cream)] tracking-wide mt-0.5">
+                    <h3 className="text-lg font-light text-[var(--pearl)] tracking-wide mt-0.5">
                       {event.title}
                     </h3>
                   </div>

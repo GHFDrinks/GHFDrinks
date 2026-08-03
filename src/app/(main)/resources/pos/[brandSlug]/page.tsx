@@ -68,7 +68,7 @@ export default function BrandPosLibraryPage() {
                     <div className="absolute inset-0 bg-black/45" />
 
                     <div className="absolute bottom-4 left-4 right-4">
-                      <h3 className="text-base font-light text-[var(--cream)] tracking-wide leading-tight">
+                      <h3 className="text-base font-light text-[var(--pearl)] tracking-wide leading-tight">
                         {item.title}
                       </h3>
                     </div>

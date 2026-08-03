@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useBrands } from "@/hooks/useBrands";
-import { getSupportTiles, SupportResult, SupportInputs, SupportCategory } from "@/lib/support-rules";
+import { getSupportTiles, SupportResult, SupportInputs, SupportCategory, SUPPORT_TILE_DETAILS } from "@/lib/support-rules";
 import { SupportTile } from "@/components/support/SupportTile";
 
 const TABS = [
@@ -173,22 +173,13 @@ export default function SupportOptionDetailPage() {
     }
   };
 
-  // Helper to color/group exclusivity clusters
-  const getExclusivityGroupColor = (group?: string) => {
-    if (!group) return "";
-    switch (group) {
-      case "A":
-        return "border-amber-500/60 bg-amber-500/5";
-      case "trio":
-        return "border-emerald-500/60 bg-emerald-500/5";
-      case "alt":
-        return "border-purple-500/60 bg-purple-500/5";
-      case "experiences":
-        return "border-blue-500/60 bg-blue-500/5";
-      default:
-        return "border-[var(--sage)] bg-[var(--sage)]/5";
-    }
-  };
+  // Groups that currently have a selected tile — used to grey out the remaining
+  // (now unavailable) options in the same either/or group.
+  const selectedGroups = new Set(
+    supportResult.tiles
+      .filter((t) => highlightedTiles.includes(t.title) && t.exclusivityGroup)
+      .map((t) => t.exclusivityGroup)
+  );
 
   const skuOptions = Array.from({ length: 10 }, (_, i) => String(i + 1));
   const wineSkuOptions = ["2", "3", "4"];
@@ -409,21 +400,22 @@ export default function SupportOptionDetailPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {supportResult.tiles.map((tile) => {
                 const isSelected = highlightedTiles.includes(tile.title);
-                const groupStyle = getExclusivityGroupColor(tile.exclusivityGroup);
+                const isGreyed =
+                  !!tile.exclusivityGroup && !isSelected && selectedGroups.has(tile.exclusivityGroup);
 
                 return (
                   <div
                     key={tile.title}
                     onClick={() => handleTileClick(tile.title)}
-                    className={`cursor-pointer border transition-all rounded-lg p-1 ${
-                      isSelected
-                        ? "ring-2 ring-[var(--sage)] border-transparent scale-[1.02]"
-                        : groupStyle
-                        ? groupStyle
-                        : "border-[var(--border)] hover:border-[var(--sage)]/50"
-                    }`}
+                    className={`cursor-pointer rounded-lg transition-all ${
+                      isSelected ? "ring-2 ring-[var(--sage)] scale-[1.02]" : ""
+                    } ${isGreyed ? "opacity-40 grayscale" : ""}`}
                   >
-                    <SupportTile title={tile.title} badge={tile.badge || (tile.exclusivityGroup ? `Exclusivity Group: ${tile.exclusivityGroup}` : undefined)} />
+                    <SupportTile
+                      title={tile.title}
+                      description={SUPPORT_TILE_DETAILS[tile.title]}
+                      badge={tile.badge}
+                    />
                   </div>
                 );
               })}

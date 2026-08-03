@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useBrands } from "@/hooks/useBrands";
 import { getBrandImages } from "@/lib/brand-images";
-import { SERVES_DATA, Season, Serve } from "@/data/serves";
+import { SERVES_DATA, Season, Serve, FEVER_TREE_SERVES } from "@/data/serves";
 
 export default function ServesPage() {
   const params = useParams();
@@ -17,9 +17,10 @@ export default function ServesPage() {
   const brand = brands.find((b) => b.slug === brandSlug);
   const local = getBrandImages(brandSlug);
 
-  // Read initial season from query parameters, default to spring-summer
-  const initialSeason = (searchParams.get("season") as Season) || "spring-summer";
-  const [season, setSeason] = useState<Season>(initialSeason);
+  // Read initial season from query parameters, default to spring-summer.
+  // "fever-tree" is a third tab (spirits only) alongside the two seasons.
+  const initialSeason = (searchParams.get("season") as Season | "fever-tree") || "spring-summer";
+  const [season, setSeason] = useState<Season | "fever-tree">(initialSeason);
 
   // Filter available variants for this brand in SERVES_DATA
   const variants = SERVES_DATA.filter((v) => v.brandSlug === brandSlug);
@@ -57,7 +58,13 @@ export default function ServesPage() {
   }
 
   const activeVariant = variants.find((v) => v.variantSlug === activeVariantSlug) || variants[0];
-  const serves = season === "spring-summer" ? activeVariant?.springSummer : activeVariant?.autumnWinter;
+  const isSpirits = brand.category?.toLowerCase() === "spirits";
+  const serves =
+    season === "spring-summer"
+      ? activeVariant?.springSummer
+      : season === "autumn-winter"
+      ? activeVariant?.autumnWinter
+      : (activeVariant?.feverTree ?? FEVER_TREE_SERVES);
 
   const handleBack = () => {
     if (returnTo) {
@@ -84,11 +91,11 @@ export default function ServesPage() {
   return (
     <div className="min-h-screen flex flex-col px-12 py-10" style={{ backgroundColor: "var(--background)" }}>
       
-      {/* Top Header Row with Back Button & Brand Logo */}
-      <div className="flex items-center justify-between mb-8">
+      {/* Top Header Row: Back Button (left) + centred Brand Logo */}
+      <div className="relative flex items-center mb-8 min-h-12">
         <button
           onClick={handleBack}
-          className="text-xs tracking-widest uppercase text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors cursor-pointer font-bold"
+          className="relative z-10 text-xs tracking-widest uppercase text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors cursor-pointer font-bold"
         >
           ← {returnTo ? returnTo.label : "Back"}
         </button>
@@ -96,7 +103,7 @@ export default function ServesPage() {
           <img
             src={local.logo}
             alt={brand.name}
-            className="max-h-12 max-w-[140px] object-contain"
+            className="absolute left-1/2 -translate-x-1/2 max-h-12 max-w-[140px] object-contain"
           />
         )}
       </div>
@@ -154,6 +161,18 @@ export default function ServesPage() {
           >
             Autumn / Winter
           </button>
+          {isSpirits && (
+            <button
+              onClick={() => setSeason("fever-tree")}
+              className={`px-6 py-2 text-xs font-bold uppercase tracking-wider rounded-md transition-all ${
+                season === "fever-tree"
+                  ? "bg-[var(--sage)] text-[var(--background)] font-black"
+                  : "text-[var(--foreground)]/70 hover:text-[var(--foreground)]"
+              }`}
+            >
+              Fever-Tree
+            </button>
+          )}
         </div>
       </div>
 

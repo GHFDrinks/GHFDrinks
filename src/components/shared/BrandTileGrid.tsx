@@ -36,20 +36,12 @@ export function BrandTileGrid({ basePath, filter, onClick }: BrandTileGridProps)
             {/* Dark overlay */}
             <div className="absolute inset-0 bg-black/40 group-hover:bg-black/35 transition-colors" />
 
-            {/* Logo or text centered */}
-            <div className="relative z-10 w-full max-w-[50%] flex items-center justify-center p-4">
-              {images?.logo ? (
-                <img
-                  src={images.logo}
-                  alt={brand.name}
-                  className="max-h-12 object-contain transition-transform duration-300 group-hover:scale-105"
-                  style={{ filter: "brightness(0) invert(1)" }}
-                />
-              ) : (
-                <span className="text-sm font-bold uppercase tracking-widest text-[var(--cream)] text-center transition-transform duration-300 group-hover:scale-105">
-                  {brand.name}
-                </span>
-              )}
+            {/* Brand name label — pearl over the dark overlay (reliable across all
+                brands; avoids the white-box artefact from filtering non-transparent logos) */}
+            <div className="relative z-10 w-full flex items-center justify-center p-4">
+              <span className="text-sm md:text-base font-bold uppercase tracking-widest text-[var(--pearl)] text-center drop-shadow-md transition-transform duration-300 group-hover:scale-105">
+                {brand.name}
+              </span>
             </div>
           </div>
         );

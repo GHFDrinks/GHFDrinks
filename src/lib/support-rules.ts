@@ -21,6 +21,28 @@ export type SupportResult = {
   choiceMode?: "all" | "pick-one" | "complex"; // how user selects from tiles
 };
 
+// Short holding descriptions per support tile (shown on the tile — no price).
+export const SUPPORT_TILE_DETAILS: Record<string, string> = {
+  "2&1 Stock Support": "Buy-two-get-one stock support to drive trial and volume.",
+  "Stock Support": "Stock support to underpin the activation (volume dependent).",
+  "Photos & Social Media Support": "Professional photography and social content for the activation.",
+  "Staff Training": "Brand and product training for your team.",
+  "Staff Incentives": "Incentives and rewards to motivate your team.",
+  "Brand Merch": "Branded merchandise and POS for the venue.",
+  "Cocktail Competition": "A staff cocktail competition with brand support.",
+  "Founder/Ambassador Masterclass": "A masterclass hosted by the founder or brand ambassador.",
+  "WSET Courses": "Funded WSET education for your team.",
+  "WSET x1": "One funded WSET course for your team.",
+  "WSET x2": "Two funded WSET courses for your team.",
+  "Brand Immersion": "An immersive brand experience for key staff.",
+  "Retro Pricing Support": "Retrospective pricing support on qualifying volume.",
+  "Event Tickets": "Tickets to brand and trade events.",
+  "Brand Activations": "In-venue brand activations and events.",
+  "Local Experiences": "A local brand experience for your team.",
+  "Abroad Experiences": "An overseas brand experience for your team.",
+  "1st Case FOC": "First case free of charge to support launch.",
+};
+
 export function getSupportTiles(inputs: SupportInputs): SupportResult {
   switch (inputs.category) {
     case "spirits-launch":
