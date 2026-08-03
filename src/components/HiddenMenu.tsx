@@ -38,16 +38,22 @@ export function HiddenMenu() {
 
   return (
     <>
-      {/* Circular Menu Button */}
+      {/* Logo Menu Button — clicking the GHF logo opens the menu */}
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed top-6 left-6 lg:left-auto lg:right-6 z-[90] rounded-full flex items-center justify-center bg-[var(--card)] border border-[var(--sage)] shadow-lg hover:scale-105 active:scale-95 transition-all"
-        style={{ width: "44px", height: "44px" }}
-        aria-label="Open Menu"
+        className="group fixed top-6 right-6 z-[90] flex flex-col items-center gap-1 rounded-lg p-1 cursor-pointer hover:scale-[1.03] active:scale-95 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--sage)] focus-visible:ring-offset-2"
+        aria-label="Open menu"
+        aria-haspopup="dialog"
+        aria-expanded={isOpen}
       >
-        <svg className="w-5 h-5 text-[var(--cream)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
+        <img
+          src="/ghf-logo-dark.png"
+          alt="GHF Drinks"
+          className="w-12 h-12 md:w-14 md:h-14 object-contain pointer-events-none"
+        />
+        <span className="text-[8px] font-semibold tracking-[0.25em] uppercase leading-none text-[var(--muted-foreground)] group-hover:text-[var(--sage)] transition-colors pointer-events-none">
+          Menu
+        </span>
       </button>
 
       {/* Overlay Backdrop */}

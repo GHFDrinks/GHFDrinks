@@ -48,12 +48,7 @@ function slugFromHref(href: string): string {
 export default function HomePage() {
   return (
     <div className="relative min-h-screen flex flex-col px-12 py-10" style={{ backgroundColor: "var(--background)" }}>
-      {/* GHF Logo Top Right */}
-      <img
-        src="/ghf-logo-dark.png"
-        alt="GHF Drinks"
-        className="absolute top-6 right-6 w-12 h-12 md:w-14 md:h-14 object-contain"
-      />
+      {/* GHF logo now lives in the global menu button (HiddenMenu) — clicking it opens the menu */}
 
       {/* Header */}
       <div className="mb-10">
