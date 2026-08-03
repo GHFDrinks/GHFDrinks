@@ -30,7 +30,7 @@ export default function PackagesPage() {
           return (
             <Link
               key={template.id}
-              href={`/packages/${template.id}`}
+              href={`/present-mode/${template.id}`}
               className="group block rounded-xl overflow-hidden border border-[var(--border)] hover:border-[var(--sage)] transition-colors bg-[var(--background)]"
             >
               {/* Bottle grid */}

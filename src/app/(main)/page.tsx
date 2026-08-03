@@ -17,25 +17,25 @@ const ROWS = [
   {
     label: "OCCASION",
     cards: [
-      { title: "Crafted & Discerning", href: "/packages/crafted-and-discerning" },
-      { title: "Elevated & Sophisticated", href: "/packages/elevated-and-sophisticated" },
-      { title: "Contemporary & Creative", href: "/packages/contemporary-and-creative" },
+      { title: "Crafted & Discerning", href: "/present-mode/crafted-and-discerning" },
+      { title: "Elevated & Sophisticated", href: "/present-mode/elevated-and-sophisticated" },
+      { title: "Contemporary & Creative", href: "/present-mode/contemporary-and-creative" },
     ],
   },
   {
     label: "CULTURE",
     cards: [
-      { title: "Best of British", href: "/packages/best-of-british" },
-      { title: "European Lifestyle", href: "/packages/european-lifestyle" },
-      { title: "Sustainability Focus", href: "/packages/sustainable" },
+      { title: "Best of British", href: "/present-mode/best-of-british" },
+      { title: "European Lifestyle", href: "/present-mode/european-lifestyle" },
+      { title: "Sustainability Focus", href: "/present-mode/sustainable" },
     ],
   },
   {
     label: "PRODUCTS",
     cards: [
-      { title: "No/Low", href: "/products/no-low" },
-      { title: "Whisky", href: "/products/whisky" },
-      { title: "Exclusives", href: "/products/exclusives" },
+      { title: "No/Low", href: "/present-mode/no-low" },
+      { title: "Whisky", href: "/present-mode/whisky" },
+      { title: "Exclusives", href: "/present-mode/exclusives" },
     ],
   },
 ];
@@ -94,9 +94,9 @@ export default function HomePage() {
                       minHeight: "140px",
                     }}
                   >
-                    <TileImageCarousel brandSlugs={brandSlugs} intervalMs={1000} />
+                    <TileImageCarousel brandSlugs={brandSlugs} />
                     <span
-                      className="relative z-10 text-xl font-light tracking-wide text-[var(--foreground)] drop-shadow-md group-hover:text-[var(--sage)] transition-colors text-center"
+                      className="relative z-10 text-xl font-light tracking-wide text-[var(--pearl)] drop-shadow-md group-hover:text-[var(--sage)] transition-colors text-center"
                     >
                       {card.title}
                     </span>

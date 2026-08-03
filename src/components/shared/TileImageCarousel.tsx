@@ -5,10 +5,17 @@ import { getBrandImages } from "@/lib/brand-images";
 
 export interface TileImageCarouselProps {
   brandSlugs: string[];
-  intervalMs?: number;
+  /** Minimum time (ms) a single image stays on screen before changing. */
+  minIntervalMs?: number;
+  /** Random extra time (ms) added on top of the minimum, re-rolled each cycle. 0 = steady/in-sync. */
+  maxJitterMs?: number;
 }
 
-export function TileImageCarousel({ brandSlugs, intervalMs = 1000 }: TileImageCarouselProps) {
+export function TileImageCarousel({
+  brandSlugs,
+  minIntervalMs = 5000,
+  maxJitterMs = 3000,
+}: TileImageCarouselProps) {
   // Collect all lifestyle/hero images from all brands in the list.
   const images = React.useMemo(() => {
     return brandSlugs.flatMap((slug) => {
@@ -21,14 +28,26 @@ export function TileImageCarousel({ brandSlugs, intervalMs = 1000 }: TileImageCa
 
   useEffect(() => {
     if (images.length <= 1) return;
-    const id = setInterval(() => {
-      setIndex((i) => (i + 1) % images.length);
-    }, intervalMs);
-    return () => clearInterval(id);
-  }, [images.length, intervalMs]);
+
+    // Self-rescheduling timeout: each cycle waits a fresh random duration
+    // (>= minIntervalMs) so tiles drift out of sync and never all change at once.
+    // Math.random() lives only in the effect (client-only) to avoid SSR hydration mismatch.
+    let timeoutId: ReturnType<typeof setTimeout>;
+    const scheduleNext = () => {
+      const delay = minIntervalMs + Math.random() * maxJitterMs;
+      timeoutId = setTimeout(() => {
+        setIndex((i) => (i + 1) % images.length);
+        scheduleNext();
+      }, delay);
+    };
+
+    scheduleNext();
+    return () => clearTimeout(timeoutId);
+  }, [images.length, minIntervalMs, maxJitterMs]);
 
   if (images.length === 0) {
-    return <div className="absolute inset-0 bg-[var(--muted)]/20" />;
+    // Dark fill so the pearl copy stays legible on imageless tiles too.
+    return <div className="absolute inset-0 bg-[var(--foreground)]" />;
   }
 
   return (

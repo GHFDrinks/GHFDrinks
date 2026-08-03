@@ -37,9 +37,9 @@ export function ClosingSlide() {
                 minHeight: "160px",
               }}
             >
-              <TileImageCarousel brandSlugs={brandSlugs} intervalMs={2000} />
+              <TileImageCarousel brandSlugs={brandSlugs} minIntervalMs={2000} maxJitterMs={0} />
               <span
-                className="relative z-10 text-2xl font-light tracking-wider text-[var(--foreground)] drop-shadow-md group-hover:text-[var(--sage)] transition-colors text-center"
+                className="relative z-10 text-2xl font-light tracking-wider text-[var(--pearl)] drop-shadow-md group-hover:text-[var(--sage)] transition-colors text-center"
               >
                 {cat.title}
               </span>

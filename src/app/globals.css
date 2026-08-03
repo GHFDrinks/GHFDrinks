@@ -18,6 +18,7 @@
   --accent-foreground: #faf8f3; /* Pearl */
   --gold: #0a1410;              /* keep var name for back-compat, point to Ivy */
   --sage: #7a8f7a;              /* Sage green for footer text/graphics, labels */
+  --pearl: #faf8f3;             /* Pearl — light copy over dark image overlays */
   --border: #0a1410;            /* Ivy borders for tiles */
   --ring: #0a1410;
   --sidebar: #faf8f3;
@@ -46,6 +47,7 @@
   --color-gold: var(--gold);
   --color-border: var(--border);
   --color-sage: var(--sage);
+  --color-pearl: var(--pearl);
   --color-cream: var(--cream);
   --color-accent-orange: var(--accent-orange);
   

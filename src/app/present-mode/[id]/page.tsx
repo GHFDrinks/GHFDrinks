@@ -8,7 +8,9 @@ import { BrandIntroSlide } from "@/components/brand/BrandIntroSlide";
 import { BrandActivationSlide } from "@/components/brand/BrandActivationSlide";
 import { ClosingSlide } from "@/components/presentation/ClosingSlide";
 import { Brand } from "@/types/brand";
+import { Presentation } from "@/types/presentation";
 import { mockBrands } from "@/data/brands";
+import { PACKAGE_PRESENTATIONS, PACKAGE_LABELS } from "@/data/package-presentations";
 
 export default function PresentModePage() {
   const { id } = useParams<{ id: string }>();
@@ -17,9 +19,31 @@ export default function PresentModePage() {
   const { brands } = useBrands();
 
   const [slideIndex, setSlideIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
+  // Package presentations (launched from a home tile) auto-play; saved presentations start paused.
+  const [isPlaying, setIsPlaying] = useState(() => Boolean(PACKAGE_PRESENTATIONS[id]));
 
-  const presentation = savedPresentations.find((p) => p.id === id);
+  // Resolve the presentation: a saved one by id, otherwise build an ephemeral
+  // presentation on the fly from a package/category slug (e.g. "crafted-and-discerning").
+  const presentation = React.useMemo<Presentation | undefined>(() => {
+    const saved = savedPresentations.find((p) => p.id === id);
+    if (saved) return saved;
+
+    const packageSlugs = PACKAGE_PRESENTATIONS[id];
+    if (!packageSlugs) return undefined;
+
+    const source = brands.length > 0 ? brands : mockBrands;
+    const brandIds = packageSlugs
+      .map((slug) => source.find((b) => b.slug === slug)?.id)
+      .filter((x): x is string => Boolean(x));
+
+    return {
+      id,
+      name: PACKAGE_LABELS[id] ?? id,
+      dateCreated: "",
+      brands: brandIds,
+      slides: [],
+    };
+  }, [savedPresentations, brands, id]);
 
   // Build ordered slide list:
   // For each brand, include intro and activation, then append closing slide
