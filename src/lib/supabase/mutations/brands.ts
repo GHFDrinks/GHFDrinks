@@ -12,6 +12,7 @@ export async function saveBrand(brandData: any) {
     slug: data.slug,
     name: data.name,
     category: data.category,
+    packages: data.packages || [],
     tagline: data.tagline,
     story_title: data.story?.title || (data.name + ' Story'),
     story_description: data.story?.description || data.tagline || '',

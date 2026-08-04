@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Brand } from '@/types/brand';
-import { fetchBrandsClient, syncBrandsClient } from '@/lib/supabase/clientQueries';
+import { syncBrandsClient } from '@/lib/supabase/clientQueries';
 import { STATIC_BRANDS } from '@/lib/static-brands';
 
 export function useBrands() {
@@ -8,22 +8,31 @@ export function useBrands() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    async function loadData() {
-      // 1. Get cached brands if available
-      const initialBrands = await fetchBrandsClient();
-      if (initialBrands && initialBrands.length > 0) {
-        setBrands(initialBrands);
-      }
+    let active = true;
 
-      // 2. Fetch live updates in the background
+    async function sync() {
       await syncBrandsClient((updatedBrands) => {
-        if (updatedBrands && updatedBrands.length > 0) {
+        if (active && updatedBrands && updatedBrands.length > 0) {
           setBrands(updatedBrands);
         }
       });
+      // Signal a completed refresh (the reconnect indicator listens for this).
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('ghf:synced'));
+      }
     }
 
-    loadData();
+    // Initial pull.
+    sync();
+
+    // Re-pull the latest team updates whenever the connection is (re)established.
+    const onOnline = () => sync();
+    window.addEventListener('online', onOnline);
+
+    return () => {
+      active = false;
+      window.removeEventListener('online', onOnline);
+    };
   }, []);
 
   return { brands, loading };

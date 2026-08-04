@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Image coming soon">
+  <rect width="800" height="600" fill="#efece4"/>
+  <g fill="none" stroke="#7a8f7a" stroke-width="6" opacity="0.5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- simple bottle silhouette -->
+    <path d="M372 150 h56 v70 c0 14 22 26 22 70 v150 c0 18 -14 30 -30 30 h-62 c-16 0 -30 -12 -30 -30 v-150 c0 -44 22 -56 22 -70 z"/>
+    <line x1="386" y1="150" x2="414" y2="150"/>
+  </g>
+  <text x="400" y="520" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" letter-spacing="4" fill="#7a8f7a" opacity="0.7" text-transform="uppercase">IMAGE COMING SOON</text>
+</svg>

@@ -71,7 +71,7 @@ export default function VariantDetailPage() {
     if (carouselImages.length <= 1) return;
     const interval = setInterval(() => {
       setCarouselIdx((prev) => (prev + 1) % carouselImages.length);
-    }, 2000);
+    }, 5000);
     return () => clearInterval(interval);
   }, [carouselImages]);
 

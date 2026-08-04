@@ -1,3 +1,5 @@
+import type { Brand } from "@/types/brand";
+
 export const PACKAGE_PRESENTATIONS: Record<string, string[]> = {
   spirits: ["sapling", "dropworks", "desdeya", "pensador", "fielden", "everleaf", "whisky-a", "whisky-b", "non-alc-a"],
   wines: ["mirabeau", "craggy-range", "coates-and-seely", "quinta-da-romaneira", "dreamsake", "wild-idol"],
@@ -33,3 +35,53 @@ export const PACKAGE_LABELS: Record<string, string> = {
   "whisky": "Whisky",
   "exclusives": "Exclusives",
 };
+
+// Category packages are derived from a brand's `category` field (not admin-assigned).
+const CATEGORY_PACKAGE_TO_CATEGORY: Record<string, string> = {
+  spirits: "spirits",
+  wines: "wines",
+  beer: "packaged",
+};
+
+// The packages an admin assigns per brand (Occasion / Culture / Product).
+// Category packages are excluded — those follow the brand's category automatically.
+export const ASSIGNABLE_PACKAGE_GROUPS: { group: string; options: { slug: string; label: string }[] }[] = [
+  {
+    group: "Occasion",
+    options: [
+      { slug: "crafted-and-discerning", label: "Crafted & Discerning" },
+      { slug: "elevated-and-sophisticated", label: "Elevated & Sophisticated" },
+      { slug: "contemporary-and-creative", label: "Contemporary & Creative" },
+    ],
+  },
+  {
+    group: "Culture",
+    options: [
+      { slug: "best-of-british", label: "Best of British" },
+      { slug: "european-lifestyle", label: "European Lifestyle" },
+      { slug: "sustainable", label: "Sustainability Focus" },
+    ],
+  },
+  {
+    group: "Product",
+    options: [
+      { slug: "no-low", label: "No/Low" },
+      { slug: "whisky", label: "Whisky" },
+      { slug: "exclusives", label: "Exclusives" },
+    ],
+  },
+];
+
+// Resolve the brand slugs for a package tile.
+//  - Category tiles (spirits/wines/beer) derive from each brand's `category`.
+//  - All other tiles use the admin-assigned `brand.packages`.
+//  - Falls back to the static mapping above when nothing is set yet (e.g. the DB
+//    isn't populated), so behaviour is unchanged until packages are assigned.
+export function getPackageBrandSlugs(packageSlug: string, brands: Brand[]): string[] {
+  const cat = CATEGORY_PACKAGE_TO_CATEGORY[packageSlug];
+  const matched = cat
+    ? brands.filter((b) => b.category?.toLowerCase() === cat)
+    : brands.filter((b) => Array.isArray(b.packages) && b.packages.includes(packageSlug));
+  const slugs = matched.map((b) => b.slug);
+  return slugs.length > 0 ? slugs : PACKAGE_PRESENTATIONS[packageSlug] || [];
+}

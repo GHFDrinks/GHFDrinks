@@ -66,6 +66,7 @@ export interface Brand {
   slug: string;
   name: string;
   category: string;
+  packages?: string[]; // Occasion/Culture/Product package slugs this brand belongs to (admin-managed)
   tagline: string;
   heroImage: BrandAsset;
   logo?: BrandAsset;

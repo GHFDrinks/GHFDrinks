@@ -78,7 +78,7 @@ export function BrandDetailClient({ initialBrand }: { initialBrand: Brand }) {
     if (carouselImages.length <= 1) return;
     const interval = setInterval(() => {
       setCurrentIdx((prev) => (prev + 1) % carouselImages.length);
-    }, 2000);
+    }, 5000);
     return () => clearInterval(interval);
   }, [carouselImages]);
 
@@ -150,13 +150,13 @@ export function BrandDetailClient({ initialBrand }: { initialBrand: Brand }) {
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-[var(--card)] p-6">
             {local?.logo ? (
-              <img 
-                src={local.logo} 
-                alt={brand.name} 
-                className="max-h-20 max-w-[280px] object-contain opacity-30 select-none mb-6" 
+              <img
+                src={local.logo}
+                alt={brand.name}
+                className="max-h-24 max-w-[280px] object-contain opacity-90 select-none mb-6"
               />
             ) : (
-              <h1 className="text-4xl font-light tracking-widest uppercase text-[var(--cream)]/30 mb-4">
+              <h1 className="text-4xl font-light tracking-widest uppercase text-[var(--cream)]/70 mb-4">
                 {brand.name}
               </h1>
             )}

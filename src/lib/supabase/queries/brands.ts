@@ -94,6 +94,7 @@ export async function getBrands(): Promise<Brand[]> {
         slug: b.slug,
         name: b.name,
         category: b.category,
+        packages: b.packages || [],
         tagline: b.tagline || mock?.tagline || '',
         heroImage,
         logo,

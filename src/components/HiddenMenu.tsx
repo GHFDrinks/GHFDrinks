@@ -17,7 +17,11 @@ export function HiddenMenu() {
   });
 
   // Hidden on present-mode playback screens to ensure a clean visual flow
-  if (pathname?.startsWith("/present-mode") || pathname?.startsWith("/immersive")) {
+  if (
+    pathname?.startsWith("/present-mode") ||
+    pathname?.startsWith("/immersive") ||
+    pathname?.startsWith("/admin")
+  ) {
     return null;
   }
 

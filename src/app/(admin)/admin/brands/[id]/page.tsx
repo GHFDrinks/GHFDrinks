@@ -8,6 +8,7 @@ import { mockBrands } from "@/data/brands";
 import { Brand } from "@/types/brand";
 import { getBrands } from "@/lib/supabase/queries/brands";
 import { saveBrand } from "@/lib/supabase/mutations/brands";
+import { ASSIGNABLE_PACKAGE_GROUPS } from "@/data/package-presentations";
 import { uploadImage } from "../../_lib/image-upload";
 
 export default function BrandEditorPage({ params }: { params: Promise<{ id: string }> }) {
@@ -32,6 +33,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
           // Hydrate additional brand properties if not present
           setBrand({
             ...found,
+            packages: found.packages || [],
             bcorp: found.bcorp || false,
             videoUrl: (found as any).videoUrl || "",
             brandInsights: (found as any).brandInsights?.length === 3 
@@ -66,6 +68,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
           slug: "",
           name: "",
           category: "Spirits",
+          packages: [],
           tagline: "",
           heroImage: { url: "", alt: "" },
           lifestyleImages: [],
@@ -391,6 +394,44 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                     className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-2.5 text-sm focus:border-accent focus:outline-none"
                   />
                 </div>
+              </div>
+            </div>
+
+            {/* Package Membership */}
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4">
+              <div className="border-b border-white/5 pb-2">
+                <h3 className="text-lg font-light tracking-wide text-accent">Package Membership</h3>
+                <p className="text-[11px] text-white/40 mt-1">
+                  Which Occasion / Culture / Product tiles this brand appears in (home page + presentations).
+                  Category — Spirits / Wines / Packaged — follows the brand&apos;s Category above automatically.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {ASSIGNABLE_PACKAGE_GROUPS.map((grp) => (
+                  <div key={grp.group} className="space-y-2">
+                    <h4 className="text-xs uppercase tracking-widest text-white/50 font-medium">{grp.group}</h4>
+                    {grp.options.map((opt) => {
+                      const checked = (brand.packages || []).includes(opt.slug);
+                      return (
+                        <label key={opt.slug} className="flex items-center space-x-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={(e) => {
+                              const cur: string[] = brand.packages || [];
+                              const next = e.target.checked
+                                ? [...cur, opt.slug]
+                                : cur.filter((s: string) => s !== opt.slug);
+                              setBrand({ ...brand, packages: next });
+                            }}
+                            className="w-4 h-4 accent-accent rounded"
+                          />
+                          <span className="text-sm text-white/80">{opt.label}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -1131,7 +1172,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                   disabled={brand.posLibrary.length >= 15}
                   onClick={() => {
                     const list = [...brand.posLibrary];
-                    list.push({ id: `pos-${Date.now()}`, brandSlug: brand.slug, title: "", image: "", description: "" });
+                    list.push({ id: `pos-${Date.now()}`, brandSlug: brand.slug, title: "", image: "", description: "", downloadUrl: "" });
                     setBrand({ ...brand, posLibrary: list });
                   }}
                   className="h-8 px-3 rounded bg-white/10 hover:bg-white/15 text-xs flex items-center space-x-1 disabled:opacity-50"
@@ -1182,6 +1223,24 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                           }}
                           className="w-full bg-black/40 border border-white/10 rounded px-3 py-1.5 text-xs text-white focus:outline-none"
                         />
+                      </div>
+                      <div className="space-y-3">
+                        <label className="block text-[10px] uppercase text-white/40">Download URL (PDF / asset package link)</label>
+                        <input
+                          type="text"
+                          value={pos.downloadUrl || ""}
+                          onChange={(e) => {
+                            const list = [...brand.posLibrary];
+                            list[idx] = { ...pos, downloadUrl: e.target.value };
+                            setBrand({ ...brand, posLibrary: list });
+                          }}
+                          className="w-full bg-black/40 border border-white/10 rounded px-3 py-1.5 text-xs text-white focus:outline-none"
+                          placeholder="https://…/sapling-pos-pack.pdf"
+                        />
+                        <p className="text-[9px] text-white/30 leading-relaxed">
+                          Paste a link to the hosted file (Supabase Storage or a CDN). The public POS
+                          Library shows a working Download button when this is set.
+                        </p>
                       </div>
                       <div className="space-y-2">
                         <label className="block text-[10px] uppercase text-white/40">POS Image</label>

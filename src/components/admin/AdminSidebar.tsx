@@ -3,16 +3,15 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Wine, Image as ImageIcon, Zap, FolderTree, LogOut, Users } from "lucide-react";
+import { LayoutDashboard, Wine, Image as ImageIcon, Zap, Calendar, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const ADMIN_NAV = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "Brands", href: "/admin/brands", icon: Wine },
+  { name: "Activations", href: "/admin/activations", icon: Zap },
+  { name: "Calendar", href: "/admin/calendar", icon: Calendar },
   { name: "Media Assets", href: "/admin/media", icon: ImageIcon },
-  { name: "Promotions", href: "/admin/promotions", icon: Zap },
-  { name: "Categories", href: "/admin/categories", icon: FolderTree },
-  { name: "Users", href: "/admin/users", icon: Users },
 ];
 
 export function AdminSidebar({ className }: { className?: string }) {

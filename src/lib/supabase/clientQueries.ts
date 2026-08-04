@@ -35,6 +35,7 @@ export async function syncBrandsClient(
         slug: b.slug,
         name: b.name,
         category: b.category,
+        packages: b.packages || [],
         tagline: b.tagline || '',
         heroImage: { url: curated.hero || b.hero_image_url || '', alt: b.name },
         logo: curated.logo ? { url: curated.logo, alt: b.name } : undefined,

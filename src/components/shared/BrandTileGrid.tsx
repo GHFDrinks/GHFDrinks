@@ -23,7 +23,7 @@ export function BrandTileGrid({ basePath, filter, onClick }: BrandTileGridProps)
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {filteredList.map((brand) => {
         const images = getBrandImages(brand.slug);
-        const bgImage = images?.lifestyle?.[0] || images?.hero || "/placeholder.jpg";
+        const bgImage = images?.lifestyle?.[0] || images?.hero || "/placeholder.svg";
 
         const innerContent = (
           <div className="relative aspect-[4/3] w-full rounded-lg border border-[var(--sage)]/20 overflow-hidden group bg-[var(--card)] flex items-center justify-center transition-all duration-300 hover:border-[var(--sage)]">

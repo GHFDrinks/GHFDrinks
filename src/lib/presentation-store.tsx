@@ -21,38 +21,40 @@ export function PresentationProvider({ children }: { children: React.ReactNode }
   const [isSyncing, setIsSyncing] = useState(false);
 
   useEffect(() => {
-    async function loadData() {
-      // 1. Load from localStorage immediately for fast boot & offline mode
-      const local = localStorage.getItem("ghf_presentations");
-      let localData: Presentation[] = [];
-      if (local) {
-        try {
-          localData = JSON.parse(local);
-          setSavedPresentations(localData);
-        } catch (e) {
-          console.error("Failed to parse saved presentations");
-        }
-      }
-      setIsLoaded(true);
-
-      // 2. Fetch from Supabase in background to sync (only if online)
-      if (navigator.onLine) {
-        setIsSyncing(true);
-        try {
-          const remoteData = await getPresentations();
-          // Extremely basic sync: remote wins. In a real app, use timestamps.
-          if (remoteData && remoteData.length > 0) {
-            setSavedPresentations(remoteData);
-            localStorage.setItem("ghf_presentations", JSON.stringify(remoteData));
-          }
-        } catch (e) {
-          console.error("Sync failed, falling back to local storage.", e);
-        } finally {
-          setIsSyncing(false);
-        }
+    // 1. Load from localStorage immediately for fast boot & offline mode
+    const local = localStorage.getItem("ghf_presentations");
+    if (local) {
+      try {
+        setSavedPresentations(JSON.parse(local));
+      } catch {
+        console.error("Failed to parse saved presentations");
       }
     }
-    loadData();
+    setIsLoaded(true);
+
+    // 2. Pull the latest from Supabase — on first load AND whenever the
+    //    connection is re-established (reconnect-to-update for team changes).
+    async function syncRemote() {
+      if (!navigator.onLine) return;
+      setIsSyncing(true);
+      try {
+        const remoteData = await getPresentations();
+        // Basic sync: remote wins. In a real app, use timestamps.
+        if (remoteData && remoteData.length > 0) {
+          setSavedPresentations(remoteData);
+          localStorage.setItem("ghf_presentations", JSON.stringify(remoteData));
+        }
+      } catch (e) {
+        console.error("Sync failed, falling back to local storage.", e);
+      } finally {
+        setIsSyncing(false);
+      }
+    }
+
+    syncRemote();
+    const onOnline = () => syncRemote();
+    window.addEventListener("online", onOnline);
+    return () => window.removeEventListener("online", onOnline);
   }, []);
 
   const savePresentation = async (p: Presentation) => {

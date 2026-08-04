@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { usePresentation } from "@/lib/presentation-store";
 import { useBrands } from "@/hooks/useBrands";
@@ -10,7 +10,7 @@ import { ClosingSlide } from "@/components/presentation/ClosingSlide";
 import { Brand } from "@/types/brand";
 import { Presentation } from "@/types/presentation";
 import { mockBrands } from "@/data/brands";
-import { PACKAGE_PRESENTATIONS, PACKAGE_LABELS } from "@/data/package-presentations";
+import { PACKAGE_PRESENTATIONS, PACKAGE_LABELS, getPackageBrandSlugs } from "@/data/package-presentations";
 
 export default function PresentModePage() {
   const { id } = useParams<{ id: string }>();
@@ -28,10 +28,13 @@ export default function PresentModePage() {
     const saved = savedPresentations.find((p) => p.id === id);
     if (saved) return saved;
 
-    const packageSlugs = PACKAGE_PRESENTATIONS[id];
-    if (!packageSlugs) return undefined;
+    // Only build for a recognised package slug.
+    if (!PACKAGE_PRESENTATIONS[id]) return undefined;
 
     const source = brands.length > 0 ? brands : mockBrands;
+    // Membership resolves from admin-assigned packages (category from brand.category),
+    // falling back to the static mapping.
+    const packageSlugs = getPackageBrandSlugs(id, source);
     const brandIds = packageSlugs
       .map((slug) => source.find((b) => b.slug === slug)?.id)
       .filter((x): x is string => Boolean(x));
@@ -96,8 +99,11 @@ export default function PresentModePage() {
   }, []);
 
   const exit = useCallback(() => {
+    // Leaving the presentation entirely — forget the resume point so the next
+    // launch from a home tile starts fresh at slide 0.
+    if (typeof window !== "undefined") sessionStorage.removeItem(`ghf_present_slide_${id}`);
     router.push("/");
-  }, [router]);
+  }, [router, id]);
 
   // Slideshow auto-play effect
   useEffect(() => {
@@ -115,20 +121,42 @@ export default function PresentModePage() {
     return () => clearInterval(timer);
   }, [isPlaying, total]);
 
-  // Returning from a deep-linked page (e.g. tasting notes) with ?slide=N —
-  // jump straight back to that slide and pause so the user lands where they left.
+  // On entry, resume where the user left: an explicit ?slide=N (deep link) wins,
+  // otherwise the last slide viewed for THIS presentation (covers every return
+  // path — tasting notes, brand pages, support, case studies, activations…).
+  // A fresh launch from a home tile has no stored slide, so it starts at 0.
   useEffect(() => {
-    const slideParam = new URLSearchParams(window.location.search).get("slide");
-    if (slideParam !== null) {
-      const n = parseInt(slideParam, 10);
-      if (Number.isFinite(n) && n >= 0) {
-        setSlideIndex(n);
-        setIsPlaying(false);
+    const param = new URLSearchParams(window.location.search).get("slide");
+    let target: number | null = null;
+    if (param !== null) {
+      const n = parseInt(param, 10);
+      if (Number.isFinite(n) && n >= 0) target = n;
+    } else {
+      const stored = sessionStorage.getItem(`ghf_present_slide_${id}`);
+      if (stored !== null) {
+        const n = parseInt(stored, 10);
+        if (Number.isFinite(n) && n >= 0) target = n;
       }
     }
-    // Run once on mount; the deep-link slide is only meaningful on entry.
+    if (target !== null) {
+      setSlideIndex(target);
+      setIsPlaying(false); // land where they left, paused
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Persist the current slide so any return path can restore it. Skip the very
+  // first run so the initial 0 doesn't clobber a stored resume point.
+  const persistReady = useRef(false);
+  useEffect(() => {
+    if (!persistReady.current) {
+      persistReady.current = true;
+      return;
+    }
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem(`ghf_present_slide_${id}`, String(slideIndex));
+    }
+  }, [id, slideIndex]);
 
   // Keyboard navigation
   useEffect(() => {

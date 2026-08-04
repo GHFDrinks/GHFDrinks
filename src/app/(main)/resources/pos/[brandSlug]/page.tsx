@@ -3,6 +3,7 @@
 import React from "react";
 import { useParams, useRouter } from "next/navigation";
 import { STATIC_BRANDS } from "@/lib/static-brands";
+import { useBrands } from "@/hooks/useBrands";
 import { POS_LIBRARY } from "@/data/pos-library";
 import { Download } from "lucide-react";
 
@@ -11,7 +12,9 @@ export default function BrandPosLibraryPage() {
   const router = useRouter();
   const brandSlug = params.brandSlug as string;
 
-  const brand = STATIC_BRANDS.find((b) => b.slug === brandSlug);
+  const { brands } = useBrands();
+  const brand =
+    brands.find((b) => b.slug === brandSlug) || STATIC_BRANDS.find((b) => b.slug === brandSlug);
 
   if (!brand) {
     return (
@@ -27,8 +30,16 @@ export default function BrandPosLibraryPage() {
     );
   }
 
-  // Filter and cap at 15 items total
-  const posItems = POS_LIBRARY.filter((item) => item.brandSlug === brandSlug).slice(0, 15);
+  // Prefer admin-managed POS items (from the brand record); fall back to the
+  // bundled static library. Cap at 15 items total.
+  const brandPos = (brand as { posLibrary?: Array<Record<string, string>> }).posLibrary;
+  const posItems = (
+    brandPos && brandPos.length > 0
+      ? brandPos
+      : POS_LIBRARY.filter((item) => item.brandSlug === brandSlug)
+  ).slice(0, 15);
+
+  const hasFile = (url?: string) => !!url && url !== "#" && url.trim() !== "";
 
   return (
     <div className="min-h-screen px-12 py-10 flex flex-col justify-between" style={{ backgroundColor: "var(--background)" }}>
@@ -88,18 +99,22 @@ export default function BrandPosLibraryPage() {
                   <span className="text-[9px] uppercase tracking-wider text-[var(--muted-foreground)]">
                     POS PDF / Asset package
                   </span>
-                  {item.downloadUrl && (
+                  {hasFile(item.downloadUrl) ? (
                     <a
                       href={item.downloadUrl}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        alert("Starting resource download mock...");
-                      }}
+                      download
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
                       className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[var(--foreground)] text-[var(--background)] hover:opacity-95 text-[10px] font-bold uppercase tracking-wider transition-opacity"
                     >
                       <Download className="w-3.5 h-3.5" />
                       Download
                     </a>
+                  ) : (
+                    <span className="text-[9px] uppercase tracking-wider text-[var(--muted-foreground)]/60 italic">
+                      File coming soon
+                    </span>
                   )}
                 </div>
               </div>

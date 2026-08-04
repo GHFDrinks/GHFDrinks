@@ -342,7 +342,7 @@ export function getCuratedBrandAssets(slug: string): CuratedAssets {
       return {
         bottleShots: [`${BASE}/fever-tree/bottle-1.png`, `${BASE}/fever-tree/bottle-2.png`],
         lifestyle: [`${BASE}/fever-tree/lifestyle-1.jpg`, `${BASE}/fever-tree/lifestyle-2.jpg`, `${BASE}/fever-tree/lifestyle-3.jpg`],
-        logo: `${BASE}/fever-tree/logo.png`,
+        logo: null, // no logo.png asset — fall back to the brand-name text label
         hero: `${BASE}/fever-tree/hero.png`,
       };
 

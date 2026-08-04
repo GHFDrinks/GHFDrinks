@@ -61,7 +61,7 @@ export function BrandIntroSlide({ brand, slideIndex }: { brand: Brand; slideInde
     if (carouselImages.length <= 1) return;
     const interval = setInterval(() => {
       setCurrentIdx((prev) => (prev + 1) % carouselImages.length);
-    }, 2000);
+    }, 5000);
     return () => clearInterval(interval);
   }, [carouselImages.length]);
 
@@ -154,7 +154,7 @@ export function BrandIntroSlide({ brand, slideIndex }: { brand: Brand; slideInde
               key={src}
               src={src}
               alt=""
-              className="absolute inset-0 w-full h-full object-cover transition-opacity duration-600 ease-in-out"
+              className="absolute inset-0 w-full h-full object-cover transition-opacity duration-[1200ms] ease-in-out"
               style={{
                 opacity: idx === currentIdx ? 1 : 0,
                 zIndex: idx === currentIdx ? 1 : 0,

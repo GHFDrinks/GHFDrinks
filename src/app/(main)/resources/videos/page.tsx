@@ -52,7 +52,7 @@ export default function BrandVideosPage() {
           {STATIC_BRANDS.map((brand) => {
             const local = getBrandImages(brand.slug);
             const videoUrl = getBrandVideo(brand.slug);
-            const posterImg = local?.hero || local?.lifestyle?.[0] || "/placeholder.jpg";
+            const posterImg = local?.hero || local?.lifestyle?.[0] || "/placeholder.svg";
 
             return (
               <div

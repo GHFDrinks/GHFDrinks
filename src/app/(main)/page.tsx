@@ -2,16 +2,17 @@
 
 import React from "react";
 import Link from "next/link";
-import { PACKAGE_BRANDS } from "@/data/package-brands";
+import { getPackageBrandSlugs } from "@/data/package-presentations";
+import { useBrands } from "@/hooks/useBrands";
 import { TileImageCarousel } from "@/components/shared/TileImageCarousel";
 
 const ROWS = [
   {
     label: "CATEGORY",
     cards: [
-      { title: "Spirits", href: "/brands/spirits" },
-      { title: "Wines", href: "/brands/wines" },
-      { title: "Packaged", href: "/brands/beer" },
+      { title: "Spirits", href: "/present-mode/spirits" },
+      { title: "Wines", href: "/present-mode/wines" },
+      { title: "Packaged", href: "/present-mode/beer" },
     ],
   },
   {
@@ -46,6 +47,7 @@ function slugFromHref(href: string): string {
 }
 
 export default function HomePage() {
+  const { brands } = useBrands();
   return (
     <div className="relative min-h-full flex flex-col px-12 py-8" style={{ backgroundColor: "var(--background)" }}>
       {/* GHF logo now lives in the global menu button (HiddenMenu) — clicking it opens the menu */}
@@ -82,7 +84,7 @@ export default function HomePage() {
             <div className="flex-1 grid grid-cols-3 gap-4">
               {row.cards.map((card) => {
                 const slug = slugFromHref(card.href);
-                const brandSlugs = PACKAGE_BRANDS[slug] || [];
+                const brandSlugs = getPackageBrandSlugs(slug, brands);
 
                 return (
                   <Link

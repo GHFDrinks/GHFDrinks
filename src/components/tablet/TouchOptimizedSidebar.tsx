@@ -4,16 +4,15 @@ import React, { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, LayoutDashboard, Wine, Image as ImageIcon, Zap, FolderTree, Users } from "lucide-react";
+import { Menu, X, LayoutDashboard, Wine, Image as ImageIcon, Zap, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
   { name: "Overview", href: "/admin", icon: LayoutDashboard },
   { name: "Brands", href: "/admin/brands", icon: Wine },
+  { name: "Activations", href: "/admin/activations", icon: Zap },
+  { name: "Calendar", href: "/admin/calendar", icon: Calendar },
   { name: "Media", href: "/admin/media", icon: ImageIcon },
-  { name: "Promotions", href: "/admin/promotions", icon: Zap },
-  { name: "Categories", href: "/admin/categories", icon: FolderTree },
-  { name: "Users", href: "/admin/users", icon: Users },
 ];
 
 export function TouchOptimizedSidebar() {
