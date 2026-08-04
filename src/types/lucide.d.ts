@@ -24,6 +24,7 @@ declare module "lucide-react" {
   export const LifeBuoy: Icon;
   export const ArrowDown: Icon;
   export const CheckCircle2: Icon;
+  export const DownloadCloud: Icon;
   export const Plus: Icon;
   export const FileText: Icon;
   export const Trash2: Icon;

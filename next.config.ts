@@ -10,6 +10,49 @@ const withPWA = withPWAInit({
     disableDevLogs: true,
     runtimeCaching: [
       {
+        // App Router RSC payloads (the data the client router fetches on every
+        // in-app navigation). Keyed by the `RSC` request header. ignoreVary is
+        // required because Next varies RSC responses on router-state headers that
+        // differ between our warm-up fetch and the real navigation request; without
+        // it the cache would never match offline. ignoreSearch drops the `?_rsc=`
+        // cache-buster. This is what lets *every* page (not just visited ones) open
+        // offline once SitePrecacher has warmed it.
+        urlPattern: ({ url, sameOrigin, request }) =>
+          sameOrigin &&
+          request.headers.has("RSC") &&
+          !url.pathname.startsWith("/api/"),
+        handler: "NetworkFirst",
+        options: {
+          cacheName: "ghf-pages-rsc",
+          networkTimeoutSeconds: 4,
+          matchOptions: { ignoreSearch: true, ignoreVary: true },
+          expiration: { maxEntries: 600, maxAgeSeconds: 30 * 24 * 60 * 60 },
+          cacheableResponse: { statuses: [0, 200] },
+        },
+      },
+      {
+        // Full HTML documents — needed when the app is hard-loaded/refreshed
+        // directly on a sub-route while offline. Matches real browser navigations
+        // as well as SitePrecacher's `Accept: text/html` warm-up fetches. "/" is
+        // left to next-pwa's own start-url handler.
+        urlPattern: ({ url, sameOrigin, request }) =>
+          sameOrigin &&
+          url.pathname !== "/" &&
+          !url.pathname.startsWith("/api/") &&
+          !url.pathname.startsWith("/_next/") &&
+          (request.mode === "navigate" ||
+            request.destination === "document" ||
+            (request.headers.get("accept") || "").includes("text/html")),
+        handler: "NetworkFirst",
+        options: {
+          cacheName: "ghf-pages-doc",
+          networkTimeoutSeconds: 4,
+          matchOptions: { ignoreSearch: true },
+          expiration: { maxEntries: 600, maxAgeSeconds: 30 * 24 * 60 * 60 },
+          cacheableResponse: { statuses: [0, 200] },
+        },
+      },
+      {
         urlPattern: /\/brands\/.*\.(?:png|jpg|jpeg|webp|svg)$/i,
         handler: "CacheFirst",
         options: {

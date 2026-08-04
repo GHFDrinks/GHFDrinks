@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from "react";
 import { OfflineIndicator } from "./OfflineIndicator";
 import { AssetPreloader } from "./AssetPreloader";
+import { SitePrecacher } from "./SitePrecacher";
 
 export type NetStatus = "online" | "offline" | "syncing" | "synced";
 
@@ -76,6 +77,7 @@ export function OfflineProvider({ children }: { children: React.ReactNode }) {
       {children}
       {hasMounted && <OfflineIndicator status={status} />}
       {hasMounted && <AssetPreloader />}
+      {hasMounted && <SitePrecacher />}
     </OfflineContext.Provider>
   );
 }
