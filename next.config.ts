@@ -31,7 +31,9 @@ const withPWA = withPWAInit({
         },
       },
       {
-        urlPattern: /^https:\/\/meitlqrtqebmuovjqtei\.supabase\.co\/.*/i,
+        // Cache any Supabase project (was hardcoded to one project ref, which
+        // broke offline data caching for a different project).
+        urlPattern: /^https:\/\/[a-z0-9-]+\.supabase\.co\/.*/i,
         handler: "NetworkFirst",
         options: {
           cacheName: "ghf-supabase",
