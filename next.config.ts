@@ -26,8 +26,21 @@ const withPWA = withPWAInit({
           cacheName: "ghf-pages-rsc",
           networkTimeoutSeconds: 4,
           matchOptions: { ignoreSearch: true, ignoreVary: true },
-          expiration: { maxEntries: 600, maxAgeSeconds: 30 * 24 * 60 * 60 },
+          expiration: { maxEntries: 800, maxAgeSeconds: 30 * 24 * 60 * 60 },
           cacheableResponse: { statuses: [0, 200] },
+          plugins: [
+            {
+              // The Next router appends a `?_rsc=<hash>` cache-buster that changes
+              // per build/navigation. Collapse every variant of a route onto one
+              // key so in-app navigation can't pile up duplicates and evict the
+              // pre-warmed (never-visited) route entries this feature depends on.
+              cacheKeyWillBeUsed: async ({ request }) => {
+                const u = new URL(request.url);
+                u.search = "";
+                return u.href;
+              },
+            },
+          ],
         },
       },
       {
