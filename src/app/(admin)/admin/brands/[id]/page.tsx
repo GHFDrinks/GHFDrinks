@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Save, ArrowLeft, Plus, Trash2, AlertTriangle } from "lucide-react";
 import Link from "next/link";
@@ -94,6 +94,17 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
       setLoading(false);
     });
   }, [params]);
+
+  const lastVariantRef = useRef<HTMLDivElement>(null);
+  const scrollToNewVariant = useRef(false);
+
+  // After "Add Variant" appends a variant, scroll the new (bottom) card into view.
+  useEffect(() => {
+    if (scrollToNewVariant.current) {
+      scrollToNewVariant.current = false;
+      lastVariantRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [brand?.variants?.length]);
 
   if (loading || !brand) return <div className="p-12 text-white/50 bg-[#050505] min-h-screen">Loading brand editor...</div>;
 
@@ -190,6 +201,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
 
   const addVariant = () => {
     const newId = `new-v-${Date.now()}`;
+    scrollToNewVariant.current = true;
     setBrand((prev: any) => ({
       ...prev,
       variants: [
@@ -453,7 +465,11 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
             </div>
 
             {brand.variants.map((v: any, vIdx: number) => (
-              <div key={v.id} className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-6 relative">
+              <div
+                key={v.id}
+                ref={vIdx === brand.variants.length - 1 ? lastVariantRef : null}
+                className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-6 relative scroll-mt-24"
+              >
                 <button
                   onClick={() => removeVariant(v.id)}
                   className="absolute top-6 right-6 w-8 h-8 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 flex items-center justify-center transition-colors"
