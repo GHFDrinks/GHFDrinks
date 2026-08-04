@@ -117,7 +117,7 @@ export default function BrandSelectionPage() {
       {loading && brands.length === 0 ? (
         <p className="text-sm" style={{ color: "var(--muted-foreground)" }}>Loading brands...</p>
       ) : (
-        <div className="grid grid-cols-4 gap-4 max-w-6xl pb-28">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pb-28">
           {ordered.map((b) => {
             const local = getBrandImages(b.slug);
             const photo = local?.lifestyle?.[0] || local?.hero || "";
