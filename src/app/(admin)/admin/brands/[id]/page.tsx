@@ -10,6 +10,7 @@ import { getBrands } from "@/lib/supabase/queries/brands";
 import { saveBrand } from "@/lib/supabase/mutations/brands";
 import { ASSIGNABLE_PACKAGE_GROUPS } from "@/data/package-presentations";
 import { uploadImage } from "../../_lib/image-upload";
+import { DARK_ADMIN_ACCENT } from "@/lib/admin-theme";
 
 export default function BrandEditorPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
@@ -235,7 +236,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white pb-24">
+    <div className="min-h-screen bg-[#050505] text-white pb-24" style={DARK_ADMIN_ACCENT}>
       {/* Sticky Header */}
       <header className="sticky top-0 bg-[#0a0a0a]/90 backdrop-blur-xl border-b border-white/5 py-4 px-8 z-20 flex items-center justify-between">
         <div className="flex items-center space-x-4">

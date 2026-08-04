@@ -19,8 +19,9 @@ export default function PresentModePage() {
   const { brands } = useBrands();
 
   const [slideIndex, setSlideIndex] = useState(0);
-  // Package presentations (launched from a home tile) auto-play; saved presentations start paused.
-  const [isPlaying, setIsPlaying] = useState(() => Boolean(PACKAGE_PRESENTATIONS[id]));
+  // Slides never advance on their own — the presenter drives navigation manually.
+  // The play button is still available for anyone who wants timed auto-play.
+  const [isPlaying, setIsPlaying] = useState(false);
 
   // Resolve the presentation: a saved one by id, otherwise build an ephemeral
   // presentation on the fly from a package/category slug (e.g. "crafted-and-discerning").

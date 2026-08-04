@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Plus, Edit2, Trash2, Calendar, MapPin, Loader2, Save, Check } from "lucide-react";
+import { DARK_ADMIN_ACCENT } from "@/lib/admin-theme";
 import { getBrands } from "@/lib/supabase/queries/brands";
 import { createClient } from "@/lib/supabase/client";
 import { uploadImage } from "../_lib/image-upload";
@@ -207,7 +208,7 @@ export default function AdminActivationsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white p-8 space-y-8">
+    <div className="min-h-screen bg-[#050505] text-white p-8 space-y-8" style={DARK_ADMIN_ACCENT}>
       <header className="flex justify-between items-center">
         <div>
           <h1 className="text-4xl font-light tracking-tight mb-2">Activations Editor</h1>

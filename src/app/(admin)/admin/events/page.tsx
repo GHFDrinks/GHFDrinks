@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Plus, Edit2, Trash2, Calendar, MapPin, Loader2, Save } from "lucide-react";
+import { DARK_ADMIN_ACCENT } from "@/lib/admin-theme";
 import { UPCOMING_EVENTS } from "@/data/upcoming-events";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
@@ -143,7 +144,7 @@ export default function AdminEventsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white p-8 space-y-8">
+    <div className="min-h-screen bg-[#050505] text-white p-8 space-y-8" style={DARK_ADMIN_ACCENT}>
       <header className="flex justify-between items-center">
         <div>
           <h1 className="text-4xl font-light tracking-tight mb-2">Upcoming Events</h1>

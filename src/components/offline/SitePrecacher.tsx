@@ -1,10 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { DownloadCloud, CheckCircle2 } from "lucide-react";
 import { useBrands } from "@/hooks/useBrands";
 import { collectOfflineRoutes } from "@/lib/offline-routes";
+
+// Fullscreen, client-facing presentation views — never show the indicator here.
+const PRESENTATION_ROUTES = ["/present-mode", "/immersive", "/presentation-scenes"];
 
 const CONCURRENCY = 4;
 const FETCH_TIMEOUT_MS = 20000;
@@ -65,7 +69,9 @@ async function warmRoute(url: string) {
  */
 export function SitePrecacher() {
   const { brands } = useBrands();
+  const pathname = usePathname();
   const running = useRef(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const [justFinished, setJustFinished] = useState(false);
 
@@ -147,30 +153,47 @@ export function SitePrecacher() {
     return () => window.removeEventListener("online", onOnline);
   }, [brands]);
 
+  // Track fullscreen so the indicator can hide during any fullscreen presentation,
+  // not just the dedicated presentation routes.
+  useEffect(() => {
+    const onFsChange = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener("fullscreenchange", onFsChange);
+    onFsChange();
+    return () => document.removeEventListener("fullscreenchange", onFsChange);
+  }, []);
+
   const pct = progress ? Math.round((progress.done / progress.total) * 100) : 0;
+
+  // Never show the indicator on fullscreen, client-facing presentation views —
+  // it must not distract during a pitch or cover the Exit control. Downloading
+  // still runs in the background regardless.
+  const onPresentationRoute = PRESENTATION_ROUTES.some(
+    (r) => pathname === r || pathname.startsWith(r + "/")
+  );
+  const suppressUI = onPresentationRoute || isFullscreen;
 
   return (
     <AnimatePresence>
-      {(progress || justFinished) && (
+      {!suppressUI && (progress || justFinished) && (
         <motion.div
           key={justFinished ? "done" : "progress"}
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 40 }}
-          className="fixed bottom-6 left-6 z-[100] flex items-center gap-3 px-5 py-3 rounded-full bg-black/70 backdrop-blur-xl border border-white/20 shadow-2xl"
+          exit={{ opacity: 0, y: 20 }}
+          className="fixed bottom-4 left-4 z-[90] flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/45 backdrop-blur-md border border-white/10"
         >
           {justFinished ? (
             <>
-              <CheckCircle2 className="w-4 h-4 text-emerald-300" />
-              <span className="text-sm font-medium tracking-widest uppercase text-white">
-                Saved for offline
+              <CheckCircle2 className="w-3 h-3 text-emerald-300/90" />
+              <span className="text-[11px] font-medium tracking-wide text-white/80">
+                Saved offline
               </span>
             </>
           ) : (
             <>
-              <DownloadCloud className="w-4 h-4 text-white animate-pulse" />
-              <span className="text-sm font-medium tracking-widest uppercase text-white">
-                Saving for offline · {pct}%
+              <DownloadCloud className="w-3 h-3 text-white/70 animate-pulse" />
+              <span className="text-[11px] font-medium tracking-wide text-white/80">
+                Saving offline · {pct}%
               </span>
             </>
           )}

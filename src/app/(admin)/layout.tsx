@@ -38,6 +38,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <span className="text-white text-sm font-medium tracking-wide">Admin Panel</span>
         </div>
         <div className="flex items-center gap-6">
+          <Link href="/admin/home" className="text-xs text-white tracking-widest uppercase hover:opacity-70">
+            Home Layout
+          </Link>
           <Link href="/admin/brands" className="text-xs text-white tracking-widest uppercase hover:opacity-70">
             Brands
           </Link>

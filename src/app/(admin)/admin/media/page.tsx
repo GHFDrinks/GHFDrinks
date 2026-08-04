@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Plus, Play, Image as ImageIcon, Search, SlidersHorizontal, Film, FileVideo } from "lucide-react";
 import { motion } from "framer-motion";
+import { DARK_ADMIN_ACCENT } from "@/lib/admin-theme";
 
 export default function MediaLibraryPage() {
   const [activeTab, setActiveTab] = useState("all");
@@ -15,7 +16,7 @@ export default function MediaLibraryPage() {
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="min-h-screen bg-[#050505] text-white p-10 space-y-8" style={DARK_ADMIN_ACCENT}>
       <header className="flex justify-between items-center">
         <div>
           <h1 className="text-4xl font-light tracking-tight mb-2">Media Library</h1>

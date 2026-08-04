@@ -66,56 +66,52 @@ export default function BrandPosLibraryPage() {
             {posItems.map((item) => (
               <div
                 key={item.id}
-                className="bg-[var(--card)] border border-[var(--border)] rounded-xl overflow-hidden shadow-lg hover:border-[var(--sage)]/50 transition-all duration-300 flex flex-col justify-between h-full group"
+                className="group flex flex-col bg-[var(--card)] border border-[var(--border)] rounded-2xl overflow-hidden transition-all duration-300 hover:border-[var(--sage)]/50 hover:shadow-[0_12px_32px_-14px_rgba(0,0,0,0.3)]"
               >
-                <div>
-                  {/* Image with overlay title */}
-                  <div className="aspect-[16/10] overflow-hidden relative bg-[var(--muted)] border-b border-[var(--border)]/20">
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-75 group-hover:scale-[1.01]"
-                    />
-                    <div className="absolute inset-0 bg-black/45" />
-
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <h3 className="text-base font-light text-[var(--pearl)] tracking-wide leading-tight">
-                        {item.title}
-                      </h3>
-                    </div>
-                  </div>
-
-                  <div className="p-6">
-                    {item.description && (
-                      <p className="text-xs text-[var(--muted-foreground)] leading-relaxed">
-                        {item.description}
-                      </p>
-                    )}
-                  </div>
+                {/* Preview image */}
+                <div className="aspect-[4/3] overflow-hidden bg-[var(--muted)]">
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    loading="lazy"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                  />
                 </div>
 
-                {/* Footer action */}
-                <div className="p-6 pt-0 flex justify-between items-center border-t border-[var(--border)]/40 mt-4">
-                  <span className="text-[9px] uppercase tracking-wider text-[var(--muted-foreground)]">
-                    POS PDF / Asset package
+                {/* Body */}
+                <div className="flex flex-col flex-1 p-5">
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--sage)]">
+                    POS · Asset Package
                   </span>
-                  {hasFile(item.downloadUrl) ? (
-                    <a
-                      href={item.downloadUrl}
-                      download
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[var(--foreground)] text-[var(--background)] hover:opacity-95 text-[10px] font-bold uppercase tracking-wider transition-opacity"
-                    >
-                      <Download className="w-3.5 h-3.5" />
-                      Download
-                    </a>
-                  ) : (
-                    <span className="text-[9px] uppercase tracking-wider text-[var(--muted-foreground)]/60 italic">
-                      File coming soon
-                    </span>
+                  <h3 className="mt-2 text-[15px] font-semibold text-[var(--foreground)] leading-snug">
+                    {item.title}
+                  </h3>
+                  {item.description && (
+                    <p className="mt-1.5 text-[13px] text-[var(--muted-foreground)] leading-relaxed line-clamp-3">
+                      {item.description}
+                    </p>
                   )}
+
+                  {/* Footer action */}
+                  <div className="mt-auto pt-5 flex items-center justify-between">
+                    {hasFile(item.downloadUrl) ? (
+                      <a
+                        href={item.downloadUrl}
+                        download
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--foreground)] text-[var(--background)] hover:opacity-90 text-[11px] font-bold uppercase tracking-wider transition-opacity"
+                      >
+                        <Download className="w-4 h-4" />
+                        Download
+                      </a>
+                    ) : (
+                      <span className="text-[11px] uppercase tracking-wider text-[var(--muted-foreground)]/70 italic">
+                        File coming soon
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}

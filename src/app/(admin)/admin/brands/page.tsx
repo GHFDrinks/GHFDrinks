@@ -6,6 +6,7 @@ import { Plus, Search, Edit2, Trash2, Loader2 } from "lucide-react";
 import { Brand } from "@/types/brand";
 import { getBrands } from "@/lib/supabase/queries/brands";
 import { deleteBrand } from "@/lib/supabase/mutations/brands";
+import { DARK_ADMIN_ACCENT } from "@/lib/admin-theme";
 
 export default function AdminBrandsPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -35,7 +36,7 @@ export default function AdminBrandsPage() {
 
   if (loading) {
     return (
-      <div className="h-64 flex flex-col items-center justify-center space-y-4">
+      <div className="min-h-screen flex flex-col items-center justify-center space-y-4 bg-[#050505] text-white" style={DARK_ADMIN_ACCENT}>
         <Loader2 className="w-8 h-8 animate-spin text-accent" />
         <p className="text-white/50 font-medium">Loading Portfolio...</p>
       </div>
@@ -43,7 +44,7 @@ export default function AdminBrandsPage() {
   }
 
   return (
-    <div className="space-y-10">
+    <div className="min-h-screen bg-[#050505] text-white p-10 space-y-10" style={DARK_ADMIN_ACCENT}>
       <header className="flex justify-between items-center">
         <div>
           <h1 className="text-4xl font-light tracking-tight mb-2">Brands</h1>

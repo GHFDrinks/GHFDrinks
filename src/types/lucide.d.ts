@@ -25,6 +25,8 @@ declare module "lucide-react" {
   export const ArrowDown: Icon;
   export const CheckCircle2: Icon;
   export const DownloadCloud: Icon;
+  export const ChevronUp: Icon;
+  export const ChevronDown: Icon;
   export const Plus: Icon;
   export const FileText: Icon;
   export const Trash2: Icon;
