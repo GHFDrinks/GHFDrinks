@@ -41,6 +41,8 @@ const ROWS = [
   },
 ];
 
+const CARDS = ROWS.flatMap((row) => row.cards);
+
 function slugFromHref(href: string): string {
   const parts = href.split("/");
   return parts[parts.length - 1] || "";
@@ -62,71 +64,49 @@ export default function HomePage() {
         </p>
       </div>
 
-      {/* 4x3 grid with row labels */}
-      <div className="flex-1 flex flex-col gap-4 max-w-5xl">
-        {ROWS.map((row) => (
-          <div key={row.label} className="flex items-stretch gap-4">
-            {/* Rotated row label */}
-            <div className="flex-shrink-0 flex items-center justify-center" style={{ width: "34px" }}>
-              <span
-                className="text-[10px] font-bold tracking-[0.35em] uppercase select-none"
+      {/* Flat responsive grid: 1 col (mobile) → 2 (tablet) → 4 (desktop) */}
+      <div className="flex-1 flex flex-col gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {CARDS.map((card) => {
+            const slug = slugFromHref(card.href);
+            const brandSlugs = getPackageBrandSlugs(slug, brands);
+
+            return (
+              <Link
+                key={card.title}
+                href={card.href}
+                className="group relative rounded-lg border overflow-hidden flex items-center justify-center text-center px-6 transition-all hover:border-[var(--sage)] hover:scale-[1.02]"
                 style={{
-                  color: "var(--sage)",
-                  writingMode: "vertical-rl",
-                  transform: "rotate(180deg)",
+                  borderColor: "var(--border)",
+                  minHeight: "140px",
                 }}
               >
-                {row.label}
-              </span>
-            </div>
-
-            {/* Cards */}
-            <div className="flex-1 grid grid-cols-3 gap-4">
-              {row.cards.map((card) => {
-                const slug = slugFromHref(card.href);
-                const brandSlugs = getPackageBrandSlugs(slug, brands);
-
-                return (
-                  <Link
-                    key={card.title}
-                    href={card.href}
-                    className="group relative rounded-lg border overflow-hidden flex items-center justify-center text-center px-6 transition-all hover:border-[var(--sage)] hover:scale-[1.02]"
-                    style={{
-                      borderColor: "var(--border)",
-                      minHeight: "140px",
-                    }}
-                  >
-                    <TileImageCarousel brandSlugs={brandSlugs} />
-                    <span
-                      className="relative z-10 text-xl font-light tracking-wide text-[var(--pearl)] drop-shadow-md group-hover:text-[var(--sage)] transition-colors text-center"
-                    >
-                      {card.title}
-                    </span>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        ))}
+                <TileImageCarousel brandSlugs={brandSlugs} />
+                <span
+                  className="relative z-10 text-xl font-light tracking-wide text-[var(--pearl)] drop-shadow-md group-hover:text-[var(--sage)] transition-colors text-center"
+                >
+                  {card.title}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
 
         {/* Build your own CTA — Action buttons */}
-        <div className="flex items-stretch gap-4 mt-2">
-          <div className="flex-shrink-0" style={{ width: "34px" }} />
-          <div className="flex-1 flex flex-col md:flex-row gap-4 items-stretch">
-            <Link
-              href="/presentations/new"
-              className="flex-1 py-5 px-8 rounded-lg flex items-center justify-center text-center transition-all hover:opacity-90 bg-[var(--accent)] text-[var(--accent-foreground)] font-bold tracking-[0.2em] text-xs uppercase"
-            >
-              Build your own drinks package
-            </Link>
+        <div className="flex flex-col md:flex-row gap-4 items-stretch mt-2">
+          <Link
+            href="/presentations/new"
+            className="flex-1 py-5 px-8 rounded-lg flex items-center justify-center text-center transition-all hover:opacity-90 bg-[var(--accent)] text-[var(--accent-foreground)] font-bold tracking-[0.2em] text-xs uppercase"
+          >
+            Build your own drinks package
+          </Link>
 
-            <Link
-              href="/resources"
-              className="flex-1 py-5 px-8 rounded-lg flex items-center justify-center text-center transition-all hover:opacity-90 bg-[var(--accent)] text-[var(--accent-foreground)] font-bold tracking-[0.2em] text-xs uppercase"
-            >
-              Brand Resources Hub
-            </Link>
-          </div>
+          <Link
+            href="/resources"
+            className="flex-1 py-5 px-8 rounded-lg flex items-center justify-center text-center transition-all hover:opacity-90 bg-[var(--accent)] text-[var(--accent-foreground)] font-bold tracking-[0.2em] text-xs uppercase"
+          >
+            Brand Resources Hub
+          </Link>
         </div>
       </div>
     </div>
