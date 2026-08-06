@@ -5,10 +5,24 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
+const NAV_ITEMS = [
+  { href: "/admin/home", label: "Home Layout" },
+  { href: "/admin/brands", label: "Brands" },
+  { href: "/admin/support", label: "Support" },
+  { href: "/admin/activations", label: "Activations" },
+  { href: "/admin/calendar", label: "Calendar" },
+  { href: "/admin/events", label: "Events" },
+  { href: "/admin/media", label: "Media" },
+];
+
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const isLogin = pathname === "/admin/login";
+
+  // A tab is active for its exact route and any sub-route (e.g. editing a brand
+  // under /admin/brands/[id] keeps the Brands tab highlighted).
+  const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
 
   const handleSignOut = async () => {
     const supabase = createClient();
@@ -37,28 +51,27 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
           <span className="text-white text-sm font-medium tracking-wide">Admin Panel</span>
         </div>
-        <div className="flex items-center gap-6">
-          <Link href="/admin/home" className="text-xs text-white tracking-widest uppercase hover:opacity-70">
-            Home Layout
-          </Link>
-          <Link href="/admin/brands" className="text-xs text-white tracking-widest uppercase hover:opacity-70">
-            Brands
-          </Link>
-          <Link href="/admin/activations" className="text-xs text-white tracking-widest uppercase hover:opacity-70">
-            Activations
-          </Link>
-          <Link href="/admin/calendar" className="text-xs text-white tracking-widest uppercase hover:opacity-70">
-            Calendar
-          </Link>
-          <Link href="/admin/events" className="text-xs text-white tracking-widest uppercase hover:opacity-70">
-            Events
-          </Link>
-          <Link href="/admin/media" className="text-xs text-white tracking-widest uppercase hover:opacity-70">
-            Media
-          </Link>
+        <div className="flex items-center gap-2">
+          {NAV_ITEMS.map((item) => {
+            const active = isActive(item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={active ? "page" : undefined}
+                className={`text-xs tracking-widest uppercase px-2.5 py-1.5 rounded transition-colors ${
+                  active
+                    ? "bg-white/15 text-white font-semibold"
+                    : "text-white/55 hover:text-white hover:bg-white/5"
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
           <Link
             href="/"
-            className="text-xs tracking-widest uppercase border border-white/30 rounded px-3 py-1.5 text-white hover:opacity-70"
+            className="text-xs tracking-widest uppercase border border-white/30 rounded px-3 py-1.5 text-white hover:opacity-70 ml-2"
           >
             View Site
           </Link>
