@@ -11,6 +11,12 @@ import {
   type LandingTile,
 } from "@/lib/landing-config";
 import { saveLandingConfig } from "@/lib/supabase/mutations/landing";
+import {
+  DEFAULT_SECTION_LABELS,
+  fetchSectionLabels,
+  type SectionLabels,
+} from "@/lib/section-labels";
+import { saveSectionLabels } from "@/lib/supabase/mutations/section-labels";
 
 const SAGE = "#8fb08f";
 
@@ -32,6 +38,7 @@ function move<T>(arr: T[], from: number, to: number): T[] {
 
 export default function AdminHomeLayoutPage() {
   const [sections, setSections] = useState<LandingSection[]>(DEFAULT_LANDING.sections);
+  const [labels, setLabels] = useState<SectionLabels>(DEFAULT_SECTION_LABELS);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState<"idle" | "saved" | "error">("idle");
@@ -39,9 +46,10 @@ export default function AdminHomeLayoutPage() {
 
   useEffect(() => {
     let active = true;
-    fetchLandingConfig().then((cfg) => {
+    Promise.all([fetchLandingConfig(), fetchSectionLabels()]).then(([cfg, lbls]) => {
       if (!active) return;
       if (cfg?.sections?.length) setSections(cfg.sections);
+      if (lbls) setLabels(lbls);
       setLoading(false);
     });
     return () => {
@@ -91,7 +99,7 @@ export default function AdminHomeLayoutPage() {
     setStatus("idle");
     setErrorMsg("");
     try {
-      await saveLandingConfig({ sections });
+      await Promise.all([saveLandingConfig({ sections }), saveSectionLabels(labels)]);
       setStatus("saved");
       setTimeout(() => setStatus("idle"), 3500);
     } catch (e) {
@@ -263,6 +271,52 @@ export default function AdminHomeLayoutPage() {
         >
           <Plus className="w-4 h-4" /> Add Group
         </button>
+
+        {/* Section header labels — rename fixed headings shown on the public site */}
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 mt-8 space-y-4">
+          <div>
+            <h2 className="text-base font-light tracking-wide">Section Header Labels</h2>
+            <p className="text-xs text-white/50 mt-1 leading-relaxed">
+              Rename the fixed headings shown on brand / tasting-note pages. For example, change
+              “Product Features” to “Tasting Notes”. Saved with the button above.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <label className="block text-[10px] uppercase tracking-wider text-white/60">
+                Product Features heading
+              </label>
+              <input
+                value={labels.productFeatures}
+                onChange={(e) => setLabels((l) => ({ ...l, productFeatures: e.target.value }))}
+                placeholder={DEFAULT_SECTION_LABELS.productFeatures}
+                className={`${input} w-full`}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="block text-[10px] uppercase tracking-wider text-white/60">
+                Taste Profile heading
+              </label>
+              <input
+                value={labels.tasteProfile}
+                onChange={(e) => setLabels((l) => ({ ...l, tasteProfile: e.target.value }))}
+                placeholder={DEFAULT_SECTION_LABELS.tasteProfile}
+                className={`${input} w-full`}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="block text-[10px] uppercase tracking-wider text-white/60">
+                Product Description heading
+              </label>
+              <input
+                value={labels.productDescription}
+                onChange={(e) => setLabels((l) => ({ ...l, productDescription: e.target.value }))}
+                placeholder={DEFAULT_SECTION_LABELS.productDescription}
+                className={`${input} w-full`}
+              />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

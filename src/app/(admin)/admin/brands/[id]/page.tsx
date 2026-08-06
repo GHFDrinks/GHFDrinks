@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Save, ArrowLeft, Plus, Trash2, AlertTriangle } from "lucide-react";
+import { Save, ArrowLeft, Plus, Trash2, Copy, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import { mockBrands } from "@/data/brands";
 import { Brand } from "@/types/brand";
@@ -171,6 +171,12 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
           cases[index] = { ...cases[index], image: url };
           return { ...prev, caseStudies: cases };
         });
+      } else if (type === "case-study-logo") {
+        setBrand((prev: any) => {
+          const cases = [...prev.caseStudies];
+          cases[index] = { ...cases[index], logo: url };
+          return { ...prev, caseStudies: cases };
+        });
       } else if (type === "pos") {
         setBrand((prev: any) => {
           const pos = [...prev.posLibrary];
@@ -247,6 +253,51 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
     }));
   };
 
+  // Duplicate a variant AND its related serves entry. Everything is deep-cloned
+  // so the copy doesn't share nested arrays/objects with the source, and the new
+  // variant gets a fresh temp id (serves are re-keyed to it). saveBrand remaps the
+  // temp id to the real UUID on save.
+  const duplicateVariant = (vid: string) => {
+    scrollToNewVariant.current = true;
+    setBrand((prev: any) => {
+      const source = prev.variants.find((v: any) => v.id === vid);
+      if (!source) return prev;
+      const newId = `new-v-${Date.now()}`;
+
+      const clone = {
+        ...source,
+        id: newId,
+        name: source.name ? `${source.name} (Copy)` : "",
+        image: { ...(source.image || { url: "", alt: "" }) },
+        taste_profile_radar: { ...(source.taste_profile_radar || {}) },
+        product_features: (source.product_features || []).map((f: any) => ({ ...f })),
+        carousel_images: [...(source.carousel_images || ["", "", ""])],
+      };
+
+      const cloneServe = (list: any[]) =>
+        (list || []).map((x: any) => ({
+          ...x,
+          flavourDescriptors: [...(x.flavourDescriptors || ["", "", ""])],
+        }));
+
+      const srcServe = (prev.servesData || []).find((s: any) => s.variantSlug === vid);
+      const servesData = srcServe
+        ? [
+            ...prev.servesData,
+            {
+              ...srcServe,
+              variantSlug: newId,
+              springSummer: cloneServe(srcServe.springSummer),
+              autumnWinter: cloneServe(srcServe.autumnWinter),
+              ...(srcServe.feverTree ? { feverTree: cloneServe(srcServe.feverTree) } : {}),
+            },
+          ]
+        : prev.servesData;
+
+      return { ...prev, variants: [...prev.variants, clone], servesData };
+    });
+  };
+
   return (
     <div className="min-h-screen bg-[#050505] text-white pb-24" style={DARK_ADMIN_ACCENT}>
       {/* Sticky Header */}
@@ -259,7 +310,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
           </Link>
           <div>
             <h1 className="text-2xl font-light">{brand.id === "new" ? "Create Brand" : `Edit ${brand.name}`}</h1>
-            <p className="text-xs text-white/40 uppercase tracking-widest mt-0.5">Admin Back-office Control</p>
+            <p className="text-xs text-white/60 uppercase tracking-widest mt-0.5">Admin Back-office Control</p>
           </div>
         </div>
 
@@ -286,7 +337,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
             key={t.id}
             onClick={() => setActiveTab(t.id)}
             className={`py-4 px-6 text-sm font-medium border-b-2 transition-all ${
-              activeTab === t.id ? "border-accent text-accent" : "border-transparent text-white/40 hover:text-white/75"
+              activeTab === t.id ? "border-accent text-accent" : "border-transparent text-white/60 hover:text-white/75"
             }`}
           >
             {t.label}
@@ -302,7 +353,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
               <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4">
                 <h3 className="text-lg font-light tracking-wide text-accent border-b border-white/5 pb-2">Details</h3>
                 <div className="space-y-3">
-                  <label className="block text-xs uppercase text-white/45">Brand Name</label>
+                  <label className="block text-xs uppercase text-white/65">Brand Name</label>
                   <input
                     type="text"
                     value={brand.name}
@@ -312,7 +363,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                   />
                 </div>
                 <div className="space-y-3">
-                  <label className="block text-xs uppercase text-white/45">Slug</label>
+                  <label className="block text-xs uppercase text-white/65">Slug</label>
                   <input
                     type="text"
                     value={brand.slug}
@@ -322,7 +373,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                   />
                 </div>
                 <div className="space-y-3">
-                  <label className="block text-xs uppercase text-white/45">Category</label>
+                  <label className="block text-xs uppercase text-white/65">Category</label>
                   <select
                     value={brand.category}
                     onChange={(e) => setBrand({ ...brand, category: e.target.value })}
@@ -334,7 +385,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                   </select>
                 </div>
                 <div className="space-y-3">
-                  <label className="block text-xs uppercase text-white/45">Tagline</label>
+                  <label className="block text-xs uppercase text-white/65">Tagline</label>
                   <input
                     type="text"
                     value={brand.tagline}
@@ -368,7 +419,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
               <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4">
                 <h3 className="text-lg font-light tracking-wide text-accent border-b border-white/5 pb-2">Media & Video</h3>
                 <div className="space-y-3">
-                  <label className="block text-xs uppercase text-white/45">Hero Image</label>
+                  <label className="block text-xs uppercase text-white/65">Hero Image</label>
                   {brand.heroImage?.url && (
                     <img src={brand.heroImage.url} className="h-32 w-full object-cover rounded-lg border border-white/10" alt="" />
                   )}
@@ -376,11 +427,11 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                     type="file"
                     accept="image/*"
                     onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0], "hero")}
-                    className="w-full text-xs text-white/40 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-white/10 file:text-white hover:file:bg-white/20"
+                    className="w-full text-xs text-white/60 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-white/10 file:text-white hover:file:bg-white/20"
                   />
                 </div>
                 <div className="space-y-3">
-                  <label className="block text-xs uppercase text-white/45">Brand Video URL (MP4 CDN / Blob)</label>
+                  <label className="block text-xs uppercase text-white/65">Brand Video URL (MP4 CDN / Blob)</label>
                   <input
                     type="text"
                     value={brand.videoUrl}
@@ -390,7 +441,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                   />
                 </div>
                 <div className="space-y-3">
-                  <label className="block text-xs uppercase text-white/45">Story Title</label>
+                  <label className="block text-xs uppercase text-white/65">Story Title</label>
                   <input
                     type="text"
                     value={brand.story?.title}
@@ -399,7 +450,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                   />
                 </div>
                 <div className="space-y-3">
-                  <label className="block text-xs uppercase text-white/45">Story Description</label>
+                  <label className="block text-xs uppercase text-white/65">Story Description</label>
                   <textarea
                     rows={3}
                     value={brand.story?.description}
@@ -414,7 +465,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
             <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4">
               <div className="border-b border-white/5 pb-2">
                 <h3 className="text-lg font-light tracking-wide text-accent">Package Membership</h3>
-                <p className="text-[11px] text-white/40 mt-1">
+                <p className="text-[11px] text-white/60 mt-1">
                   Which Occasion / Culture / Product tiles this brand appears in (home page + presentations).
                   Category — Spirits / Wines / Packaged — follows the brand&apos;s Category above automatically.
                 </p>
@@ -470,19 +521,29 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                 ref={vIdx === brand.variants.length - 1 ? lastVariantRef : null}
                 className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-6 relative scroll-mt-24"
               >
-                <button
-                  onClick={() => removeVariant(v.id)}
-                  className="absolute top-6 right-6 w-8 h-8 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 flex items-center justify-center transition-colors"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
+                <div className="absolute top-6 right-6 flex items-center gap-2">
+                  <button
+                    onClick={() => duplicateVariant(v.id)}
+                    title="Duplicate this variant and its serves"
+                    className="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-white/80 flex items-center justify-center transition-colors"
+                  >
+                    <Copy className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => removeVariant(v.id)}
+                    title="Remove this variant"
+                    className="w-8 h-8 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 flex items-center justify-center transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                   {/* Variant info */}
                   <div className="space-y-4 md:col-span-2">
                     <h4 className="text-lg font-light text-white/90">Variant #{vIdx + 1} Details</h4>
                     <div className="space-y-3">
-                      <label className="block text-xs uppercase text-white/45">Name</label>
+                      <label className="block text-xs uppercase text-white/65">Name</label>
                       <input
                         type="text"
                         value={v.name}
@@ -496,7 +557,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-3">
-                        <label className="block text-xs uppercase text-white/45">ABV</label>
+                        <label className="block text-xs uppercase text-white/65">ABV</label>
                         <input
                           type="text"
                           value={v.abv}
@@ -509,7 +570,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                         />
                       </div>
                       <div className="space-y-3">
-                        <label className="block text-xs uppercase text-white/45">Volume</label>
+                        <label className="block text-xs uppercase text-white/65">Volume</label>
                         <input
                           type="text"
                           value={v.volume}
@@ -523,7 +584,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                       </div>
                     </div>
                     <div className="space-y-3">
-                      <label className="block text-xs uppercase text-white/45">Bottle Shot Image</label>
+                      <label className="block text-xs uppercase text-white/65">Bottle Shot Image</label>
                       {v.image?.url && (
                         <img src={v.image.url} className="h-20 object-contain rounded border border-white/10" alt="" />
                       )}
@@ -531,7 +592,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                         type="file"
                         accept="image/*"
                         onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0], "variant", 0, v.id)}
-                        className="w-full text-xs text-white/40 file:mr-4 file:py-1 file:px-2 file:rounded file:border-0 file:bg-white/10 file:text-white"
+                        className="w-full text-xs text-white/60 file:mr-4 file:py-1 file:px-2 file:rounded file:border-0 file:bg-white/10 file:text-white"
                       />
                     </div>
                   </div>
@@ -618,7 +679,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                           type="file"
                           accept="image/*"
                           onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0], "variant-carousel", imgIdx, v.id)}
-                          className="w-full text-[10px] text-white/30 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-white/10 file:text-[10px]"
+                          className="w-full text-[10px] text-white/55 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-white/10 file:text-[10px]"
                         />
                       </div>
                     ))}
@@ -640,7 +701,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                   <div key={idx} className="bg-white/5 border border-white/10 rounded-2xl p-5 space-y-4">
                     <h4 className="text-sm font-medium uppercase tracking-wider text-accent border-b border-white/5 pb-2">Stat #{idx + 1}</h4>
                     <div className="space-y-3">
-                      <label className="block text-xs uppercase text-white/45">Headline (e.g. 42%)</label>
+                      <label className="block text-xs uppercase text-white/65">Headline (e.g. 42%)</label>
                       <input
                         type="text"
                         value={stat.headline}
@@ -653,7 +714,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                       />
                     </div>
                     <div className="space-y-3">
-                      <label className="block text-xs uppercase text-white/45">Caption (e.g. YoY growth)</label>
+                      <label className="block text-xs uppercase text-white/65">Caption (e.g. YoY growth)</label>
                       <input
                         type="text"
                         value={stat.caption}
@@ -666,7 +727,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                       />
                     </div>
                     <div className="space-y-3">
-                      <label className="block text-xs uppercase text-white/45">Detail</label>
+                      <label className="block text-xs uppercase text-white/65">Detail</label>
                       <textarea
                         rows={3}
                         value={stat.detail}
@@ -679,7 +740,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="block text-xs uppercase text-white/45">Image</label>
+                      <label className="block text-xs uppercase text-white/65">Image</label>
                       {stat.image && (
                         <img src={stat.image} className="h-20 w-full object-cover rounded border border-white/10" alt="" />
                       )}
@@ -687,7 +748,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                         type="file"
                         accept="image/*"
                         onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0], "insight", idx)}
-                        className="w-full text-[10px] text-white/40 file:bg-white/10 file:text-[10px]"
+                        className="w-full text-[10px] text-white/60 file:bg-white/10 file:text-[10px]"
                       />
                     </div>
                   </div>
@@ -800,7 +861,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                                     type="file"
                                     accept="image/*"
                                     onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0], `serve-springSummer-${sIdx}`, sDataIndex)}
-                                    className="w-full text-[10px] text-white/30 file:bg-white/10 file:text-[9px]"
+                                    className="w-full text-[10px] text-white/55 file:bg-white/10 file:text-[9px]"
                                   />
                                 </div>
                               </div>
@@ -871,7 +932,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                                     type="file"
                                     accept="image/*"
                                     onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0], `serve-autumnWinter-${sIdx}`, sDataIndex)}
-                                    className="w-full text-[10px] text-white/30 file:bg-white/10 file:text-[9px]"
+                                    className="w-full text-[10px] text-white/55 file:bg-white/10 file:text-[9px]"
                                   />
                                 </div>
                               </div>
@@ -908,7 +969,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
               </div>
 
               {brand.promotions.length === 0 ? (
-                <p className="text-xs text-white/40 italic">No promotions configured for this brand.</p>
+                <p className="text-xs text-white/60 italic">No promotions configured for this brand.</p>
               ) : (
                 <div className="space-y-4">
                   {brand.promotions.map((p: any, idx: number) => (
@@ -923,7 +984,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                         <Trash2 className="w-4 h-4" />
                       </button>
                       <div className="space-y-3">
-                        <label className="block text-[10px] uppercase text-white/40">Title</label>
+                        <label className="block text-[10px] uppercase text-white/60">Title</label>
                         <input
                           type="text"
                           value={p.title}
@@ -936,7 +997,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                         />
                       </div>
                       <div className="space-y-3">
-                        <label className="block text-[10px] uppercase text-white/40">Target URL</label>
+                        <label className="block text-[10px] uppercase text-white/60">Target URL</label>
                         <input
                           type="text"
                           value={p.targetUrl}
@@ -949,7 +1010,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                         />
                       </div>
                       <div className="space-y-3 md:col-span-2">
-                        <label className="block text-[10px] uppercase text-white/40">Description</label>
+                        <label className="block text-[10px] uppercase text-white/60">Description</label>
                         <textarea
                           rows={2}
                           value={p.description}
@@ -991,7 +1052,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                     key={t}
                     onClick={() => setHaloTab(t)}
                     className={`px-3 py-1.5 text-xs font-semibold rounded-md uppercase tracking-wider ${
-                      haloTab === t ? "bg-accent text-accent-foreground" : "text-white/40 hover:text-white"
+                      haloTab === t ? "bg-accent text-accent-foreground" : "text-white/60 hover:text-white"
                     }`}
                   >
                     {t.replace("-", " ")}
@@ -1001,7 +1062,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
 
               <div className="space-y-4 mt-2">
                 {brand.haloOutlets.filter((o: any) => o.tier === haloTab).length === 0 ? (
-                  <p className="text-xs text-white/40 italic">No outlets added in this tier yet.</p>
+                  <p className="text-xs text-white/60 italic">No outlets added in this tier yet.</p>
                 ) : (
                   brand.haloOutlets.map((o: any, idx: number) => {
                     const globalIdx = brand.haloOutlets.findIndex((x: any) => x === o);
@@ -1017,7 +1078,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                           <Trash2 className="w-4 h-4" />
                         </button>
                         <div className="flex-1 space-y-3">
-                          <label className="block text-[10px] uppercase text-white/40">Outlet Name</label>
+                          <label className="block text-[10px] uppercase text-white/60">Outlet Name</label>
                           <input
                             type="text"
                             value={o.outletName}
@@ -1031,7 +1092,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                           />
                         </div>
                         <div className="space-y-2">
-                          <label className="block text-[10px] uppercase text-white/40">Outlet Image</label>
+                          <label className="block text-[10px] uppercase text-white/60">Outlet Image</label>
                           {o.outletImage && (
                             <img src={o.outletImage} className="h-12 w-20 object-cover rounded border border-white/10" alt="" />
                           )}
@@ -1039,11 +1100,11 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                             type="file"
                             accept="image/*"
                             onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0], "halo", globalIdx)}
-                            className="w-full text-[10px] text-white/30 file:bg-white/10"
+                            className="w-full text-[10px] text-white/55 file:bg-white/10"
                           />
                         </div>
                         <div className="space-y-2">
-                          <label className="block text-[10px] uppercase text-white/40">Outlet Logo (Optional)</label>
+                          <label className="block text-[10px] uppercase text-white/60">Outlet Logo (Optional)</label>
                           {o.outletLogo && (
                             <img src={o.outletLogo} className="h-12 w-20 object-contain rounded border border-white/10" alt="" />
                           )}
@@ -1051,7 +1112,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                             type="file"
                             accept="image/*"
                             onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0], "halo-logo", globalIdx)}
-                            className="w-full text-[10px] text-white/30 file:bg-white/10"
+                            className="w-full text-[10px] text-white/55 file:bg-white/10"
                           />
                         </div>
                       </div>
@@ -1085,7 +1146,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                     key={t}
                     onClick={() => setCaseStudyTab(t)}
                     className={`px-3 py-1.5 text-xs font-semibold rounded-md uppercase tracking-wider ${
-                      caseStudyTab === t ? "bg-accent text-accent-foreground" : "text-white/40 hover:text-white"
+                      caseStudyTab === t ? "bg-accent text-accent-foreground" : "text-white/60 hover:text-white"
                     }`}
                   >
                     {t.replace("-", " ")}
@@ -1095,7 +1156,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
 
               <div className="space-y-4 mt-2">
                 {brand.caseStudies.filter((c: any) => c.tier === caseStudyTab).length === 0 ? (
-                  <p className="text-xs text-white/40 italic">No case studies in this tier yet.</p>
+                  <p className="text-xs text-white/60 italic">No case studies in this tier yet.</p>
                 ) : (
                   brand.caseStudies.filter((c: any) => c.tier === caseStudyTab).map((c: any, idx: number) => {
                     const globalIdx = brand.caseStudies.findIndex((x: any) => x === c);
@@ -1111,7 +1172,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                           <Trash2 className="w-4 h-4" />
                         </button>
                         <div className="space-y-3">
-                          <label className="block text-[10px] uppercase text-white/40">Title</label>
+                          <label className="block text-[10px] uppercase text-white/60">Title</label>
                           <input
                             type="text"
                             value={c.title}
@@ -1124,7 +1185,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                           />
                         </div>
                         <div className="space-y-3">
-                          <label className="block text-[10px] uppercase text-white/40">Outlet Name</label>
+                          <label className="block text-[10px] uppercase text-white/60">Outlet Name</label>
                           <input
                             type="text"
                             value={c.outletName}
@@ -1137,7 +1198,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                           />
                         </div>
                         <div className="space-y-3 md:col-span-2">
-                          <label className="block text-[10px] uppercase text-white/40">Summary</label>
+                          <label className="block text-[10px] uppercase text-white/60">Summary</label>
                           <input
                             type="text"
                             value={c.summary}
@@ -1150,7 +1211,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                           />
                         </div>
                         <div className="space-y-3 md:col-span-2">
-                          <label className="block text-[10px] uppercase text-white/40">Full Text</label>
+                          <label className="block text-[10px] uppercase text-white/60">Full Text</label>
                           <textarea
                             rows={3}
                             value={c.fullText}
@@ -1162,8 +1223,8 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                             className="w-full bg-black/40 border border-white/10 rounded px-3 py-1.5 text-xs text-white focus:outline-none"
                           />
                         </div>
-                        <div className="space-y-2 md:col-span-2">
-                          <label className="block text-[10px] uppercase text-white/40">Case Study Image</label>
+                        <div className="space-y-2">
+                          <label className="block text-[10px] uppercase text-white/60">Background Image</label>
                           {c.image && (
                             <img src={c.image} className="h-20 w-32 object-cover rounded border border-white/10" alt="" />
                           )}
@@ -1171,7 +1232,19 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                             type="file"
                             accept="image/*"
                             onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0], "case-study", globalIdx)}
-                            className="w-full text-[10px] text-white/30 file:bg-white/10"
+                            className="w-full text-[10px] text-white/55 file:bg-white/10"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="block text-[10px] uppercase text-white/60">Logo Overlay (optional)</label>
+                          {c.logo && (
+                            <img src={c.logo} className="h-20 w-32 object-contain rounded border border-white/10 bg-white/5 p-2" alt="" />
+                          )}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0], "case-study-logo", globalIdx)}
+                            className="w-full text-[10px] text-white/55 file:bg-white/10"
                           />
                         </div>
                       </div>
@@ -1200,7 +1273,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
               </div>
 
               {brand.posLibrary.length === 0 ? (
-                <p className="text-xs text-white/40 italic">No POS assets uploaded.</p>
+                <p className="text-xs text-white/60 italic">No POS assets uploaded.</p>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {brand.posLibrary.map((pos: any, idx: number) => (
@@ -1215,7 +1288,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                         <Trash2 className="w-4 h-4" />
                       </button>
                       <div className="space-y-3">
-                        <label className="block text-[10px] uppercase text-white/40">POS Asset Title</label>
+                        <label className="block text-[10px] uppercase text-white/60">POS Asset Title</label>
                         <input
                           type="text"
                           value={pos.title}
@@ -1229,7 +1302,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                         />
                       </div>
                       <div className="space-y-3">
-                        <label className="block text-[10px] uppercase text-white/40">Description</label>
+                        <label className="block text-[10px] uppercase text-white/60">Description</label>
                         <textarea
                           rows={2}
                           value={pos.description}
@@ -1242,7 +1315,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                         />
                       </div>
                       <div className="space-y-3">
-                        <label className="block text-[10px] uppercase text-white/40">Download URL (PDF / asset package link)</label>
+                        <label className="block text-[10px] uppercase text-white/60">Download URL (PDF / asset package link)</label>
                         <input
                           type="text"
                           value={pos.downloadUrl || ""}
@@ -1254,13 +1327,13 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                           className="w-full bg-black/40 border border-white/10 rounded px-3 py-1.5 text-xs text-white focus:outline-none"
                           placeholder="https://…/sapling-pos-pack.pdf"
                         />
-                        <p className="text-[9px] text-white/30 leading-relaxed">
+                        <p className="text-[9px] text-white/55 leading-relaxed">
                           Paste a link to the hosted file (Supabase Storage or a CDN). The public POS
                           Library shows a working Download button when this is set.
                         </p>
                       </div>
                       <div className="space-y-2">
-                        <label className="block text-[10px] uppercase text-white/40">POS Image</label>
+                        <label className="block text-[10px] uppercase text-white/60">POS Image</label>
                         {pos.image && (
                           <img src={pos.image} className="h-16 w-full object-cover rounded border border-white/10" alt="" />
                         )}
@@ -1268,7 +1341,7 @@ export default function BrandEditorPage({ params }: { params: Promise<{ id: stri
                           type="file"
                           accept="image/*"
                           onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0], "pos", idx)}
-                          className="w-full text-[10px] text-white/30 file:bg-white/10"
+                          className="w-full text-[10px] text-white/55 file:bg-white/10"
                         />
                       </div>
                     </div>

@@ -236,29 +236,39 @@ export function BrandDetailClient({ initialBrand }: { initialBrand: Brand }) {
                   How to Serve
                 </h2>
               </div>
-              {/* Season toggle — like the Serve Inspiration section (spirits with season data) */}
+              {/* Season switch — slide between Spring/Summer and Autumn/Winter serves */}
               {hasSeasonServes && (
-                <div className="inline-flex self-start md:self-auto rounded-lg border border-[var(--border)] bg-[var(--card)] p-1">
-                  <button
-                    onClick={() => setServeSeason("spring-summer")}
-                    className={`px-5 py-2 text-xs font-bold uppercase tracking-wider rounded-md transition-all ${
-                      serveSeason === "spring-summer"
-                        ? "bg-[var(--sage)] text-[var(--background)] font-black"
-                        : "text-[var(--foreground)]/70 hover:text-[var(--foreground)]"
+                <div className="inline-flex items-center gap-3 self-start md:self-auto">
+                  <span
+                    className={`text-xs font-bold uppercase tracking-wider transition-colors ${
+                      serveSeason === "spring-summer" ? "text-[var(--foreground)]" : "text-[var(--foreground)]/40"
                     }`}
                   >
                     Spring / Summer
-                  </button>
+                  </span>
                   <button
-                    onClick={() => setServeSeason("autumn-winter")}
-                    className={`px-5 py-2 text-xs font-bold uppercase tracking-wider rounded-md transition-all ${
-                      serveSeason === "autumn-winter"
-                        ? "bg-[var(--sage)] text-[var(--background)] font-black"
-                        : "text-[var(--foreground)]/70 hover:text-[var(--foreground)]"
+                    role="switch"
+                    aria-checked={serveSeason === "autumn-winter"}
+                    aria-label="Toggle between Spring/Summer and Autumn/Winter serves"
+                    onClick={() =>
+                      setServeSeason(serveSeason === "spring-summer" ? "autumn-winter" : "spring-summer")
+                    }
+                    className="relative w-14 h-7 rounded-full border border-[var(--border)] bg-[var(--card)] transition-colors cursor-pointer flex-shrink-0"
+                  >
+                    <span
+                      className="absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-[var(--sage)] shadow-md transition-transform duration-300 ease-out"
+                      style={{
+                        transform: serveSeason === "autumn-winter" ? "translateX(28px)" : "translateX(0)",
+                      }}
+                    />
+                  </button>
+                  <span
+                    className={`text-xs font-bold uppercase tracking-wider transition-colors ${
+                      serveSeason === "autumn-winter" ? "text-[var(--foreground)]" : "text-[var(--foreground)]/40"
                     }`}
                   >
                     Autumn / Winter
-                  </button>
+                  </span>
                 </div>
               )}
             </div>

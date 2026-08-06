@@ -233,11 +233,19 @@ export default function CalendarPage() {
       }
     };
 
-    // Trace active events
-    if (mData.ghfActivation) {
-      checkActivation(mData.ghfActivation);
-    }
+    // Trace active events — respect the brand filter so a selected brand only
+    // lights up ITS own dates, not every brand's. (Without this gate the zoomed
+    // month grid highlighted all dates regardless of the selected brand.)
+    const brandDates = selectedBrandSlug ? BRAND_KEY_DATES[selectedBrandSlug] || [] : null;
+    getGhfList(mData).forEach((name) => {
+      if (brandDates) {
+        const campaign = getCampaignByName(name);
+        if (!campaign || !campaign.relevantBrandSlugs.includes(selectedBrandSlug!)) return;
+      }
+      checkActivation(name);
+    });
     mData.events.forEach((e) => {
+      if (brandDates && !brandDates.includes(e.name)) return;
       checkActivation(e.name);
     });
 
@@ -301,27 +309,34 @@ export default function CalendarPage() {
           <p className="text-[10px] tracking-widest uppercase text-[var(--muted-foreground)]">
             Activations & Key Dates
           </p>
-          {mData.ghfActivation && (
-            <div className="p-3 bg-[var(--sage)]/10 rounded-lg flex items-center justify-between border border-[var(--sage)]/25">
-              <div>
-                <span className="text-[8px] font-bold tracking-widest uppercase text-[var(--sage)] block">
-                  GHF Activation
-                </span>
-                <span className="text-sm font-semibold text-[var(--foreground)]">
-                  {mData.ghfActivation}
-                </span>
+          {getGhfList(mData)
+            .filter((name) => {
+              // When a brand is selected, only list GHF activations relevant to it.
+              if (!selectedBrandSlug) return true;
+              const camp = getCampaignByName(name);
+              return !!camp && camp.relevantBrandSlugs.includes(selectedBrandSlug);
+            })
+            .map((name) => (
+              <div key={name} className="p-3 bg-[var(--sage)]/10 rounded-lg flex items-center justify-between border border-[var(--sage)]/25">
+                <div>
+                  <span className="text-[8px] font-bold tracking-widest uppercase text-[var(--sage)] block">
+                    GHF Activation
+                  </span>
+                  <span className="text-sm font-semibold text-[var(--foreground)]">
+                    {name}
+                  </span>
+                </div>
+                <button
+                  onClick={() => {
+                    const camp = getCampaignByName(name);
+                    if (camp) handleCampaignClick(camp);
+                  }}
+                  className="text-[10px] font-bold uppercase tracking-wider text-[var(--sage)] hover:underline cursor-pointer"
+                >
+                  Details
+                </button>
               </div>
-              <button
-                onClick={() => {
-                  const camp = getCampaignByName(mData.ghfActivation!);
-                  if (camp) handleCampaignClick(camp);
-                }}
-                className="text-[10px] font-bold uppercase tracking-wider text-[var(--sage)] hover:underline cursor-pointer"
-              >
-                Details
-              </button>
-            </div>
-          )}
+            ))}
 
           {mData.events.map((e, idx) => {
             const isRelevant = !selectedBrandSlug || (BRAND_KEY_DATES[selectedBrandSlug] || []).includes(e.name);

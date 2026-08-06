@@ -68,7 +68,9 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-3 gap-6 mb-10">
         {[
           { label: "Edit Brands", desc: "Update descriptions, SKUs, activations", href: "/admin/brands" },
-          { label: "Manage Promotions", desc: "Turn live promotions on or off per brand", href: "/admin/brands" },
+          { label: "Support Packages", desc: "Set which products show per SKU scenario", href: "/admin/support" },
+          { label: "Home & Section Labels", desc: "Front-page tiles and editable headings", href: "/admin/home" },
+          { label: "Calendar", desc: "Key dates and brand connections", href: "/admin/calendar" },
           { label: "Media", desc: "View uploaded media assets", href: "/admin/media" },
         ].map((item) => (
           <Link

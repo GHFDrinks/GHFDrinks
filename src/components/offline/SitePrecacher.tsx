@@ -34,6 +34,32 @@ function writeLastRun(ts: number) {
   }
 }
 
+// Which routes have already been warmed in the SW cache. Persisted so an
+// interrupted pass (connectivity blip, backgrounded iPad tab, refresh) RESUMES
+// where it left off instead of being suppressed by the throttle with a partial
+// cache — that partial-cache-then-throttle was why only visited pages worked
+// offline.
+const WARMED_KEY = "ghf:precache-warmed";
+
+function readWarmed(): Set<string> {
+  try {
+    const raw = localStorage.getItem(WARMED_KEY);
+    if (!raw) return new Set();
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? new Set(arr as string[]) : new Set();
+  } catch {
+    return new Set();
+  }
+}
+
+function writeWarmed(set: Set<string>) {
+  try {
+    localStorage.setItem(WARMED_KEY, JSON.stringify(Array.from(set)));
+  } catch {
+    /* storage full/unavailable — resume just won't persist */
+  }
+}
+
 async function fetchOnce(url: string, rsc: boolean) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
@@ -102,18 +128,32 @@ export function SitePrecacher() {
       const routes = collectOfflineRoutes(brands);
       if (routes.length === 0) return;
 
-      running.current = true;
-      writeLastRun(Date.now());
-      setJustFinished(false);
-      setProgress({ done: 0, total: routes.length });
+      // Resume: skip routes already warmed. A forced pass (reconnect / SW update)
+      // re-warms everything to pick up team content changes.
+      const warmed = force ? new Set<string>() : readWarmed();
+      let pending = routes.filter((r) => !warmed.has(r));
 
-      let done = 0;
-      const queue = [...routes];
+      // Everything already warmed. Honour the throttle so we don't re-download the
+      // whole site on every page load; a forced pass ignores it.
+      if (pending.length === 0) {
+        if (!force && Date.now() - readLastRun() < MIN_REWARM_MS) return;
+        pending = [...routes];
+        warmed.clear();
+      }
+
+      running.current = true;
+      setJustFinished(false);
+      setProgress({ done: routes.length - pending.length, total: routes.length });
+
+      let done = routes.length - pending.length;
+      const queue = [...pending];
       const worker = async () => {
         while (queue.length) {
-          if (!navigator.onLine) return; // gave up — connection dropped
+          if (!navigator.onLine) return; // paused — connection dropped; resumes later
           const url = queue.shift()!;
           await warmRoute(url);
+          warmed.add(url);
+          writeWarmed(warmed); // persist progress so an interruption can resume
           done += 1;
           setProgress({ done, total: routes.length });
           window.dispatchEvent(
@@ -126,13 +166,17 @@ export function SitePrecacher() {
 
       try {
         await Promise.all(
-          Array.from({ length: Math.min(CONCURRENCY, routes.length) }, worker)
+          Array.from({ length: Math.min(CONCURRENCY, pending.length) }, worker)
         );
       } finally {
         running.current = false;
-        const completed = done >= routes.length;
+        // Only mark the run complete (arming the throttle) once EVERY route is
+        // warmed — never at the start of the pass. A partial pass leaves the
+        // throttle unset so the next load/visibility/reconnect finishes the job.
+        const completed = routes.every((r) => warmed.has(r));
         setProgress(null);
         if (completed) {
+          writeLastRun(Date.now());
           setJustFinished(true);
           window.dispatchEvent(new Event("ghf:precache-done"));
           setTimeout(() => setJustFinished(false), 4000);
@@ -148,9 +192,27 @@ export function SitePrecacher() {
         : setTimeout(cb, 2500);
     idle(kick);
 
+    // Reconnect forces a full refresh (team content may have changed).
     const onOnline = () => run(true);
+    // When the tab returns to the foreground (very common on iPad, where a
+    // backgrounded tab suspends the warm-up), resume any unfinished pass.
+    const onVisible = () => {
+      if (document.visibilityState === "visible") run(false);
+    };
+    // A new service worker taking control means a fresh deploy — re-warm so the
+    // new page chunks are cached, not the old ones.
+    const onControllerChange = () => run(true);
+
     window.addEventListener("online", onOnline);
-    return () => window.removeEventListener("online", onOnline);
+    document.addEventListener("visibilitychange", onVisible);
+    window.addEventListener("focus", onVisible);
+    navigator.serviceWorker?.addEventListener("controllerchange", onControllerChange);
+    return () => {
+      window.removeEventListener("online", onOnline);
+      document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("focus", onVisible);
+      navigator.serviceWorker?.removeEventListener("controllerchange", onControllerChange);
+    };
   }, [brands]);
 
   // Track fullscreen so the indicator can hide during any fullscreen presentation,

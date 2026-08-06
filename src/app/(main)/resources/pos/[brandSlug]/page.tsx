@@ -41,6 +41,22 @@ export default function BrandPosLibraryPage() {
 
   const hasFile = (url?: string) => !!url && url !== "#" && url.trim() !== "";
 
+  // SharePoint / OneDrive share links open a viewer by default; appending the
+  // download flag makes them fetch the actual file. Left untouched for any other
+  // host (e.g. a direct PDF or Supabase Storage link already downloads).
+  const resolveDownloadUrl = (url: string) => {
+    try {
+      const u = new URL(url);
+      if (u.hostname.endsWith("sharepoint.com") || u.hostname.endsWith("onedrive.live.com") || u.hostname.endsWith("1drv.ms")) {
+        if (!u.searchParams.has("download")) u.searchParams.set("download", "1");
+        return u.toString();
+      }
+    } catch {
+      /* not an absolute URL — leave as-is */
+    }
+    return url;
+  };
+
   return (
     <div className="min-h-screen px-12 py-10 flex flex-col justify-between" style={{ backgroundColor: "var(--background)" }}>
       <div className="space-y-8">
@@ -96,7 +112,7 @@ export default function BrandPosLibraryPage() {
                   <div className="mt-auto pt-5 flex items-center justify-between">
                     {hasFile(item.downloadUrl) ? (
                       <a
-                        href={item.downloadUrl}
+                        href={resolveDownloadUrl(item.downloadUrl!)}
                         download
                         target="_blank"
                         rel="noopener noreferrer"
@@ -104,7 +120,7 @@ export default function BrandPosLibraryPage() {
                         className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--foreground)] text-[var(--background)] hover:opacity-90 text-[11px] font-bold uppercase tracking-wider transition-opacity"
                       >
                         <Download className="w-4 h-4" />
-                        Download
+                        Download PDF
                       </a>
                     ) : (
                       <span className="text-[11px] uppercase tracking-wider text-[var(--muted-foreground)]/70 italic">

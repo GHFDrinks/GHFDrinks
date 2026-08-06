@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useBrands } from "@/hooks/useBrands";
-import { getSupportTiles, SupportResult, SupportInputs, SupportCategory, SUPPORT_TILE_DETAILS } from "@/lib/support-rules";
+import { getSupportTilesWithLocked, SupportResult, SupportInputs, SupportCategory, SupportTileSpec, SUPPORT_TILE_DETAILS } from "@/lib/support-rules";
+import { fetchSupportConfig, DEFAULT_SUPPORT_CONFIG, type SupportConfig } from "@/lib/support-config";
 import { SupportTile } from "@/components/support/SupportTile";
 
 const TABS = [
@@ -35,7 +36,18 @@ export default function SupportOptionDetailPage() {
 
   const [showTiles, setShowTiles] = useState(false);
   const [supportResult, setSupportResult] = useState<SupportResult>({ tiles: [] });
+  const [lockedTiles, setLockedTiles] = useState<SupportTileSpec[]>([]);
   const [highlightedTiles, setHighlightedTiles] = useState<string[]>([]);
+  const [supportConfig, setSupportConfig] = useState<SupportConfig>(DEFAULT_SUPPORT_CONFIG);
+
+  // Admin-managed support tiles per SKU scenario (falls back to defaults).
+  useEffect(() => {
+    let active = true;
+    fetchSupportConfig().then((c) => active && setSupportConfig(c));
+    return () => {
+      active = false;
+    };
+  }, []);
 
   // Sync session storage return path
   useEffect(() => {
@@ -149,8 +161,9 @@ export default function SupportOptionDetailPage() {
       inputs.positioning = packagedPositioning as any;
     }
 
-    const result = getSupportTiles(inputs);
+    const result = getSupportTilesWithLocked(inputs, supportConfig);
     setSupportResult(result);
+    setLockedTiles(result.lockedTiles);
     setHighlightedTiles([]);
     setShowTiles(true);
   };
@@ -396,7 +409,7 @@ export default function SupportOptionDetailPage() {
           )}
 
           {/* Tiles Grid */}
-          {supportResult.tiles.length > 0 && (
+          {(supportResult.tiles.length > 0 || lockedTiles.length > 0) && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {supportResult.tiles.map((tile) => {
                 const isSelected = highlightedTiles.includes(tile.title);
@@ -419,6 +432,25 @@ export default function SupportOptionDetailPage() {
                   </div>
                 );
               })}
+
+              {/* Locked options — unlocked by choosing a higher SKU count. Shown
+                  greyed and non-interactive so the user can see what more SKUs get. */}
+              {lockedTiles.map((tile) => (
+                <div
+                  key={`locked-${tile.title}`}
+                  title="Available with a higher number of SKUs"
+                  className="relative rounded-lg opacity-40 grayscale pointer-events-none select-none"
+                >
+                  <SupportTile
+                    title={tile.title}
+                    description={SUPPORT_TILE_DETAILS[tile.title]}
+                    badge={tile.badge}
+                  />
+                  <span className="absolute top-2 right-2 z-10 text-[8px] font-bold tracking-wider uppercase bg-[var(--foreground)] text-[var(--background)] px-2 py-0.5 rounded-full">
+                    More SKUs
+                  </span>
+                </div>
+              ))}
             </div>
           )}
 

@@ -11,12 +11,18 @@ CREATE TABLE IF NOT EXISTS public.site_config (
 
 ALTER TABLE public.site_config ENABLE ROW LEVEL SECURITY;
 
+-- Policies are dropped first so this migration is safe to re-run (Postgres has
+-- no CREATE POLICY IF NOT EXISTS).
+
 -- Public read (the home page renders this on the public site).
+DROP POLICY IF EXISTS "Allow public read access on site_config" ON public.site_config;
 CREATE POLICY "Allow public read access on site_config"
   ON public.site_config FOR SELECT USING (true);
 
 -- Write access requires an authenticated admin.
+DROP POLICY IF EXISTS "Admins can insert site_config" ON public.site_config;
 CREATE POLICY "Admins can insert site_config"
   ON public.site_config FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+DROP POLICY IF EXISTS "Admins can update site_config" ON public.site_config;
 CREATE POLICY "Admins can update site_config"
   ON public.site_config FOR UPDATE USING (auth.role() = 'authenticated');

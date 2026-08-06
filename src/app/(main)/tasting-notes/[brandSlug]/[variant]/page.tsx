@@ -10,6 +10,7 @@ import { TasteRadarChart } from "@/components/tasting/TasteRadarChart";
 import { ProductFeaturesList } from "@/components/tasting/ProductFeaturesList";
 import { SeasonSelectorModal } from "@/components/serves/SeasonSelectorModal";
 import { Season } from "@/data/serves";
+import { DEFAULT_SECTION_LABELS, fetchSectionLabels, type SectionLabels } from "@/lib/section-labels";
 
 function slugify(text: string) {
   return text
@@ -40,6 +41,16 @@ export default function VariantDetailPage() {
   const [carouselIdx, setCarouselIdx] = useState(0);
   const [isServeModalOpen, setIsServeModalOpen] = useState(false);
   const [returnTo, setReturnTo] = useState<{ url: string; label: string } | null>(null);
+  const [labels, setLabels] = useState<SectionLabels>(DEFAULT_SECTION_LABELS);
+
+  // Admin-managed section header labels (e.g. rename "Product Features").
+  useEffect(() => {
+    let active = true;
+    fetchSectionLabels().then((l) => active && setLabels(l));
+    return () => {
+      active = false;
+    };
+  }, []);
 
   // Check sessionStorage for presentation return context
   useEffect(() => {
@@ -178,7 +189,7 @@ export default function VariantDetailPage() {
           {/* Taste Profile Radar Section */}
           <div className="space-y-4">
             <h2 className="text-lg font-light tracking-wider uppercase text-[var(--foreground)]">
-              Taste Profile
+              {labels.tasteProfile}
             </h2>
             {note.tasteProfileRadar ? (
               <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--card)]">
@@ -195,7 +206,7 @@ export default function VariantDetailPage() {
           {/* Product Description (holding text — to be populated per variant) */}
           <div className="space-y-4">
             <h2 className="text-lg font-light tracking-wider uppercase text-[var(--foreground)]">
-              Product Description
+              {labels.productDescription}
             </h2>
             <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
               A considered expression, crafted with intent. Full product description to follow.
@@ -205,7 +216,7 @@ export default function VariantDetailPage() {
           {/* Product Features — moved down to sit alongside the Taste Profile */}
           <div className="space-y-4">
             <h2 className="text-lg font-light tracking-wider uppercase text-[var(--foreground)]">
-              Product Features
+              {labels.productFeatures}
             </h2>
             {note.productFeatures && note.productFeatures.length > 0 ? (
               <ProductFeaturesList features={note.productFeatures} />

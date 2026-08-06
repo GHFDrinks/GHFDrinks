@@ -47,6 +47,7 @@ export async function getBrands(): Promise<Brand[]> {
               serveInspiration: '',
               taste_profile_radar: v.taste_profile_radar || null,
               product_features: v.product_features || [],
+              carousel_images: v.carousel_images || [],
             }))
         : mock?.variants || [];
 

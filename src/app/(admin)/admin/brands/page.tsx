@@ -61,13 +61,13 @@ export default function AdminBrandsPage() {
       <div className="p-6 rounded-[2rem] bg-white/5 border border-white/10">
         <div className="flex items-center space-x-4 mb-8">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60" />
             <input 
               type="text" 
               placeholder="Search brands..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-12 pl-12 pr-4 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all text-white placeholder:text-white/40"
+              className="w-full h-12 pl-12 pr-4 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all text-white placeholder:text-white/60"
             />
           </div>
         </div>
@@ -121,7 +121,7 @@ export default function AdminBrandsPage() {
             </tbody>
           </table>
           {filteredBrands.length === 0 && (
-            <div className="text-center py-12 text-white/40">
+            <div className="text-center py-12 text-white/60">
               No brands found matching your search.
             </div>
           )}

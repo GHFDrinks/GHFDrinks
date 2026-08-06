@@ -3,7 +3,8 @@ export type CaseStudy = {
   brandSlug: string;
   tier: "prestige" | "independent" | "national-group";
   title: string;
-  image: string;
+  image: string;        // background image
+  logo?: string;        // optional outlet logo, overlaid on the background
   outletName: string;
   summary: string;
   fullText?: string;

@@ -30,6 +30,7 @@ declare module "lucide-react" {
   export const Plus: Icon;
   export const FileText: Icon;
   export const Trash2: Icon;
+  export const Copy: Icon;
   export const GripVertical: Icon;
   export const X: Icon;
   export const Check: Icon;

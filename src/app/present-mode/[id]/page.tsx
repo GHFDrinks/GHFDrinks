@@ -22,6 +22,10 @@ export default function PresentModePage() {
   // Slides never advance on their own — the presenter drives navigation manually.
   // The play button is still available for anyone who wants timed auto-play.
   const [isPlaying, setIsPlaying] = useState(false);
+  // Gate the first paint until we've resolved the resume slide (from ?slide= or
+  // sessionStorage). Without this the view renders slide 0 (the first brand) for
+  // one frame before jumping to the real slide — the "wrong brand flash".
+  const [resumeResolved, setResumeResolved] = useState(false);
 
   // Resolve the presentation: a saved one by id, otherwise build an ephemeral
   // presentation on the fly from a package/category slug (e.g. "crafted-and-discerning").
@@ -89,7 +93,10 @@ export default function PresentModePage() {
     : [];
 
   const total = slides.length;
-  const current = slides[slideIndex];
+  // Clamp so a stale resume target (e.g. slide count shrank) can never leave the
+  // view stuck on an undefined slide.
+  const safeIndex = total > 0 ? Math.min(Math.max(slideIndex, 0), total - 1) : 0;
+  const current = slides[safeIndex];
 
   const goNext = useCallback(() => {
     setSlideIndex((i) => Math.min(i + 1, total - 1));
@@ -143,6 +150,8 @@ export default function PresentModePage() {
       setSlideIndex(target);
       setIsPlaying(false); // land where they left, paused
     }
+    // Resume point resolved (whether or not one was found) — safe to paint now.
+    setResumeResolved(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -192,10 +201,14 @@ export default function PresentModePage() {
     );
   }
 
-  if (total === 0 || !current) {
+  // Hold the first paint on a neutral backdrop until the resume slide is resolved,
+  // so we never flash slide 0 (the wrong brand) before jumping to the real slide.
+  if (!resumeResolved || total === 0 || !current) {
     return (
       <div className="flex items-center justify-center h-screen" style={{ backgroundColor: "var(--background)" }}>
-        <p style={{ color: "var(--muted-foreground)" }}>Loading slides...</p>
+        {total === 0 && resumeResolved ? (
+          <p style={{ color: "var(--muted-foreground)" }}>Loading slides...</p>
+        ) : null}
       </div>
     );
   }

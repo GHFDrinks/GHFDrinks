@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { STATIC_BRANDS } from "@/lib/static-brands";
+import { useBrands } from "@/hooks/useBrands";
 import { CASE_STUDIES, CaseStudy } from "@/data/case-studies";
 import { X } from "lucide-react";
 
@@ -19,7 +20,9 @@ export default function BrandCaseStudiesPage() {
   const router = useRouter();
   const brandSlug = params.brandSlug as string;
 
-  const brand = STATIC_BRANDS.find((b) => b.slug === brandSlug);
+  const { brands } = useBrands();
+  const liveBrand = brands.find((b) => b.slug === brandSlug);
+  const brand = liveBrand || STATIC_BRANDS.find((b) => b.slug === brandSlug);
   const [activeTab, setActiveTab] = useState<Tier>("prestige");
   const [selectedStudy, setSelectedStudy] = useState<CaseStudy | null>(null);
 
@@ -48,7 +51,13 @@ export default function BrandCaseStudiesPage() {
     );
   }
 
-  const brandStudies = CASE_STUDIES.filter((c) => c.brandSlug === brandSlug);
+  // Prefer admin-managed case studies (from Supabase, with editable background +
+  // logo overlay); fall back to the static library when none are configured.
+  const adminStudies = ((liveBrand as unknown as { caseStudies?: CaseStudy[] })?.caseStudies || [])
+    .filter((c) => c && c.title);
+  const brandStudies = adminStudies.length > 0
+    ? adminStudies
+    : CASE_STUDIES.filter((c) => c.brandSlug === brandSlug);
   const activeStudies = brandStudies.filter((c) => c.tier === activeTab);
 
   return (
@@ -109,6 +118,11 @@ export default function BrandCaseStudiesPage() {
                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-103"
                     />
                     <div className="absolute inset-0 bg-black/40 group-hover:bg-black/35 transition-colors" />
+                    {study.logo && (
+                      <div className="absolute top-3 left-3 z-10 h-12 w-12 rounded-full bg-white/90 border border-white/40 flex items-center justify-center p-1.5 shadow-lg">
+                        <img src={study.logo} alt="" className="w-full h-full object-contain" />
+                      </div>
+                    )}
                     <div className="absolute bottom-4 left-4 right-4">
                       <span className="text-[9px] font-bold tracking-widest uppercase text-[var(--sage)]">
                         {study.outletName}
@@ -168,6 +182,11 @@ export default function BrandCaseStudiesPage() {
                   className="absolute inset-0 w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-black/45" />
+                {selectedStudy.logo && (
+                  <div className="absolute top-5 left-6 z-10 h-16 w-16 rounded-full bg-white/90 border border-white/40 flex items-center justify-center p-2 shadow-xl">
+                    <img src={selectedStudy.logo} alt="" className="w-full h-full object-contain" />
+                  </div>
+                )}
                 <div className="absolute bottom-6 left-6 right-6">
                   <span className="text-[10px] font-bold tracking-widest uppercase text-[var(--sage)]">
                     {selectedStudy.outletName} • {selectedStudy.tier.replace("-", " ")}
